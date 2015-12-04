@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Hank
- * Date: 26.11.2015
- * Time: 15:09
- */
-
 namespace common\models;
 
-use DTS\eBaySDK\Types\UnboundType;
 use Yii;
 use yii\base\Model;
 use \DTS\eBaySDK\Parser;
@@ -20,10 +12,9 @@ use \DTS\eBaySDK\Trading\Services as TradSer;
 use \DTS\eBaySDK\Trading\Types as TradType;
 use \DTS\eBaySDK\Trading\Enums as TradEnums;
 
-
-
 class EbayForm extends Model
 {
+    private $cacheTime = 2678400;
     public $queryText;
     public $queryCategory;
     public $queryMinPrice;
@@ -57,14 +48,22 @@ class EbayForm extends Model
     }
 
     public function getItems() {
+        $items = Yii::$app->getCache()->get($this->queryText);
+        if($items !== false) {
+            return $items;
+        }
         $service = new Services\FindingService(array(
             'appId' => $this->config['production']['appId'],
             'apiVersion' => $this->config['findingApiVersion'],
-            'globalId' => Constants\GlobalIds::US
+            'globalId' => 'EBAY-RU'
         ));
         $request = new Types\FindItemsAdvancedRequest();
         $request->keywords = $this->queryText;
-        $request->categoryId = array($this->queryCategory);
+        if(!empty($this->queryCategory)){
+            $request->categoryId = array($this->queryCategory);
+        }else{
+            $request->categoryId = array('6030');
+        }
         $itemFilter = new Types\ItemFilter();
         $itemFilter->name = 'ListingType';
         $itemFilter->value[] = 'AuctionWithBIN';
@@ -82,16 +81,24 @@ class EbayForm extends Model
                 'value' => array($this->queryMaxPrice)
             ));
         }
-        $request->sortOrder = $this->querySort;
+//        if(empty($this->querySort)) {
+//            $request->sortOrder = $this->querySort;
+//        }
 
         $response = $service->findItemsAdvanced($request);
 
         if ($response->ack !== 'Failure') {
-            return $response->searchResult;
+            $arrayresp = $response->toArray();
+            Yii::$app->getCache()->set($this->queryText, $arrayresp, 120);
+            return $arrayresp;
         }
     }
 
     public function getCategories() {
+        $categories = Yii::$app->getCache()->get('Lolcategory');
+        if($categories !== false) {
+            return $categories;
+        }
         $service = new TradSer\TradingService(array(
             'apiVersion' => $this->config['tradingApiVersion'],
             'siteId' => Constants\SiteIds::US
@@ -114,7 +121,39 @@ class EbayForm extends Model
                 $catconfig[$name][$key] = $service->getCategories($request);
             }
         }
-        return $catconfig;
+        $toCache = $this->convertToSimpleArray($catconfig);
+        Yii::$app->getCache()->set('Lolcategory', $toCache, $this->cacheTime);
+        return $toCache;
+    }
+
+    private function convertToSimpleArray($categoryArray) {
+        $i = 0;
+
+        $simpleArray = [
+            'cats' => [
+            ],
+            'brands' => [
+                ''=>''
+            ]
+        ];
+
+        foreach($categoryArray as $sections) {
+            foreach($sections as $subsection) {
+                $i++;
+                if($i%2==0) {
+                    //Будем перебирать брэнды
+                    foreach($subsection->CategoryArray->Category as $category) {
+                        array_push($simpleArray['brands'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel]);
+                    }
+                }else{
+                    //Будем перебирать категории
+                    foreach($subsection->CategoryArray->Category as $category) {
+                        array_push($simpleArray['cats'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel]);
+                    }
+                }
+            }
+        }
+        return $simpleArray;
     }
 
     private function getCategoryConfig() {

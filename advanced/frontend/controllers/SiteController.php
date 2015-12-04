@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\CacheModel;
 use Yii;
 use common\models\LoginForm;
 use common\models\EbayForm;
@@ -145,9 +146,17 @@ class SiteController extends Controller
     public function actionEbay() {
         $model = new EbayForm();
         $categories = $model->getCategories();
-//        $list =  $model->getCategoryList();
+        if ($model->load(Yii::$app->request->post())) {
+            $result = $model->getItems();
+            return $this->render('ebay', [
+                'categories' => $categories,
+                'result' => $result,
+                'model' => $model,
+            ]);
+        }
         return $this->render('ebay', [
-            'categories' => $categories['auto'],
+            'categories' => $categories,
+            'result' => false,
             'model' => $model,
         ]);
     }
