@@ -23,7 +23,7 @@ class EbayForm extends Model
     public $queryBrand;
     public $queryState;
     private $config;
-
+    private $queryHash;
     /**
      * EbayForm constructor.
      */
@@ -47,8 +47,24 @@ class EbayForm extends Model
         $this->config = require __DIR__ . '/../../configuration.php';
     }
 
+    private function genMd5Hash() {
+        $this->queryHash = md5($this->queryText.$this->queryCategory.$this->queryBrand.$this->queryState.$this->querySort.$this->queryMaxPrice.$this->queryMinPrice);
+    }
+
+    private function getItemsFromDB() {
+        $linka = Links::findOne([
+            'hashId' => $this->queryHash,
+        ]);
+        if(empty($linka->hashId)) {
+            return false;
+        }
+        $links = new Links();
+        return  $links->getItems();
+    }
+
     public function getItems() {
-        $items = Yii::$app->getCache()->get($this->queryText);
+        $this->genMd5Hash();
+        $items = $this->getItemsFromDB();
         if($items !== false) {
             return $items;
         }
@@ -84,13 +100,48 @@ class EbayForm extends Model
 //        if(empty($this->querySort)) {
 //            $request->sortOrder = $this->querySort;
 //        }
-
         $response = $service->findItemsAdvanced($request);
-
         if ($response->ack !== 'Failure') {
             $arrayresp = $response->toArray();
-            Yii::$app->getCache()->set($this->queryText, $arrayresp, 120);
+            //md5($this->queryText.); Надо реализовать формирования хеша. выбрать какие именно поля будут участвовать
+            $this->addToBD($arrayresp);
+
+            Yii::$app->getCache()->set($this->queryText, $arrayresp, 10);
             return $arrayresp;
+        }
+    }
+
+    private function addToBD($ebayResponse) {
+        $today = date("Ymd");
+        $hash = new Hash();
+        $hash->hash = $this->queryHash;
+        $hash->life_time = $today;
+        $hashID = $hash->id;
+        $hash->save();
+        foreach($ebayResponse['searchResult']['item'] as $itemEbay){
+            $ebay_item = Item::findOne([
+                'ebay_item_id' => $itemEbay['itemId'],
+            ]);
+            if(!empty($ebay_item->ebay_item_id)){
+                continue;
+            }
+            $item = new Item();
+            $item->ebay_item_id         = $itemEbay['itemId'];
+            $item->title                = $itemEbay['title'];
+            $item->categoryId           = $itemEbay['primaryCategory']['categoryId'];
+            $item->categoryName         = $itemEbay['primaryCategory']['categoryName'];
+            $item->galleryURL           = $itemEbay['galleryURL'];
+            $item->viewItemURL          = $itemEbay['viewItemURL'];
+            $item->current_price_value  = $itemEbay['sellingStatus']['currentPrice']['value'];
+            $item->sellingState         = $itemEbay['sellingStatus']['sellingState'];
+            $item->timeLeft             = $itemEbay['sellingStatus']['timeLeft'];
+            $item->save();
+            $itemID = $item->id;
+
+            $links = new Links();
+            $links->itemId = $itemID;
+            $links->hashId = $hashID;
+            $links->save();
         }
     }
 
