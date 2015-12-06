@@ -13,68 +13,115 @@ use common\widgets\Alert;
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
-<!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>">
-<head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?= Html::csrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-</head>
-<body>
-<?php $this->beginBody() ?>
+    <!DOCTYPE html>
+    <html lang="<?= Yii::$app->language ?>">
+    <head>
+        <meta charset="<?= Yii::$app->charset ?>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?= Html::csrfMetaTags() ?>
+        <title><?= Html::encode($this->title) ?></title>
+        <?php $this->head() ?>
 
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'CGPX',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
-        ['label' => 'Ebay search', 'url' => ['/site/ebay']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = [
-            'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-            'url' => ['/site/logout'],
-            'linkOptions' => ['data-method' => 'post']
+        <style>
+            .navbar {
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+
+            .row.content {height: 450px}
+
+            footer {
+                background-color: #555;
+                color: white;
+                padding: 15px;
+            }
+        </style>
+
+    </head>
+    <body>
+    <?php $this->beginBody() ?>
+
+    <div class="wrap">
+        <?php
+        NavBar::begin([
+            'brandLabel' => '<span class="glyphicon glyphicon-barcode" aria-hidden="true"></span> BayEbay',
+            'brandUrl' => Yii::$app->homeUrl,
+            'options' => [
+                'class' => 'navbar-inverse navbar-fixed-top navbar',
+            ],
+        ]);
+        $menuItems = [
+            ['label' => 'Информация', 'url' => ['/site/index']],
+            ['label' => 'Каталог', 'url' => ['/site/itemslist']],
+            ['label' => 'Оплата', 'url' => ['/site/404']],
+            ['label' => 'Доставка', 'url' => ['/site/404']],
+            ['label' => 'Доставка', 'url' => ['/site/404']],
         ];
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
+        /* это борода для отображение авторизации, нам пока не надо
+        if (Yii::$app->user->isGuest) {
+            $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
+            $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        } else {
+            $menuItems[] = [
+                'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                'url' => ['/site/logout'],
+                'linkOptions' => ['data-method' => 'post']
+            ];
+        }
+        */
 
-    <div class="container-fluid">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav navbar-nav'],
+            'items' => $menuItems,
+        ]);
+        NavBar::end();
+        ?>
+
+        <div class="container-fluid">
+
+            <?= Breadcrumbs::widget([
+                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            ]) ?>
+            <?= Alert::widget() ?>
+
+            <?php
+            $this->beginContent('@frontend/views/layouts/itemslist.php');
+            echo $content;
+            $this->endContent();
+            ?>
+
+
+        </div>
+
+
+
     </div>
-</div>
 
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+    <footer class="container-fluid text-center">
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
-    </div>
-</footer>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 text-left">
 
-<?php $this->endBody() ?>
-</body>
-</html>
+                <address>
+                    <strong>&copy; Ololosh, Inc. <?= date('Y') ?></strong><br>
+                    123321 г.Кукуево<br>
+                    шоссе Программистов, строение 512<br>
+                    <abbr title="Phone">т:</abbr> (495) 222 22 22
+                </address>
+
+                <address>
+                    <strong>Я тебе покушать принёс</strong><br>
+                    <a href="mailto:#">pahom@elephant.com</a>
+                </address>
+
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+
+    </footer>
+
+    <?php $this->endBody() ?>
+    </body>
+    </html>
 <?php $this->endPage() ?>

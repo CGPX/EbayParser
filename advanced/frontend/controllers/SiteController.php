@@ -66,14 +66,46 @@ class SiteController extends Controller
         ];
     }
 
+    /** Рендерим наши страницы */
+
     /**
-     * Displays homepage.
+     * Лендинг (информация)
      *
      * @return mixed
      */
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    /**
+     * Выводим каталог товара
+     *
+     * @return mixed
+     */
+    public function actionItemslist()
+    {
+        return $this->render('itemslist');
+    }
+
+    /**
+     * Выводим оформление товаров
+     *
+     * @return mixed
+     */
+    public function actionOrder()
+    {
+        return $this->render('order');
+    }
+
+    /**
+     * Выводим просмотр подробностей о товаре
+     *
+     * @return mixed
+     */
+    public function actionSingle()
+    {
+        return $this->render('single');
     }
 
     /**
