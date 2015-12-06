@@ -10,9 +10,9 @@ class Links extends ActiveRecord {
         return '{{%links}}';
     }
 
-    public  function getItems()
+    public function getItems($id)
     {
-        return $this->hasMany(Item::className(), ['item_id' => 'id'])->all();
+        return $this->hasMany(Item::className(), ['id' => 'itemId'])->where('hashId = :idhash',['idhash' => $id])->all();
     }
 
 }

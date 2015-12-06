@@ -52,14 +52,15 @@ class EbayForm extends Model
     }
 
     private function getItemsFromDB() {
-        $linka = Links::findOne([
-            'hashId' => $this->queryHash,
+        $oneHash = Hash::findOne([
+            'hash' => $this->queryHash,
         ]);
-        if(empty($linka->hashId)) {
+        $h = Hash::findOne($oneHash->id);
+        if(empty($h)) {
             return false;
         }
-        $links = new Links();
-        return  $links->getItems();
+        $resp =  $h->items;
+        return $resp;
     }
 
     public function getItems() {
@@ -103,7 +104,6 @@ class EbayForm extends Model
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
             $arrayresp = $response->toArray();
-            //md5($this->queryText.); Надо реализовать формирования хеша. выбрать какие именно поля будут участвовать
             $this->addToBD($arrayresp);
             return $this->getItemsFromDB();
         }

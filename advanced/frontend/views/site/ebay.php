@@ -46,15 +46,15 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="row placeholders">
                 <? if ($result !== false) {
-//                      print_r($result);
-                    foreach ($result['searchResult']['item'] as $item) {
-                        $pic = $item['galleryURL'];
-                        $link = $item['viewItemURL'];
-                        $title = $item['title'];
-                        $price = $item['sellingStatus']['currentPrice']['value'];
-                        $results .= '<div class="col-xs-6 col-sm-3 placeholders"><h4>' . $title . '</h4><img src=' . $pic . ' class="img-thumbnail"><p>' . $price . '</p><p><a class="btn btn-default" href="' . $link . '" role="button">Глянуть на ebay »</a></p></div>';
-                    }
-                    echo $results;
+                      print_r($result);
+//                    foreach ($result['searchResult']['item'] as $item) {
+//                        $pic = $item['galleryURL'];
+//                        $link = $item['viewItemURL'];
+//                        $title = $item['title'];
+//                        $price = $item['sellingStatus']['currentPrice']['value'];
+//                        $results .= '<div class="col-xs-6 col-sm-3 placeholders"><h4>' . $title . '</h4><img src=' . $pic . ' class="img-thumbnail"><p>' . $price . '</p><p><a class="btn btn-default" href="' . $link . '" role="button">Глянуть на ebay »</a></p></div>';
+//                    }
+//                    echo $results;
                 }
                 ?>
             </div>
