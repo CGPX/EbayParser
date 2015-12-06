@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Hank
- * Date: 26.11.2015
- * Time: 15:09
- */
-
 namespace common\models;
 
-use DTS\eBaySDK\Types\UnboundType;
 use Yii;
 use yii\base\Model;
 use \DTS\eBaySDK\Parser;
@@ -20,10 +12,9 @@ use \DTS\eBaySDK\Trading\Services as TradSer;
 use \DTS\eBaySDK\Trading\Types as TradType;
 use \DTS\eBaySDK\Trading\Enums as TradEnums;
 
-
-
 class EbayForm extends Model
 {
+    private $cacheTime = 2678400;
     public $queryText;
     public $queryCategory;
     public $queryMinPrice;
@@ -32,7 +23,7 @@ class EbayForm extends Model
     public $queryBrand;
     public $queryState;
     private $config;
-
+    private $queryHash;
     /**
      * EbayForm constructor.
      */
@@ -56,15 +47,40 @@ class EbayForm extends Model
         $this->config = require __DIR__ . '/../../configuration.php';
     }
 
+    private function genMd5Hash() {
+        $this->queryHash = md5($this->queryText.$this->queryCategory.$this->queryBrand.$this->queryState.$this->querySort.$this->queryMaxPrice.$this->queryMinPrice);
+    }
+
+    private function getItemsFromDB() {
+        $oneHash = Hash::findOne([
+            'hash' => $this->queryHash,
+        ]);
+        $h = Hash::findOne($oneHash->id);
+        if(empty($h)) {
+            return false;
+        }
+        $resp =  $h->items;
+        return $resp;
+    }
+
     public function getItems() {
+        $this->genMd5Hash();
+        $items = $this->getItemsFromDB();
+        if($items !== false) {
+            return $items;
+        }
         $service = new Services\FindingService(array(
             'appId' => $this->config['production']['appId'],
             'apiVersion' => $this->config['findingApiVersion'],
-            'globalId' => Constants\GlobalIds::US
+            'globalId' => 'EBAY-RU'
         ));
         $request = new Types\FindItemsAdvancedRequest();
         $request->keywords = $this->queryText;
-        $request->categoryId = array($this->queryCategory);
+        if(!empty($this->queryCategory)){
+            $request->categoryId = array($this->queryCategory);
+        }else{
+            $request->categoryId = array('6030');
+        }
         $itemFilter = new Types\ItemFilter();
         $itemFilter->name = 'ListingType';
         $itemFilter->value[] = 'AuctionWithBIN';
@@ -82,16 +98,56 @@ class EbayForm extends Model
                 'value' => array($this->queryMaxPrice)
             ));
         }
-        $request->sortOrder = $this->querySort;
-
+//        if(empty($this->querySort)) {
+//            $request->sortOrder = $this->querySort;
+//        }
         $response = $service->findItemsAdvanced($request);
-
         if ($response->ack !== 'Failure') {
-            return $response->searchResult;
+            $arrayresp = $response->toArray();
+            $this->addToBD($arrayresp);
+            return $this->getItemsFromDB();
+        }
+    }
+
+    private function addToBD($ebayResponse) {
+        $today = date("Ymd");
+        $hash = new Hash();
+        $hash->hash = $this->queryHash;
+        $hash->life_time = $today;
+        $hash->save();
+        $hashID = $hash->id;
+        foreach($ebayResponse['searchResult']['item'] as $itemEbay){
+            $ebay_item = Item::findOne([
+                'ebay_item_id' => $itemEbay['itemId'],
+            ]);
+            if(!empty($ebay_item->ebay_item_id)){
+                continue;
+            }
+            $item = new Item();
+            $item->ebay_item_id         = $itemEbay['itemId'];
+            $item->title                = $itemEbay['title'];
+            $item->categoryId           = $itemEbay['primaryCategory']['categoryId'];
+            $item->categoryName         = $itemEbay['primaryCategory']['categoryName'];
+            $item->galleryURL           = $itemEbay['galleryURL'];
+            $item->viewItemURL          = $itemEbay['viewItemURL'];
+            $item->current_price_value  = $itemEbay['sellingStatus']['currentPrice']['value'];
+            $item->sellingState         = $itemEbay['sellingStatus']['sellingState'];
+            $item->timeLeft             = $itemEbay['sellingStatus']['timeLeft'];
+            $item->save();
+            $itemID = $item->id;
+
+            $links = new Links();
+            $links->itemId = $itemID;
+            $links->hashId = $hashID;
+            $links->save();
         }
     }
 
     public function getCategories() {
+        $categories = Yii::$app->getCache()->get('Lolcategory');
+        if($categories !== false) {
+            return $categories;
+        }
         $service = new TradSer\TradingService(array(
             'apiVersion' => $this->config['tradingApiVersion'],
             'siteId' => Constants\SiteIds::US
@@ -114,7 +170,39 @@ class EbayForm extends Model
                 $catconfig[$name][$key] = $service->getCategories($request);
             }
         }
-        return $catconfig;
+        $toCache = $this->convertToSimpleArray($catconfig);
+        Yii::$app->getCache()->set('Lolcategory', $toCache, $this->cacheTime);
+        return $toCache;
+    }
+
+    private function convertToSimpleArray($categoryArray) {
+        $i = 0;
+
+        $simpleArray = [
+            'cats' => [
+            ],
+            'brands' => [
+                ''=>''
+            ]
+        ];
+
+        foreach($categoryArray as $sections) {
+            foreach($sections as $subsection) {
+                $i++;
+                if($i%2==0) {
+                    //Будем перебирать брэнды
+                    foreach($subsection->CategoryArray->Category as $category) {
+                        array_push($simpleArray['brands'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel]);
+                    }
+                }else{
+                    //Будем перебирать категории
+                    foreach($subsection->CategoryArray->Category as $category) {
+                        array_push($simpleArray['cats'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel]);
+                    }
+                }
+            }
+        }
+        return $simpleArray;
     }
 
     private function getCategoryConfig() {

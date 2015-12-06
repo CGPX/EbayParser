@@ -14,9 +14,10 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
                 <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-                    <?php foreach ($categories['autocat']->CategoryArray->Category as $category):?>
-                        <li><a href="#"> <?php echo $category->CategoryName; ?> </a></li>
+                    <?php foreach ($categories['cats'] as $category):?>
+                        <li><a href="#"> <?php echo $category?> </a></li>
                     <?php endforeach ?>
+<!--                --><?php //var_dump($categories)?>
             </ul>
             <ul class="nav nav-sidebar">
                 <li><a href="">Запчасти мотоциклетные</a></li>
@@ -44,22 +45,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php ActiveForm::end(); ?>
             </div>
             <div class="row placeholders">
-<!--                --><?//
-//                if($model->ebayresult !== 'empty') {
-//                    $rs = $model->ebayresult;
-//                    echo $rs->paginationOutput->totalEntries;
-//                    foreach($rs->searchResult->item as $item) {
-//                        $pic   = $item->galleryURL;
-//                        $link  = $item->viewItemURL;
-//                        $title = $item->title;
-//                        $price = $item->sellingStatus->currentPrice->value;
-//                        $results .= '<div class="col-xs-6 col-sm-3 placeholders"><h4>'.$title.'</h4><img src='.$pic.' class="img-thumbnail"><p>'.$price.'</p><p><a class="btn btn-default" href="'.$link.'" role="button">Глянуть на ebay »</a></p></div>';
+                <? if ($result !== false) {
+                      print_r($result);
+//                    foreach ($result['searchResult']['item'] as $item) {
+//                        $pic = $item['galleryURL'];
+//                        $link = $item['viewItemURL'];
+//                        $title = $item['title'];
+//                        $price = $item['sellingStatus']['currentPrice']['value'];
+//                        $results .= '<div class="col-xs-6 col-sm-3 placeholders"><h4>' . $title . '</h4><img src=' . $pic . ' class="img-thumbnail"><p>' . $price . '</p><p><a class="btn btn-default" href="' . $link . '" role="button">Глянуть на ebay »</a></p></div>';
 //                    }
 //                    echo $results;
-//                } else {
-//                    echo 'Nothing to show...';
-//                }
-//                ?>
+                }
+                ?>
             </div>
         </div>
     </div>
