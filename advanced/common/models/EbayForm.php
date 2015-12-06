@@ -105,9 +105,7 @@ class EbayForm extends Model
             $arrayresp = $response->toArray();
             //md5($this->queryText.); Надо реализовать формирования хеша. выбрать какие именно поля будут участвовать
             $this->addToBD($arrayresp);
-
-            Yii::$app->getCache()->set($this->queryText, $arrayresp, 10);
-            return $arrayresp;
+            return $this->getItemsFromDB();
         }
     }
 
@@ -116,8 +114,8 @@ class EbayForm extends Model
         $hash = new Hash();
         $hash->hash = $this->queryHash;
         $hash->life_time = $today;
-        $hashID = $hash->id;
         $hash->save();
+        $hashID = $hash->id;
         foreach($ebayResponse['searchResult']['item'] as $itemEbay){
             $ebay_item = Item::findOne([
                 'ebay_item_id' => $itemEbay['itemId'],
