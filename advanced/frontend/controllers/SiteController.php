@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use common\models\CacheModel;
+use frontend\models\OrderForm;
 use Yii;
 use common\models\LoginForm;
 use common\models\EbayForm;
@@ -101,15 +102,7 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Выводим оформление товаров
-     *
-     * @return mixed
-     */
-    public function actionOrder()
-    {
-        return $this->render('order');
-    }
+
 
     /**
      * Выводим просмотр подробностей о товаре
@@ -176,7 +169,28 @@ class SiteController extends Controller
             ]);
         }
     }
+    /**
+     * Выводим оформление товаров
+     *
+     * @return mixed
+     */
+    public function actionOrder()
+    {
+        $model = new OrderForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
+                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+            } else {
+                Yii::$app->session->setFlash('error', 'There was an error sending email.');
+            }
 
+            return $this->refresh();
+        } else {
+            return $this->render('order', [
+                'model' => $model,
+            ]);
+        }
+    }
     /**
      * Displays about page.
      *
