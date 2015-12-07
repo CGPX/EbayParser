@@ -23,6 +23,10 @@ AppAsset::register($this);
         <?php $this->head() ?>
 
         <style>
+            body {
+                padding-top: 50px;
+            }
+
             .navbar {
                 margin-bottom: 0;
                 border-radius: 0;

@@ -20,41 +20,13 @@
             <div id="collapse1" class="panel-collapse collapse in">
 
                 <!-- Форма корзины START -->
-                <table class="table table-hover">
+                <table class="table table-hover cart_box">
 
-                    <tr class="new_cart_item_box">
-                        <td align=left class="item_name">Название</td>
-                        <td class="item_price">
-                            10
-                        </td>
-                        <td class="item_quantity">
 
-                            2
-
-                        </td>
-                        <td>
-                            <button class="btn btn-default item_remove" type="submit" data-id="0"><span class="glyphicon glyphicon-remove"></span></button>
-                        </td>
-                    </tr>
-
-                    <tr class="new_cart_item_box">
-                        <td align=left class="item_name">Название</td>
-                        <td class="item_price">
-                            320
-                        </td>
-                        <td class="item_quantity">
-
-                            4
-
-                        </td>
-                        <td>
-                            <button class="btn btn-default item_remove" type="submit" data-id="0"><span class="glyphicon glyphicon-remove"></span></button>
-                        </td>
-                    </tr>
 
                 </table>
 
-                <div class="panel-footer"><strong></strong><button class="btn btn-default " type="submit">Оформить</button></div>
+                <div class="panel-footer"><center><strong></strong><button class="btn btn-default cart_clear" type="submit">Очистить</button></center></div>
                 <!-- Форма корзины END -->
 
             </div>
