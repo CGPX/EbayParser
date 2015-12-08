@@ -61,14 +61,17 @@ function catalogArray($auto, $autocat, $level, $categories){
 
 	foreach($categories[$auto][$autocat]['CategoryArray']['Category'] as $value){
 
-		$abber[0]="";
-		$abber[1]="";
-		$abber[2]="";
-		$abber[3]="glyphicon-list";
-		$abber[4]="glyphicon-chevron-right";
-		$abber[5]="glyphicon-chevron-right";
-		$abber[6]="glyphicon-chevron-right";
-		$echotext="<a href=\"#\" class=\"list-group-item small\" data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"#".$value['CategoryParentID'][0]."\"><span class=\"glyphicon ". $abber[$value['CategoryLevel']] ."\"></span> ".  $value['CategoryName']."</a> \n";
+		$abber['glyphicon'][0]="";
+		$abber['glyphicon'][1]="";
+		$abber['glyphicon'][2]="";
+		$abber['glyphicon'][3]="glyphicon-list";
+		$abber['glyphicon'][4]="glyphicon-chevron-right";
+		$abber['glyphicon'][5]="";
+		$abber['glyphicon'][6]="glyphicon-chevron-right";
+
+		$abber['action'][5]="catChange";
+
+		$echotext="<a href=\"#\" class=\"list-group-item small ".$abber['action'][$value['CategoryLevel']]." \" data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"".$value['CategoryParentID'][0]."\">".  $value['CategoryName']." <span class=\"glyphicon pull-right ". $abber['glyphicon'][$value['CategoryLevel']] ." \"></span></a> \n";
 
 		if($level==$value['CategoryLevel']){ // мы остаёмся на том же уровне вложенности
 			echo $echotext."\n";

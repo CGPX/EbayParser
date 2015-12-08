@@ -14,18 +14,20 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'BayEbay - Каталог';
 ?>
 
-<?php $form = ActiveForm::begin(['id' => 'ebay-form']); ?>
-<div class="col-sm-12">
-<div class="input-group">
+    <?php $form = ActiveForm::begin(['id' => 'ebay-form']); ?>
+<div class="col-sm-12" xmlns="http://www.w3.org/1999/html">
+    <div class="input-group">
 
-    <input type="text" class="form-control" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]">
-                          <span class="input-group-btn">
-                            <?= Html::submitButton('Найти <span class="glyphicon glyphicon-search" aria-hidden="true"></span>', ['class' => 'btn btn-success', 'name' => 'ebay-button']) ?>
-                          </span>
+        <input type="text" class="form-control" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]">
+        <input type="text" placeholder="Определяем категорию..." id="ebayform-querycategory" name="EbayForm[queryCategory]" value="173511" >
 
-</div>
-</div>
-<?php ActiveForm::end(); ?>
+                              <span class="input-group-btn">
+                                <?= Html::submitButton('Найти <span class="glyphicon glyphicon-search" aria-hidden="true"></span>', ['class' => 'btn btn-success', 'name' => 'ebay-button']) ?>
+                              </span>
+
+    </div>
+    </div>
+    <?php ActiveForm::end(); ?>
 <br /><br /><br />
 
 <?php
