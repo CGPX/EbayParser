@@ -3,42 +3,91 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
 
-$this->title = 'Оформление';
-
-
+$this->title = 'Оформление заявки';
 
 ?>
-<div class="site-contact">
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="row">
+    <div class="col-md-4">
 
-    <p>
-        Оформление заказа.
-    </p>
+            <!-- Данные заказчика на оформление -->
+            <h4 class="text-uppercase"><small><?= Html::encode($this->title) ?></small></h4>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div id="collapse1" class="panel-collapse collapse in">
 
-            <?= $form->field($model, 'name') ?>
+                        <!-- Форма корзины START -->
+                        <table class="table table-hover">
+                            <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
+                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="ФИО" name="OrderForm[name]"></td></tr>
+                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Регион"></td></tr>
+                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Индекс"></td></tr>
+                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Город"></td></tr>
+                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Адрес" name="OrderForm[addres]"></td></tr>
+                                <tr><td><input type="phone" class="form-control" id="exampleInputEmail1" placeholder="Телефон" name="OrderForm[phone]"></td></tr>
+                                <tr><td><input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="OrderForm[email]"></td></tr>
+                                <tr><td><textarea class="form-control" rows="3" placeholder="Дополнительная информация" name="OrderForm[body]"></textarea><p class="help-block help-block-error"></p></td></tr>
 
-            <?= $form->field($model, 'email') ?>
+                                <tr><td>
+                                        <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
+                                            'template' => '<div class="row"><div class="col-lg-6">{image}</div><div class="col-lg-6">{input}</div></div>',
+                                        ]) ?>
+                                    </td></tr><tr><td>
+                                        <div class="form-group text-center">
+                                            <?= Html::submitButton('Оформить заявку', ['class' => 'btn btn-success', 'name' => 'contact-button']) ?>
+                                        </div>
+                                </td></tr>
+                                <?php ActiveForm::end(); ?>
+                        </table>
 
-            <?= $form->field($model, 'phone') ?>
+                        <!-- Форма корзины END -->
 
-            <?= $form->field($model, 'addres') ?>
-
-            <?= $form->field($model, 'body')->textArea(['rows' => 6]) ?>
-
-            <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
-                'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-6">{input}</div></div>',
-            ]) ?>
-
-            <div class="form-group">
-                <?= Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
+                    </div>
+                </div>
             </div>
 
-            <?php ActiveForm::end(); ?>
-        </div>
-    </div>
 
+
+    </div>
+    <div class="col-md-8">
+
+            <!-- Данные корзины на оформление -->
+            <h4><small>КОРЗИНА</small></h4>
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div id="collapse1" class="panel-collapse collapse in">
+
+                        <!-- Форма корзины START -->
+                        <table class="table table-hover">
+
+                            <tr>
+                                <td><a href="#">Левая дверь Mazda rx7</a></td>
+                                <td style="width:350px; max-width: 1000px;">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">600 р.</div>
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-menu-left"></span></button>
+                                        </div>
+                                        <input name="quantity" type="text" value="1" min="1" max="9999" maxlength="5" class="form-control" autocomplete="off" />
+                                        <div class="input-group-addon">600 р.</div>
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-menu-right"></span></button>
+                                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-remove"></span></button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <div class="panel-footer"><strong>ИТОГ: 1200р. </strong></div>
+                        <!-- Форма корзины END -->
+
+                    </div>
+                </div>
+            </div>
+
+
+    </div>
 </div>

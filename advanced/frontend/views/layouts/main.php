@@ -59,7 +59,7 @@ AppAsset::register($this);
             ['label' => 'Каталог', 'url' => ['/site/itemslist']],
             ['label' => 'Оплата', 'url' => ['/site/404']],
             ['label' => 'Доставка', 'url' => ['/site/404']],
-            ['label' => 'Доставка', 'url' => ['/site/404']],
+            ['label' => 'Оформление', 'url' => ['/site/order']],
         ];
         /* это борода для отображение авторизации, нам пока не надо
         if (Yii::$app->user->isGuest) {
@@ -88,11 +88,37 @@ AppAsset::register($this);
             ]) ?>
             <?= Alert::widget() ?>
 
-            <?php
-            $this->beginContent('@frontend/views/layouts/itemslist.php');
-            echo $content;
-            $this->endContent();
-            ?>
+            <div class="container-fluid">
+                <div class="row content">
+                    <div class="col-sm-2  text-left">
+
+                        <br>
+                        <?php
+                        $this->beginContent('@frontend/views/site/catalog.php');
+                        echo $content;
+                        $this->endContent();
+                        ?>
+
+                    </div>
+                    <div class="col-sm-8">
+                        <br>
+
+
+
+                        <?= $content ?>
+                    </div>
+                    <div class="col-sm-2 text-left">
+
+                        <br>
+                        <?php
+                        $this->beginContent('@frontend/views/site/cart.php');
+                        echo $content;
+                        $this->endContent();
+                        ?>
+
+                    </div>
+                </div>
+            </div>
 
 
         </div>

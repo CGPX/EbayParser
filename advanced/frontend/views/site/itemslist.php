@@ -44,7 +44,7 @@ if ($result!==false) {
                             <td class=\"item_title\" style=\"height:80px;\">". $value1[title] ."</td>
                         </tr>
                         <tr>
-                            <td><center><img src=\"". $value1[galleryURL] ."\" class=\"img-responsive\" style=\"height:220px;\" alt=\"Image\"></center></td>
+                            <td><center><img src=\"". $value1[galleryURL] ."\" class=\"img-responsive\" style=\"height:220px; width:200px;\" alt=\"Image\"></center></td>
                         </tr>
                         <tr>
                             <td>Цена: <span class=\"item_price\">". $value1[current_price_value] ."</span>р <button class=\"btn btn-default pull-right item_add\" data-id=\"". $value1[ebay_item_id] ."\">Купить сейчас <span class=\"glyphicon glyphicon-shopping-cart\" aria-hidden=\"true\"></span></td>

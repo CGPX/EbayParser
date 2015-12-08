@@ -144,6 +144,9 @@ class EbayForm extends Model
     }
 
     public function getCategories() {
+        // удаление кеша
+        //Yii::$app->getCache()->delete('Lolcategory');
+
         $categories = Yii::$app->getCache()->get('Lolcategory');
         if($categories !== false) {
             return $categories;
@@ -167,12 +170,11 @@ class EbayForm extends Model
                     'CategoryArray.Category.CategoryLevel',
                     'CategoryArray.Category.CategoryName'
                 );
-                $catconfig[$name][$key] = $service->getCategories($request);
+                $catconfig[$name][$key] = $service->getCategories($request)->toArray();
             }
         }
-        $toCache = $this->convertToSimpleArray($catconfig);
-        Yii::$app->getCache()->set('Lolcategory', $toCache, $this->cacheTime);
-        return $toCache;
+        Yii::$app->getCache()->set('Lolcategory', $catconfig, $this->cacheTime);
+        return $catconfig;
     }
 
     private function convertToSimpleArray($categoryArray) {
@@ -192,12 +194,12 @@ class EbayForm extends Model
                 if($i%2==0) {
                     //Будем перебирать брэнды
                     foreach($subsection->CategoryArray->Category as $category) {
-                        array_push($simpleArray['brands'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel]);
+                        array_push($simpleArray['brands'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel,$category->CategoryParentID]);
                     }
                 }else{
                     //Будем перебирать категории
                     foreach($subsection->CategoryArray->Category as $category) {
-                        array_push($simpleArray['cats'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel]);
+                        array_push($simpleArray['cats'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel,$category->CategoryParentID]);
                     }
                 }
             }
