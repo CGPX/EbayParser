@@ -14,31 +14,44 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'BayEbay - Каталог';
 ?>
 
-    <?php $form = ActiveForm::begin(['id' => 'ebay-form']); ?>
-<div class="col-sm-12" xmlns="http://www.w3.org/1999/html">
-    <div class="input-group">
+<div class="col-sm-2  text-left">
 
-        <input type="text" class="form-control" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]">
-        <input type="text" placeholder="Определяем категорию..." id="ebayform-querycategory" name="EbayForm[queryCategory]">
+    <br>
+    <?php
+    $this->beginContent('@frontend/views/site/catalog.php');
+    echo $content;
+    $this->endContent();
+    ?>
+
+</div>
+<div class="col-sm-8">
+    <br>
+
+    <?php $form = ActiveForm::begin(['id' => 'ebay-form']); ?>
+    <div class="col-sm-12" xmlns="http://www.w3.org/1999/html">
+        <div class="input-group">
+
+            <input type="text" class="form-control" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]">
+            <input type="text" placeholder="Определяем категорию..." id="ebayform-querycategory" name="EbayForm[queryCategory]" hidden>
 
                               <span class="input-group-btn">
                                 <?= Html::submitButton('Найти <span class="glyphicon glyphicon-search" aria-hidden="true"></span>', ['class' => 'btn btn-success', 'name' => 'ebay-button']) ?>
                               </span>
 
-    </div>
+        </div>
     </div>
     <?php ActiveForm::end(); ?>
-<br /><br /><br />
+    <br /><br /><br />
 
-<?php
-if ($result!==false) {
-    foreach ($result as $value1) {
-        //echo"<hr>"; <td class="item_number">5</td>
-        //var_dump($value1);
-        //echo $value1->title;
-        //echo $value1[title];
+    <?php
+    if ($result!==false) {
+        foreach ($result as $value1) {
+            //echo"<hr>"; <td class="item_number">5</td>
+            //var_dump($value1);
+            //echo $value1->title;
+            //echo $value1[title];
 
-        echo "
+            echo "
             <div class=\"col-md-4\" style=\"height:400px;\">
                 <div class=\"panel panel-default item_box\">
                     <table class=\"table table-striped\">
@@ -55,7 +68,20 @@ if ($result!==false) {
                 </div>
             </div>
         ";
+        }
     }
-}
 
-?>
+    ?>
+
+
+</div>
+<div class="col-sm-2 text-left">
+
+    <br>
+    <?php
+    $this->beginContent('@frontend/views/site/cart.php');
+    echo $content;
+    $this->endContent();
+    ?>
+
+</div>

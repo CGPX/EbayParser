@@ -3,6 +3,23 @@
  */
 
 $(function() {
+    /**
+     * Объявление переменных
+     */
+
+
+    /**
+     * Функции работы с LocalStorage
+     */
+    function getCartData() {
+        return JSON.parse(localStorage.getItem('items_cart'));
+    }
+
+    function setCartData(o) {
+        localStorage.setItem('items_cart', JSON.stringify(o));
+        return false;
+    }
+
     /** Перечень функций js/jq
      */
 
@@ -33,4 +50,28 @@ $(function() {
      * Для инициализации дописываем class="catChange"
      */
     $('.catChange').click(catChange);
+
+
+    /**
+     * Post Передача информации из корзины в форму оформления заказа
+     */
+    function orderPlace(){
+        // вынимаем данные из localStorage
+        var cartData = getCartData(),
+            // переменная куда складываем список
+            itemsList = '';
+
+        for (var items in cartData) {
+            itemsList += cartData[items][0]+'<?item?>'+cartData[items][1]+'<?item?>'+cartData[items][3]+'<?end?>\n';
+        }
+        //alert(itemsList);
+        $('.OrderForm-itemslist').text(itemsList);
+    }
+
+
+    /**
+     * Инициализируем заполнение формы оформления заказа
+     * Активация по загрузке страницы
+     */
+    $(document).ready(orderPlace);
 });
