@@ -19,7 +19,7 @@ $this->title = 'BayEbay - Каталог';
     <div class="input-group">
 
         <input type="text" class="form-control" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]">
-        <input type="text" placeholder="Определяем категорию..." id="ebayform-querycategory" name="EbayForm[queryCategory]" value="173511" >
+        <input type="text" placeholder="Определяем категорию..." id="ebayform-querycategory" name="EbayForm[queryCategory]">
 
                               <span class="input-group-btn">
                                 <?= Html::submitButton('Найти <span class="glyphicon glyphicon-search" aria-hidden="true"></span>', ['class' => 'btn btn-success', 'name' => 'ebay-button']) ?>
