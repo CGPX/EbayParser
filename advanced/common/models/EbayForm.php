@@ -35,7 +35,7 @@ class EbayForm extends Model
     {
         return [
             // name, email, subject and body are required
-            [['queryText'], 'required'],
+            [['queryText','queryCategory'], 'required'],
 //            // email has to be a valid email address
 //            ['email', 'email'],
 //            // verifyCode needs to be entered correctly
@@ -110,7 +110,7 @@ class EbayForm extends Model
     }
 
     private function addToBD($ebayResponse) {
-        $today = date("Ymd");
+        $today = date("YmdHis");
         $hash = new Hash();
         $hash->hash = $this->queryHash;
         $hash->life_time = $today;
