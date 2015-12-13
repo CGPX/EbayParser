@@ -18,7 +18,7 @@ $(function() {
         /*$('#ebayform-querycategory').each(function(){
             alert($(this).attr('value', "6030"));
         });*/
-        $('#ebayform-querycategory').attr('value', catId);
+        $('#ebayform-querycategory').attr('value', catId.substr(1));
         //$("title = 'EbayForm[queryCategory]'").attr('value', "6030");
         //$("name = 'EbayForm[queryCategory]'").html('');
 
