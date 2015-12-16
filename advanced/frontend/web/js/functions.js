@@ -62,9 +62,11 @@ $(function() {
             itemsList = '';
 
         for (var items in cartData) {
-            itemsList += cartData[items][0]+'<?item?>'+cartData[items][1]+'<?item?>'+cartData[items][3]+'<?end?>\n';
+            //itemsList += cartData[items][0]+'<?item?>'+cartData[items][1]+'<?item?>'+cartData[items][3]+'<?end?>\n';
+            itemsList += cartData[items][0]+',';
         }
-        //alert(itemsList);
+        itemsList = itemsList.slice(0,-1);
+
         $('.OrderForm-itemslist').text(itemsList);
     }
 

@@ -8,6 +8,7 @@
 
 namespace frontend\models;
 
+use common\models\Item;
 use yii;
 use yii\base\Model;
 
@@ -19,6 +20,7 @@ class OrderForm extends Model {
     public $addres;
     private $subject = 'Заказ';
     public $body;
+    public $itemslist;
     public $verifyCode;
     private $mailText;
 
@@ -26,7 +28,7 @@ class OrderForm extends Model {
     {
         return [
             // name, email, subject and body are required
-            [['name', 'email', 'phone', 'body'], 'required'],
+            [['name', 'email', 'phone', 'body', 'itemslist'], 'required'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly
@@ -41,12 +43,18 @@ class OrderForm extends Model {
         ];
     }
 
-    public function sendEmail($email)
-    {
-        $this->mailText = 'Доброго времени суток, от '.$this->name.' поступил заказ '.$this->email.' '.$this->phone.' '.$this->addres;
+    public function sendEmail($email) {
+        $ids = explode(",", $this->itemslist);
+        $items = Item::find()->where(['ebay_item_id' => $ids])->asArray()->all();
+        $text = '';
+        foreach ($items as $item) {
+            $text .= $item['title'].' сумма: '.$item['current_price_value'] .' ';
+        }
+
+        $this->mailText = 'Доброго времени суток, от '.$this->name.' поступил заказ '.$this->email.' '.$this->phone.' '.$this->addres.' '.$text.' ';
         return Yii::$app->mailer->compose()
-            ->setTo($email)
-            ->setFrom([$email => $this->name])
+            ->setTo('null@binaryworld.ru')
+            ->setFrom('satan1988@list.ru')
             ->setSubject($this->subject)
             ->setTextBody($this->mailText)
             ->send();
