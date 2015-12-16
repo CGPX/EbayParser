@@ -10,9 +10,16 @@ class Links extends ActiveRecord {
         return '{{%links}}';
     }
 
-    public function getItems($id)
-    {
-        return $this->hasMany(Item::className(), ['id' => 'itemId'])->where('hashId = :idhash',['idhash' => $id])->all();
+    public function beforeDelete() {
+        if (parent::beforeDelete()) {
+            $items =Item::find()->where(['id' => $this->itemId])->all();
+            foreach($items as $item) {
+                $item->delete();
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
