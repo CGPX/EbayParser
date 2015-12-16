@@ -63,8 +63,16 @@ class EbayForm extends Model
         return $resp;
     }
 
+    private function removeOldRecords() {
+        $oldHashes = Hash::find()->where('life_time < (NOW() - interval 1 HOUR )')->all();
+        foreach($oldHashes as $oldHash) {
+            $oldHash->delete();
+        }
+    }
+
     public function getItems() {
         $this->genMd5Hash();
+        $this->removeOldRecords();
         $items = $this->getItemsFromDB();
         if($items !== false) {
             return $items;
@@ -110,6 +118,7 @@ class EbayForm extends Model
     }
 
     private function addToBD($ebayResponse) {
+        date_default_timezone_set('Europe/Moscow');
         $today = date("YmdHis");
         $hash = new Hash();
         $hash->hash = $this->queryHash;
