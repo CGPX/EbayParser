@@ -22,6 +22,8 @@ class EbayForm extends Model
     public $querySort;
     public $queryBrand;
     public $queryState;
+    public $queryPage = 1;
+    public $pageCount;
     private $config;
     private $queryHash;
     /**
@@ -55,7 +57,8 @@ class EbayForm extends Model
         $oneHash = Hash::findOne([
             'hash' => $this->queryHash,
         ]);
-        $h = Hash::findOne($oneHash->id);
+//        $h = Hash::findOne($oneHash->id);
+        $h = Hash::findOne(['id'=>$oneHash->id,'page'=>$this->queryPage]);
         if(empty($h)) {
             return false;
         }
@@ -94,21 +97,25 @@ class EbayForm extends Model
         $itemFilter->value[] = 'AuctionWithBIN';
         $itemFilter->value[] = 'FixedPrice';
         $request->itemFilter[] = $itemFilter;
-        if($this->queryMinPrice > 0) {
+        if(isset($this->queryMinPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MinPrice',
                 'value' => array($this->queryMinPrice)
             ));
         }
-        if($this->queryMaxPrice > 0) {
+        if(isset($this->queryMaxPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MaxPrice',
                 'value' => array($this->queryMaxPrice)
             ));
         }
+        $request->sortOrder = 'CurrentPriceHighest';
 //        if(empty($this->querySort)) {
 //            $request->sortOrder = $this->querySort;
 //        }
+        $request->paginationInput = new Types\PaginationInput();
+        $request->paginationInput->entriesPerPage = 100;
+        $request->paginationInput->pageNumber = $this->queryPage;
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
             $arrayresp = $response->toArray();
