@@ -118,6 +118,7 @@ class EbayForm extends Model
         $request->paginationInput->pageNumber = $this->queryPage;
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
+            $this->pageCount = $response->paginationOutput->totalPages;
             $arrayresp = $response->toArray();
             $this->addToBD($arrayresp);
             return $this->getItemsFromDB();
@@ -130,6 +131,7 @@ class EbayForm extends Model
         $hash = new Hash();
         $hash->hash = $this->queryHash;
         $hash->life_time = $today;
+        $hash->page = $this->queryPage;
         $hash->save();
         $hashID = $hash->id;
         foreach($ebayResponse['searchResult']['item'] as $itemEbay){
