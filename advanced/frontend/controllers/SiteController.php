@@ -1,11 +1,11 @@
 <?php
 namespace frontend\controllers;
 
-use common\models\CacheModel;
-use frontend\models\OrderForm;
 use Yii;
 use common\models\LoginForm;
 use common\models\EbayForm;
+use frontend\models\SingleForm;
+use frontend\models\OrderForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -102,8 +102,6 @@ class SiteController extends Controller
         ]);
     }
 
-
-
     /**
      * Выводим просмотр подробностей о товаре
      *
@@ -111,7 +109,14 @@ class SiteController extends Controller
      */
     public function actionSingle()
     {
-        return $this->render('single');
+        $model = new SingleForm();
+        if($model->load(Yii::$app->request->post())){
+            $result = $model->getSingleItem();
+            return $this->render('single',[
+                'result' => $result,
+                'model' => $model,
+            ]);
+        }
     }
 
     /**

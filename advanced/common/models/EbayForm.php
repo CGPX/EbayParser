@@ -37,7 +37,7 @@ class EbayForm extends Model
     {
         return [
             // name, email, subject and body are required
-            [['queryText','queryCategory'], 'required'],
+            [['queryText','queryCategory', 'queryPage'], 'required'],
 //            // email has to be a valid email address
 //            ['email', 'email'],
 //            // verifyCode needs to be entered correctly
