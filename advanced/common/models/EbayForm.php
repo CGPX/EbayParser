@@ -24,6 +24,7 @@ class EbayForm extends Model
     public $queryState;
     public $queryPage = 1;
     public $pageCount;
+    public $singleItemId;
     private $config;
     private $queryHash;
     /**
@@ -37,7 +38,7 @@ class EbayForm extends Model
     {
         return [
             // name, email, subject and body are required
-            [['queryText','queryCategory', 'queryPage'], 'required'],
+            [['queryText','queryCategory', 'queryPage','singleItemId'], 'required'],
 //            // email has to be a valid email address
 //            ['email', 'email'],
 //            // verifyCode needs to be entered correctly
@@ -158,6 +159,12 @@ class EbayForm extends Model
             $links->itemId = $itemID;
             $links->hashId = $hashID;
             $links->save();
+        }
+    }
+
+    public function getSingleItem() {
+        if(isset($this->singleItemId)){
+            return Item::find()->where(['ebay_item_id' => $this->singleItemId])->asArray()->all();
         }
     }
 

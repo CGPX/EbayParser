@@ -88,6 +88,13 @@ class SiteController extends Controller
         $model = new EbayForm();
         $categories = $model->getCategories();
         if ($model->load(Yii::$app->request->post())) {
+            if(isset($model->singleItemId)){
+                $result = $model->getSingleItem();
+                return $this->render('single',[
+                    'result' => $result,
+                    'model' => $model,
+                ]);
+            }
             $result = $model->getItems();
             return $this->render('itemslist', [
                 'categories' => $categories,
@@ -109,14 +116,7 @@ class SiteController extends Controller
      */
     public function actionSingle()
     {
-        $model = new SingleForm();
-        if($model->load(Yii::$app->request->post())){
-            $result = $model->getSingleItem();
-            return $this->render('single',[
-                'result' => $result,
-                'model' => $model,
-            ]);
-        }
+
     }
 
     /**
