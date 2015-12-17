@@ -22,6 +22,9 @@ class EbayForm extends Model
     public $querySort;
     public $queryBrand;
     public $queryState;
+    public $queryPage = 1;
+    public $pageCount;
+    public $singleItemId;
     private $config;
     private $queryHash;
     /**
@@ -35,7 +38,7 @@ class EbayForm extends Model
     {
         return [
             // name, email, subject and body are required
-            [['queryText','queryCategory'], 'required'],
+            [['queryText','queryCategory', 'queryPage','singleItemId'], 'required'],
 //            // email has to be a valid email address
 //            ['email', 'email'],
 //            // verifyCode needs to be entered correctly
@@ -55,7 +58,8 @@ class EbayForm extends Model
         $oneHash = Hash::findOne([
             'hash' => $this->queryHash,
         ]);
-        $h = Hash::findOne($oneHash->id);
+//        $h = Hash::findOne($oneHash->id);
+        $h = Hash::findOne(['id'=>$oneHash->id,'page'=>$this->queryPage]);
         if(empty($h)) {
             return false;
         }
@@ -94,23 +98,28 @@ class EbayForm extends Model
         $itemFilter->value[] = 'AuctionWithBIN';
         $itemFilter->value[] = 'FixedPrice';
         $request->itemFilter[] = $itemFilter;
-        if($this->queryMinPrice > 0) {
+        if(isset($this->queryMinPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MinPrice',
                 'value' => array($this->queryMinPrice)
             ));
         }
-        if($this->queryMaxPrice > 0) {
+        if(isset($this->queryMaxPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MaxPrice',
                 'value' => array($this->queryMaxPrice)
             ));
         }
+        $request->sortOrder = 'CurrentPriceHighest';
 //        if(empty($this->querySort)) {
 //            $request->sortOrder = $this->querySort;
 //        }
+        $request->paginationInput = new Types\PaginationInput();
+        $request->paginationInput->entriesPerPage = 100;
+        $request->paginationInput->pageNumber = $this->queryPage;
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
+            $this->pageCount = $response->paginationOutput->totalPages;
             $arrayresp = $response->toArray();
             $this->addToBD($arrayresp);
             return $this->getItemsFromDB();
@@ -123,6 +132,7 @@ class EbayForm extends Model
         $hash = new Hash();
         $hash->hash = $this->queryHash;
         $hash->life_time = $today;
+        $hash->page = $this->queryPage;
         $hash->save();
         $hashID = $hash->id;
         foreach($ebayResponse['searchResult']['item'] as $itemEbay){
@@ -149,6 +159,12 @@ class EbayForm extends Model
             $links->itemId = $itemID;
             $links->hashId = $hashID;
             $links->save();
+        }
+    }
+
+    public function getSingleItem() {
+        if(isset($this->singleItemId)){
+            return Item::find()->where(['ebay_item_id' => $this->singleItemId])->asArray()->all();
         }
     }
 

@@ -1,11 +1,11 @@
 <?php
 namespace frontend\controllers;
 
-use common\models\CacheModel;
-use frontend\models\OrderForm;
 use Yii;
 use common\models\LoginForm;
 use common\models\EbayForm;
+use frontend\models\SingleForm;
+use frontend\models\OrderForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -86,23 +86,25 @@ class SiteController extends Controller
      */
     public function actionItemslist() {
         $model = new EbayForm();
-        $categories = $model->getCategories();
         if ($model->load(Yii::$app->request->post())) {
+            if(isset($model->singleItemId)){
+                $result = $model->getSingleItem();
+                return $this->render('single',[
+                    'result' => $result,
+                    'model' => $model,
+                ]);
+            }
             $result = $model->getItems();
             return $this->render('itemslist', [
-                'categories' => $categories,
                 'result' => $result,
                 'model' => $model,
             ]);
         }
         return $this->render('itemslist', [
-            'categories' => $categories,
             'result' => false,
             'model' => $model,
         ]);
     }
-
-
 
     /**
      * Выводим просмотр подробностей о товаре
@@ -111,7 +113,7 @@ class SiteController extends Controller
      */
     public function actionSingle()
     {
-        return $this->render('single');
+
     }
 
     /**
