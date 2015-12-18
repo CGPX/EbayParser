@@ -51,7 +51,7 @@ class OrderForm extends Model {
         $cart = json_decode($this->itemslist);
         foreach($cart as $item) {
             $ebayItem = Item::findOne(['ebay_item_id' =>$item[0]]);
-            $text .= '<tr>'.'<td>'.$ebayItem['title'].'</td>'.'<td>'. $item[3] .'</td>>'.'<td>'.$ebayItem['current_price_value'] * $item[3].'</td></tr>';
+            $text .= '<tr>'.'<td>'.$ebayItem['title'].'</td>'.' <td>'.$ebayItem['current_price_value'].'</td>'.'<td>'. $item[3] .'</td>>'.'<td>'.$ebayItem['current_price_value'] * $item[3].'</td></tr>';
         }
         return Yii::$app->mailer->compose('order-link', [
             'user' => Yii::$app->user->identity,
@@ -65,10 +65,9 @@ class OrderForm extends Model {
             'city' => $this->city,
             'text' => $text,
         ])
-            ->setTo('null@binaryworld.ru')
-            ->setFrom('satan1988@list.ru')
+            ->setTo(Yii::$app->params['adminEmail'])
+            ->setFrom(Yii::$app->params['supportEmail'])
             ->setSubject($this->subject)
-//            ->setTextBody($this->mailText)
             ->send();
     }
 
