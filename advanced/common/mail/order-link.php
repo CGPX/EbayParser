@@ -42,6 +42,7 @@ $detailsTable = '<table>
     </caption>
   <tr>
     <th>Наименование</th>
+    <th>Цена</th>
     <th>Количество</th>
     <th>Сумма</th>
   </tr>'
