@@ -65,10 +65,9 @@ class OrderForm extends Model {
             'city' => $this->city,
             'text' => $text,
         ])
-            ->setTo('null@binaryworld.ru')
-            ->setFrom('satan1988@list.ru')
+            ->setTo(Yii::$app->params['adminEmail'])
+            ->setFrom(Yii::$app->params['supportEmail'])
             ->setSubject($this->subject)
-//            ->setTextBody($this->mailText)
             ->send();
     }
 
