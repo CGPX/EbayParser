@@ -56,18 +56,7 @@ $(function() {
      * Post Передача информации из корзины в форму оформления заказа
      */
     function orderPlace(){
-        // вынимаем данные из localStorage
-        var cartData = getCartData(),
-            // переменная куда складываем список
-            itemsList = '';
-
-        for (var items in cartData) {
-            //itemsList += cartData[items][0]+'<?item?>'+cartData[items][1]+'<?item?>'+cartData[items][3]+'<?end?>\n';
-            itemsList += cartData[items][0]+',';
-        }
-        itemsList = itemsList.slice(0,-1);
-
-        $('.OrderForm-itemslist').text(itemsList);
+        $('.OrderForm-itemslist').text(JSON.stringify(getCartData()));
     }
 
 
