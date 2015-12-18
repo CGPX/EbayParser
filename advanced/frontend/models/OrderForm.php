@@ -18,17 +18,20 @@ class OrderForm extends Model {
     public $email;
     public $phone;
     public $addres;
-    private $subject = 'Заказ';
     public $body;
+    public $region;
+    public $index;
+    public $city;
     public $itemslist;
     public $verifyCode;
-    private $mailText;
+    private $subject = 'Заказ';
+
 
     public function rules()
     {
         return [
-            // name, email, subject and body are required
-            [['name', 'email', 'phone', 'body', 'itemslist'], 'required'],
+            // name, email, subject and body are required 'name', 'email', 'phone', 'body',
+            [['name', 'email', 'phone', 'body', 'region', 'index', 'city', 'addres', 'itemslist'], 'required'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly
@@ -44,19 +47,28 @@ class OrderForm extends Model {
     }
 
     public function sendEmail($email) {
-        $ids = explode(",", $this->itemslist);
-        $items = Item::find()->where(['ebay_item_id' => $ids])->asArray()->all();
         $text = '';
-        foreach ($items as $item) {
-            $text .= $item['title'].' сумма: '.$item['current_price_value'] .' ';
+        $cart = json_decode($this->itemslist);
+        foreach($cart as $item) {
+            $ebayItem = Item::findOne(['ebay_item_id' =>$item[0]]);
+            $text .= '<tr>'.'<td>'.$ebayItem['title'].'</td>'.'<td>'. $item[3] .'</td>>'.'<td>'.$ebayItem['current_price_value'] * $item[3].'</td></tr>';
         }
-
-        $this->mailText = 'Доброго времени суток, от '.$this->name.' поступил заказ '.$this->email.' '.$this->phone.' '.$this->addres.' '.$text.' ';
-        return Yii::$app->mailer->compose()
+        return Yii::$app->mailer->compose('order-link', [
+            'user' => Yii::$app->user->identity,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'addres' => $this->addres,
+            'body' => $this->body,
+            'region' => $this->region,
+            'index' => $this->index,
+            'city' => $this->city,
+            'text' => $text,
+        ])
             ->setTo('null@binaryworld.ru')
             ->setFrom('satan1988@list.ru')
             ->setSubject($this->subject)
-            ->setTextBody($this->mailText)
+//            ->setTextBody($this->mailText)
             ->send();
     }
 
