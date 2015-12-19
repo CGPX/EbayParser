@@ -37,12 +37,7 @@ class EbayForm extends Model
     public function rules()
     {
         return [
-            // name, email, subject and body are required
-            [['queryText','queryCategory', 'queryPage','singleItemId'], 'required'],
-//            // email has to be a valid email address
-//            ['email', 'email'],
-//            // verifyCode needs to be entered correctly
-//            ['verifyCode', 'captcha'],
+            [['queryText','queryCategory', 'queryPage','singleItemId'], 'default'],
         ];
     }
 
@@ -55,11 +50,7 @@ class EbayForm extends Model
     }
 
     private function getItemsFromDB() {
-        $oneHash = Hash::findOne([
-            'hash' => $this->queryHash,
-        ]);
-//        $h = Hash::findOne($oneHash->id);
-        $h = Hash::findOne(['id'=>$oneHash->id,'page'=>$this->queryPage]);
+        $h = Hash::findOne(['hash' => $this->queryHash,'page'=>$this->queryPage]);
         if(empty($h)) {
             return false;
         }

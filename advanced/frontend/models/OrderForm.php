@@ -51,7 +51,7 @@ class OrderForm extends Model {
         $cart = json_decode($this->itemslist);
         foreach($cart as $item) {
             $ebayItem = Item::findOne(['ebay_item_id' =>$item[0]]);
-            $text .= '<tr>'.'<td>'.$ebayItem['title'].'</td>'.' <td>'.$ebayItem['current_price_value'].'</td>'.'<td>'. $item[3] .'</td>>'.'<td>'.$ebayItem['current_price_value'] * $item[3].'</td></tr>';
+            $text .= '<tr>'.' <td>'.$ebayItem['ebay_item_id'].'</td> '.'<td>'.$ebayItem['title'].'</td>'.' <td>'.$ebayItem['current_price_value'].'</td>'.'<td>'. $item[3] .'</td>>'.'<td>'.$ebayItem['current_price_value'] * $item[3].'</td><td>'.$ebayItem['viewItemURL'].'</td>></tr>';
         }
         return Yii::$app->mailer->compose('order-link', [
             'user' => Yii::$app->user->identity,
