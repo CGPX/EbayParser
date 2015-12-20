@@ -75,7 +75,7 @@ class EbayForm extends Model
         $service = new Services\FindingService(array(
             'appId' => $this->config['production']['appId'],
             'apiVersion' => $this->config['findingApiVersion'],
-            'globalId' => 'EBAY-RU'
+            'globalId' => Constants\GlobalIds::US,
         ));
         $request = new Types\FindItemsAdvancedRequest();
         $request->keywords = $this->queryText;
@@ -119,6 +119,7 @@ class EbayForm extends Model
 
     private function addToBD($ebayResponse) {
         date_default_timezone_set('Europe/Moscow');
+
         $today = date("YmdHis");
         $hash = new Hash();
         $hash->hash = $this->queryHash;
@@ -126,7 +127,7 @@ class EbayForm extends Model
         $hash->page = $this->queryPage;
         $hash->save();
         $hashID = $hash->id;
-        foreach($ebayResponse['searchResult']['item'] as $itemEbay){
+        foreach($ebayResponse['searchResult']['item'] as $itemEbay) {
             $ebay_item = Item::findOne([
                 'ebay_item_id' => $itemEbay['itemId'],
             ]);
@@ -140,7 +141,11 @@ class EbayForm extends Model
             $item->categoryName         = $itemEbay['primaryCategory']['categoryName'];
             $item->galleryURL           = $itemEbay['galleryURL'];
             $item->viewItemURL          = $itemEbay['viewItemURL'];
-            $item->current_price_value  = $itemEbay['sellingStatus']['currentPrice']['value'];
+            if(EbayConst::$usePricePolitic) {
+                $item->current_price_value = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'] * EbayConst::$currentUSDExchangeRate * EbayConst::$priceCoefficient;
+            }else{
+                $item->current_price_value  = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'];
+            }
             $item->sellingState         = $itemEbay['sellingStatus']['sellingState'];
             $item->timeLeft             = $itemEbay['sellingStatus']['timeLeft'];
             $item->save();
@@ -191,36 +196,6 @@ class EbayForm extends Model
         }
         Yii::$app->getCache()->set('Lolcategory', $catconfig, $this->cacheTime);
         return $catconfig;
-    }
-
-    private function convertToSimpleArray($categoryArray) {
-        $i = 0;
-
-        $simpleArray = [
-            'cats' => [
-            ],
-            'brands' => [
-                ''=>''
-            ]
-        ];
-
-        foreach($categoryArray as $sections) {
-            foreach($sections as $subsection) {
-                $i++;
-                if($i%2==0) {
-                    //Будем перебирать брэнды
-                    foreach($subsection->CategoryArray->Category as $category) {
-                        array_push($simpleArray['brands'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel,$category->CategoryParentID]);
-                    }
-                }else{
-                    //Будем перебирать категории
-                    foreach($subsection->CategoryArray->Category as $category) {
-                        array_push($simpleArray['cats'], [$category->CategoryID, $category->CategoryName, $category->CategoryLevel,$category->CategoryParentID]);
-                    }
-                }
-            }
-        }
-        return $simpleArray;
     }
 
     private function getCategoryConfig() {
