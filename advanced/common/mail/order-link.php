@@ -41,10 +41,12 @@ $detailsTable = '<table>
         Номенклатура
     </caption>
   <tr>
+    <th>Ebay ID</th>
     <th>Наименование</th>
     <th>Цена</th>
     <th>Количество</th>
     <th>Сумма</th>
+    <th>Ссылка на товар на ebay</th>
   </tr>'
     . $text .
     '</table>' ?>
