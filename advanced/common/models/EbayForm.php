@@ -37,7 +37,7 @@ class EbayForm extends Model
     public function rules()
     {
         return [
-            [['queryText','queryCategory', 'queryPage','singleItemId'], 'default'],
+            [['queryText', 'queryCategory', 'queryPage', 'singleItemId'], 'default'],
         ];
     }
 
@@ -46,14 +46,15 @@ class EbayForm extends Model
     }
 
     private function genMd5Hash() {
-        $this->queryHash = md5($this->queryText.$this->queryCategory.$this->queryBrand.$this->queryState.$this->querySort.$this->queryMaxPrice.$this->queryMinPrice);
+        $this->queryHash = md5($this->queryText.$this->queryCategory.$this->queryBrand.$this->queryState.$this->querySort.$this->queryMaxPrice.$this->queryMinPrice.$this->queryPage);
     }
 
     private function getItemsFromDB() {
         $h = Hash::findOne(['hash' => $this->queryHash,'page'=>$this->queryPage]);
-        if(empty($h)) {
+        if($h==false) {
             return false;
         }
+        $this->pageCount=$h->page_count;
         $resp =  $h->items;
         return $resp;
     }
@@ -107,7 +108,9 @@ class EbayForm extends Model
 //        }
         $request->paginationInput = new Types\PaginationInput();
         $request->paginationInput->entriesPerPage = 100;
-        $request->paginationInput->pageNumber = $this->queryPage;
+
+            $request->paginationInput->pageNumber = $this->queryPage;
+
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
             $this->pageCount = $response->paginationOutput->totalPages;
@@ -124,7 +127,10 @@ class EbayForm extends Model
         $hash = new Hash();
         $hash->hash = $this->queryHash;
         $hash->life_time = $today;
-        $hash->page = $this->queryPage;
+        $hash->page_count = $this->pageCount;
+
+            $hash->page = $this->queryPage;
+
         $hash->save();
         $hashID = $hash->id;
         foreach($ebayResponse['searchResult']['item'] as $itemEbay) {

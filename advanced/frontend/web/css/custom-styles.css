@@ -1,0 +1,43 @@
+/** Кастомные классы для Bootstrap **/
+
+/* Убираем в меню навигации границы */
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+/* перекрашиваем footer в тёмный цвет */
+footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+}
+
+/* вертикальное выравнивание */
+.vcenter {
+    display: inline-block;
+    float: none;
+    vertical-align: middle;
+}
+
+/* прокрутка для div элемента */
+.vslide {
+    overflow-y: scroll;
+}
+
+/* полоса прокрутки на всех страницах */
+/* для адекватного смещения */
+html {
+    overflow-y: scroll;
+}
+
+/* Отступы от границ экрана */
+.container-fluid {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+/* Абсолютное позицианирование состояние */
+.cgp-absolute {
+    position: absolute;
+}
