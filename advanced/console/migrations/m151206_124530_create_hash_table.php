@@ -18,6 +18,7 @@ class m151206_124530_create_hash_table extends Migration
             'hash' => $this->string()->notNull()->unique(),
             'life_time' => $this->dateTime()->notNull(),
             'page' => $this->integer()->notNull(),
+            'page_count' => $this->integer()->notNull(),
         ], $tableOptions);
     }
 

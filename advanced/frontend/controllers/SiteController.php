@@ -86,14 +86,21 @@ class SiteController extends Controller
      */
     public function actionItemslist() {
         $model = new EbayForm();
+
         if ($model->load(Yii::$app->request->post())) {
-            if(isset($model->singleItemId)){
+
+            Yii::$app->getCache()->set('postModel', $model);
+
+            if(isset($model->singleItemId) & !empty($model->singleItemId)){
                 $result = $model->getSingleItem();
                 return $this->render('single',[
                     'result' => $result,
                     'model' => $model,
                 ]);
             }
+
+            if (empty($model->queryPage) or $model->queryPage==null){$model->queryPage=1;} else {$model->queryPage=(int)$model->queryPage;}
+
             $result = $model->getItems();
             return $this->render('itemslist', [
                 'result' => $result,
@@ -181,9 +188,14 @@ class SiteController extends Controller
         $model = new OrderForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
-                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+
+                //Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+                return $this->render('success');
+
             } else {
+
                 Yii::$app->session->setFlash('error', 'There was an error sending email.');
+
             }
 
             return $this->refresh();

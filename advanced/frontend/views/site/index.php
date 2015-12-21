@@ -7,26 +7,11 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'BayEbay - Лендинг';
 ?>
 
-
-    <div class="col-sm-2  text-left">
-
-
+<!-- Основной контент -->
+<div class="row">
+    <div class="col-lg-12">
+        <!-- Main -->
+        <h3>Страница Index (лендинг)</h3>
+        <p>Писать полную инструкцию по созданию блога, наверное, не имеет смысла, так как многие шаги схожи с первой версией, но я буду писать именно про те нюансы, которые отличаются, и буду делать акцент на новинках Yii2, которые я заметил в процессе создания приложения. Всё же остальное вы сможете быстро посмотреть в демо приложении, что, наверное, будет более эффективно, чем просто написанный текст.</p>
     </div>
-    <div class="col-sm-8">
-        <br>
-
-        <!-- Содержание -->
-        <div class="col-sm-12">
-            <h1>Welcome</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            <hr>
-            <h3>Test</h3>
-            <p>Lorem ipsum...</p>
-        </div>
-
-
-    </div>
-    <div class="col-sm-2 text-left">
-
-
-    </div>
+</div>

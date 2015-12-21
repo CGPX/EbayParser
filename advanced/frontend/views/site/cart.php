@@ -6,8 +6,8 @@
  * Time: 22:47
  *
  * Файл отвечающий за вывод шаблона корзины
- */
-?>
+
+
 
 <div class="row">
     <div class="panel-group">
@@ -31,5 +31,26 @@
 
             </div>
         </div>
+    </div>
+</div>
+ */
+?>
+
+<div class="list-group">
+
+    <!-- Всплывающее сообщение -->
+    <div class="alert alert-success cgp-absolute col-sm-12 hidden cartAlert">Allert MSG</div>
+
+    <div class="panel panel-default">
+
+        <div class="panel-heading" style="height:40px;">
+            <h4 class="panel-title text-uppercase">
+                <span class="pull-left">КОРЗИНА</span> <span class="glyphicon glyphicon-shopping-cart pull-right" aria-hidden="true"></span>
+            </h4>
+        </div>
+
+        <?= \Yii::$app->view->renderFile('@app/views/site/cart-inside.php'); ?>
+
+        <div class="panel-footer text-center"><button class="btn btn-danger btn-sm cartClear" type="submit">Очистить</button> <button class="btn btn-primary btn-sm" type="submit" onclick="location.href = '?r=site/order'">Оформить</button></div>
     </div>
 </div>
