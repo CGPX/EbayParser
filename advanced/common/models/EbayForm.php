@@ -113,10 +113,12 @@ class EbayForm extends Model
 
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
-            $this->pageCount = $response->paginationOutput->totalPages;
+            $this->pageCount = (int) $response->paginationOutput->totalPages;
             $arrayresp = $response->toArray();
             $this->addToBD($arrayresp);
             return $this->getItemsFromDB();
+        }else{
+            return false;
         }
     }
 
@@ -128,9 +130,7 @@ class EbayForm extends Model
         $hash->hash = $this->queryHash;
         $hash->life_time = $today;
         $hash->page_count = $this->pageCount;
-
-            $hash->page = $this->queryPage;
-
+        $hash->page = $this->queryPage;
         $hash->save();
         $hashID = $hash->id;
         foreach($ebayResponse['searchResult']['item'] as $itemEbay) {
