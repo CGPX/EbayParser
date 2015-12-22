@@ -48,7 +48,7 @@ function catalogArray($auto, $autocat, $level, $categories){
 			$level=$value['CategoryLevel'];
 
 		}elseif ($level<$value['CategoryLevel']){ // отпускаемся на уровень вниз
-			echo "<div id=\"".$value['CategoryParentID'][0]."\" class=\"sublinks collapse\">\n";
+			echo "<div id=\"".$value['CategoryParentID'][0]."\" class=\"sublinks collapse2\">\n";
 			echo $echotext."\n";
 			$level=$value['CategoryLevel'];
 

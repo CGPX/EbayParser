@@ -12,8 +12,7 @@ use common\widgets\Alert;
 use yii\bootstrap\ActiveForm;
 
 AppAsset::register($this);
-$SearchForm=""; // форма поиска на всех страницах. по сути она либо скрыта, либо показана.
-
+$SearchForm="hidden"; // форма поиска на всех страницах. по сути она либо скрыта, либо показана.
 /**
  * <?= $BlockCatalog ?> - вызываем отображение каталога
  * <?= $BlockCart ?> - вызываем отображение корзины
@@ -39,6 +38,7 @@ $SearchForm=""; // форма поиска на всех страницах. п�
 
         <body>
             <?php $this->beginBody() ?>
+            <div class="wrapper">
                 <!-- BEGIN навигация-->
                 <header>
                     <!--Содержимое-->
@@ -85,7 +85,7 @@ $SearchForm=""; // форма поиска на всех страницах. п�
                 <br />
 
                 <!-- BEGIN -->
-                <main>
+                <main class="content">
                     <div class="container-fluid">
 
                         <div class="row">
@@ -96,11 +96,13 @@ $SearchForm=""; // форма поиска на всех страницах. п�
                                     <!--Содержимое-->
 
                                     <?php
-                                        $this->beginContent('@frontend/views/site/catalog.php');
-                                            echo $content;
-                                        $this->endContent();
+                                        if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single"){
+                                            $SearchForm = "";
+                                            $this->beginContent('@frontend/views/site/catalog.php');
+                                                echo $content;
+                                            $this->endContent();
+                                        }
                                     ?>
-
 
                                 </div>
                             </aside>
@@ -121,11 +123,11 @@ $SearchForm=""; // форма поиска на всех страницах. п�
                                 </div>
 
                                 <!-- поисковая форма -->
-                                <div class="row">
+                                <div class="row <?= $SearchForm ?>">
                                     <div class="col-lg-12">
                                         <?php $form = ActiveForm::begin(['id' => 'ebay-form', 'action' => '?r=site/itemslist']); ?>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Ищем товары..." id="ebayform-querytext" name="EbayForm[queryText]" value="<?= $this->params['myMod'][0]['queryText']; ?>">
+                                            <input type="text" class="form-control" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]" value="<?= $this->params['myMod'][0]['queryText']; ?>">
                                             <span class="input-group-btn">
                                                 <?= Html::submitButton('Найти <span class="glyphicon glyphicon-search" aria-hidden="true"></span>', ['class' => 'btn btn-success', 'name' => 'ebay-button']) ?>
                                             </span>
@@ -154,9 +156,11 @@ $SearchForm=""; // форма поиска на всех страницах. п�
                                     <!-- содержимое -->
 
                                     <?php
-                                    $this->beginContent('@frontend/views/site/cart.php');
-                                        echo $content;
-                                    $this->endContent();
+                                        if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single"){
+                                            $this->beginContent('@frontend/views/site/cart.php');
+                                                echo $content;
+                                            $this->endContent();
+                                        }
                                     ?>
 
                                 </div>
@@ -199,7 +203,7 @@ $SearchForm=""; // форма поиска на всех страницах. п�
                     </div>
                 </footer>
                 <!-- END -->
-
+            </div>
             <?php $this->endBody() ?>
         </body>
     </html>
