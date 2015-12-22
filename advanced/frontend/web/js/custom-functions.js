@@ -257,4 +257,16 @@ $(function() {
         return false;
     }
     $(document).on("click", ".itemDec", itemDec).on("click", ".itemDec", cartDraw);
+
+    /**
+     * Работа аккордеона каталога
+     * одновременно с работой аккордеона должна отработать и окраска
+     * <button class='catC2hange' onclick="$('#6030').collapse('toggle');">Test</button>
+     */
+    function accordActivation(){
+        activateClass=$(this).data('target');
+        $(activateClass).collapse('toggle');
+        return false;
+    }
+    $('.catChange').click(accordActivation);
 });

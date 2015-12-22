@@ -15,15 +15,16 @@ use yii\bootstrap\Collapse;
 $categories = Yii::$app->getCache()->get('postModel')->getCategories();
 //$categories = $this->params['myMod'][0]['queryText'];
 
-function catalogArray($auto, $autocat, $level, $categories){
+function catalogArray($auto,$autocat,$level,$categories){
 
 	foreach($categories[$auto][$autocat]['CategoryArray']['Category'] as $value){
 
 		$abber['glyphicon'][0]="";
 		$abber['glyphicon'][1]="";
 		$abber['glyphicon'][2]="";
-		$abber['glyphicon'][3]="<span class=\"glyphicon pull-right glyphicon-list\"></span >";
-		$abber['glyphicon'][4]="<span class=\"glyphicon pull-right glyphicon-chevron-right\"></span >";
+		$abber['glyphicon'][3]="<span data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"#".$value['CategoryParentID'][0]."\" class=\"glyphicon pull-right glyphicon-list\"></span >";
+		$abber['glyphicon'][]="<span data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"#".$value['CategoryParentID'][0]."\" class=\"glyphicon pull-right glyphicon-chevron-right\"></span >";
+		//$abber['glyphicon'][4]="<span class=\"glyphicon pull-right glyphicon-chevron-right\"></span >";
 		$abber['glyphicon'][5]="<span class=\"glyphicon pull-right glyphicon-chevron-right\"></span >";
 		$abber['glyphicon'][6]="";
 
@@ -31,9 +32,9 @@ function catalogArray($auto, $autocat, $level, $categories){
         $abber['space'][1]="";
         $abber['space'][2]="";
         $abber['space'][3]="";
-        $abber['space'][4]="&nbsp;";
-        $abber['space'][5]="&nbsp;&nbsp;&nbsp;";
-        $abber['space'][6]="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        $abber['space'][4]="&nbsp;&nbsp;";
+        $abber['space'][5]="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        $abber['space'][6]="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
 		$abber['action'][6]="catChange";
 		// эта борода использовалась для смены категории напрямую
@@ -41,14 +42,15 @@ function catalogArray($auto, $autocat, $level, $categories){
 		// но при этом не будет делать submit, для смены, а будет работать в качестве фильтра
 		// дополнительно помечая активную категорию в данный момент.
 
-		$echotext="<a href=\"#\" class=\"list-group-item small catChange\" data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"#".$value['CategoryParentID'][0]."\">". $abber['space'][$value['CategoryLevel']] ." ".  $value['CategoryName']." ". $abber['glyphicon'][$value['CategoryLevel']] ."</a> \n";
+		//$echotext="<a href=\"#\" class=\"list-group-item small catChange\" data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"#".$value['CategoryParentID'][0]."\">". $abber['space'][$value['CategoryLevel']] ." ".  $value['CategoryName']." ". $abber['glyphicon'][$value['CategoryLevel']] ."</a>\n";
+		$echotext="<a href=\"#\" class=\"list-group-item small catChange\" data-toggle=\"collapse\" data-target=\"#".$value['CategoryID']."\" data-parent=\"#".$value['CategoryParentID'][0]."\">". $abber['space'][$value['CategoryLevel']] ." ".  $value['CategoryName']." ". $abber['glyphicon'][$value['CategoryLevel']] ."</a>\n";
 
 		if($level==$value['CategoryLevel']){ // мы остаёмся на том же уровне вложенности
 			echo $echotext."\n";
 			$level=$value['CategoryLevel'];
 
 		}elseif ($level<$value['CategoryLevel']){ // отпускаемся на уровень вниз
-			echo "<div id=\"".$value['CategoryParentID'][0]."\" class=\"sublinks collapse2\">\n";
+			echo "<div id=\"".$value['CategoryParentID'][0]."\" class=\"sublinks collapse\">\n";
 			echo $echotext."\n";
 			$level=$value['CategoryLevel'];
 
