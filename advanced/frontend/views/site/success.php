@@ -13,7 +13,7 @@ $this->title .= 'BayEbay - Успех';
         <div class="jumbotron">
             <h1>Ваша заказ успешно размещен.</h1>
             <p>Данные успешно отправлены оператору. После обработки вашей заявки с вами свяжутся. Спасибо за то, что пользуетесь услугами нашего сайта.</p>
-            <p><button class="btn btn-primary btn-lg" role="button" action="site/index">Вернуться к сайту</button></p>
+            <p><button class="btn btn-primary btn-lg" role="button" onclick="location.href='?r=site/index'">Вернуться к сайту</button></p>
         </div>
     </div>
 

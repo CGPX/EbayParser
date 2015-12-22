@@ -198,6 +198,31 @@ $(function() {
     $('.addToCart').click(addToCart).click(cartDraw);
 
     /**
+     * Удаление единственного товара из корзины
+     */
+    function removeItem(itemRemove){
+        cartData = getCartData();
+        if (typeof itemRemove !== "undefined") {
+            itemId = itemRemove;
+        } else {
+            itemId = $(this).closest('.cart_item_box').data('id');
+        }
+
+        if (cartData !== null){
+            if (cartData.hasOwnProperty(itemId)) {
+                delete cartData[itemId];
+                if(!setCartData(cartData)){
+
+                }
+            }
+        } else {
+            alert("Данные в корзине отсутствуют!!!");
+        }
+        return false;
+    }
+    $(document).on("click", ".removeItem", removeItem).on("click", ".removeItem", cartDraw);
+
+    /**
      * Item Increment
      */
     function itemInc(){
@@ -219,35 +244,17 @@ $(function() {
         cartData = getCartData();
         itemId = $(this).closest('.cart_item_box').data('id');
         if (cartData.hasOwnProperty(itemId)) {
-            if (cartData[itemId][3]>0) {
+            if (+cartData[itemId][3]>1) {
                 cartData[itemId][3] -= 1;
-            } else {
+            } else if (+cartData[itemId][3]===1) {
                 // тут надо запустить удаление айтема
-
+                removeItem(itemId);
             }
+
         }
         if (!setCartData(cartData)) {
         }
         return false;
     }
     $(document).on("click", ".itemDec", itemDec).on("click", ".itemDec", cartDraw);
-
-    /**
-     * Удаление единственного товара из корзины
-     */
-    function removeItem(){
-            cartData = getCartData();
-            itemId = $(this).closest('.cart_item_box').data('id');
-            if (cartData !== null){
-                if (cartData.hasOwnProperty(itemId)) {
-                    delete cartData[itemId];
-                    if(!setCartData(cartData)){
-                    }
-                }
-            } else {
-                alert("Данные в корзине отсутствуют!!!");
-            }
-        return false;
-    }
-    $(document).on("click", ".removeItem", removeItem).on("click", ".removeItem", cartDraw);
 });
