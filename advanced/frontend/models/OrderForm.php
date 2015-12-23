@@ -49,26 +49,31 @@ class OrderForm extends Model {
     public function sendEmail($email) {
         $text = '';
         $cart = json_decode($this->itemslist);
-        foreach($cart as $item) {
-            $ebayItem = Item::findOne(['ebay_item_id' =>$item[0]]);
-            $text .= '<tr>'.' <td>'.$ebayItem['ebay_item_id'].'</td> '.'<td>'.$ebayItem['title'].'</td>'.' <td>'.$ebayItem['current_price_value'].'</td>'.'<td>'. $item[3] .'</td>>'.'<td>'.$ebayItem['current_price_value'] * $item[3].'</td><td>'.$ebayItem['viewItemURL'].'</td>></tr>';
+        if(count($cart) > 0) {
+            foreach ($cart as $item) {
+                $ebayItem = Item::findOne(['ebay_item_id' => $item[0]]);
+                $text .= '<tr>' . ' <td>' . $ebayItem['ebay_item_id'] . '</td> ' . '<td>' . $ebayItem['title'] . '</td>' . ' <td>' . $ebayItem['current_price_value'] . '</td>' . '<td>' . $item[3] . '</td>>' . '<td>' . $ebayItem['current_price_value'] * $item[3] . '</td><td>' . $ebayItem['viewItemURL'] . '</td>></tr>';
+            }
+            return Yii::$app->mailer->compose('order-link', [
+                'user' => Yii::$app->user->identity,
+                'name' => $this->name,
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'addres' => $this->addres,
+                'body' => $this->body,
+                'region' => $this->region,
+                'index' => $this->index,
+                'city' => $this->city,
+                'text' => $text,
+            ])
+                ->setTo([Yii::$app->params['adminEmail'], $this->email])
+                ->setFrom(Yii::$app->params['supportEmail'])
+                ->setSubject($this->subject)
+                ->send();
+        }else{
+            return false;
         }
-        return Yii::$app->mailer->compose('order-link', [
-            'user' => Yii::$app->user->identity,
-            'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'addres' => $this->addres,
-            'body' => $this->body,
-            'region' => $this->region,
-            'index' => $this->index,
-            'city' => $this->city,
-            'text' => $text,
-        ])
-            ->setTo([Yii::$app->params['adminEmail'],$this->email])
-            ->setFrom(Yii::$app->params['supportEmail'])
-            ->setSubject($this->subject)
-            ->send();
     }
+
 
 }
