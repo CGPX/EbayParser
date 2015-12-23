@@ -46,7 +46,7 @@ class EbayForm extends Model
     }
 
     private function genMd5Hash() {
-        $this->queryHash = md5($this->queryText.$this->queryCategory.$this->queryBrand.$this->queryState.$this->querySort.$this->queryMaxPrice.$this->queryMinPrice.$this->queryPage);
+        $this->queryHash = md5(strtolower($this->queryText).$this->queryCategory.strtolower($this->queryBrand).$this->queryState.strtolower($this->querySort).$this->queryMaxPrice.$this->queryMinPrice.$this->queryPage);
     }
 
     private function getItemsFromDB() {
@@ -79,7 +79,7 @@ class EbayForm extends Model
             'globalId' => Constants\GlobalIds::US,
         ));
         $request = new Types\FindItemsAdvancedRequest();
-        $request->keywords = $this->queryText;
+        $request->keywords = strtolower($this->queryText);
         if(!empty($this->queryCategory)){
             $request->categoryId = array($this->queryCategory);
         }else{
