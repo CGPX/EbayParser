@@ -215,23 +215,6 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-    public function actionEbay() {
-        $model = new EbayForm();
-        $categories = $model->getCategories();
-        if ($model->load(Yii::$app->request->post())) {
-            $result = $model->getItems();
-            return $this->render('ebay', [
-                'categories' => $categories,
-                'result' => $result,
-                'model' => $model,
-            ]);
-        }
-        return $this->render('ebay', [
-            'categories' => $categories,
-            'result' => false,
-            'model' => $model,
-        ]);
-    }
     /**
      * Signs user up.
      *

@@ -8,6 +8,7 @@
  * Файл отвечающий за вывод навигации по каталогу (так сказать айтем лист)
  */
 
+use common\models\EbayCategory;
 use yii\helpers\Html;
 
 $this->title = 'BayEbay - Каталог';
@@ -40,11 +41,18 @@ $this->params['myMod'][] = $model;
                   </div>
         ";
         }
+    }elseif($model->emptyResponse) {
+        $ebay_cat = EbayCategory::findOne([
+            'category_id' => $model->queryCategory,
+        ]);
+        echo '<div class="col-md-4">К сожалению, по вашему запросу <b>"'.$model->queryText.'"</b> в категории <b>"'.$ebay_cat->category_name.'"</b> ничего не найдено... Попробуйте изменить параметры поиска.</div>';
     }
     ?>
 </div>
 
 <?php
+$modelPageCount =  $model->pageCount;
+
 $pageOut=""; $pageActive="";
 $pageStart=(int)$model->queryPage - 5;
 if($pageStart<=0){$pageStart=1;}
@@ -68,7 +76,7 @@ if (isset($model->pageCount)){
 
                     <li><a href=\"#\" title=\"Первая страница\" class=\"pageChange\" data-target=\"1\">&laquo;</a></li>
                     ". $pagesOut ."
-                    <li><a href=\"#\" title=\"Последняя страница\" class=\"pageChange\" data-target=\"". $model->pageCount ."\">&raquo;</a></li>
+                    <li><a href=\"#\" title=\"Последняя страница\" class=\"pageChange\" data-target=\"". $modelPageCount  ."\">&raquo;</a></li>
 
                 </ul>
             </div>

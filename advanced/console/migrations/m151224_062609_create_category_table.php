@@ -3,7 +3,7 @@
 use yii\db\Schema;
 use yii\db\Migration;
 
-class m151205_190809_create_item_table extends Migration
+class m151224_062609_create_category_table extends Migration
 {
     public function up()
     {
@@ -13,23 +13,18 @@ class m151205_190809_create_item_table extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%item}}', [
+        $this->createTable('{{%ebaycategory}}', [
             'id' => $this->primaryKey(),
-            'ebay_item_id' => $this->bigInteger()->notNull()->unique(),
-            'title' => $this->string()->notNull(),
-            'categoryId' => $this->integer()->notNull(),
-            'categoryName' => $this->string()->notNull(),
-            'galleryURL' => $this->string(),
-            'viewItemURL' => $this->string()->notNull(),
-            'current_price_value' => $this->money(null,0),
-            'sellingState' => $this->string()->notNull(),
-            'timeLeft' => $this->string()->notNull(),
+            'category_id' => $this->bigInteger()->notNull()->unique(),
+            'category_parent_id' => $this->bigInteger(),
+            'category_level' => $this->integer(),
+            'category_name' => $this->string()->notNull(),
         ], $tableOptions);
     }
 
     public function down()
     {
-        $this->dropTable('{{%item}}');
+        $this->dropTable('{{%ebaycategory}}');
     }
 
     /*
