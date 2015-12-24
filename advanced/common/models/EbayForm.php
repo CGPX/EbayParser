@@ -157,9 +157,10 @@ class EbayForm extends Model
             $item->galleryURL           = $itemEbay['galleryURL'];
             $item->viewItemURL          = $itemEbay['viewItemURL'];
             if(EbayConst::$usePricePolitic) {
-                $item->current_price_value = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'] * EbayConst::$currentUSDExchangeRate * EbayConst::$priceCoefficient;
+                $price = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'] * EbayConst::$currentUSDExchangeRate * EbayConst::$priceCoefficient;
+                $item->current_price_value = ceil($price / 10) * 10;
             }else{
-                $item->current_price_value  = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'];
+                $item->current_price_value  = ceil($itemEbay['sellingStatus']['convertedCurrentPrice']['value'] / 10) * 10;
             }
             $item->sellingState         = $itemEbay['sellingStatus']['sellingState'];
             $item->timeLeft             = $itemEbay['sellingStatus']['timeLeft'];
