@@ -28,10 +28,12 @@ class EbayForm extends Model
     public $singleItemId;
     private $config;
     private $queryHash;
+
     /**
      * EbayForm constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->initConfig();
     }
 
@@ -42,36 +44,41 @@ class EbayForm extends Model
         ];
     }
 
-    private function initConfig() {
+    private function initConfig()
+    {
         $this->config = require __DIR__ . '/../../configuration.php';
     }
 
-    private function genMd5Hash() {
-        $this->queryHash = md5(strtolower($this->queryText).$this->queryCategory.strtolower($this->queryBrand).$this->queryState.strtolower($this->querySort).$this->queryMaxPrice.$this->queryMinPrice.$this->queryPage);
+    private function genMd5Hash()
+    {
+        $this->queryHash = md5(strtolower($this->queryText) . $this->queryCategory . strtolower($this->queryBrand) . $this->queryState . strtolower($this->querySort) . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage);
     }
 
-    private function getItemsFromDB() {
-        $h = Hash::findOne(['hash' => $this->queryHash,'page'=>$this->queryPage]);
-        if($h==false) {
+    private function getItemsFromDB()
+    {
+        $h = Hash::findOne(['hash' => $this->queryHash, 'page' => $this->queryPage]);
+        if ($h == false) {
             return false;
         }
-        $this->pageCount=$h->page_count;
-        $resp =  $h->items;
+        $this->pageCount = $h->page_count;
+        $resp = $h->items;
         return $resp;
     }
 
-    private function removeOldRecords() {
+    private function removeOldRecords()
+    {
         $oldHashes = Hash::find()->where('life_time < (NOW() - interval 1 HOUR )')->all();
-        foreach($oldHashes as $oldHash) {
+        foreach ($oldHashes as $oldHash) {
             $oldHash->delete();
         }
     }
 
-    public function getItems() {
+    public function getItems()
+    {
         $this->genMd5Hash();
         $this->removeOldRecords();
         $items = $this->getItemsFromDB();
-        if($items !== false) {
+        if ($items !== false) {
             return $items;
         }
         $service = new Services\FindingService(array(
@@ -81,9 +88,9 @@ class EbayForm extends Model
         ));
         $request = new Types\FindItemsAdvancedRequest();
         $request->keywords = strtolower($this->queryText);
-        if(!empty($this->queryCategory)){
+        if (!empty($this->queryCategory)) {
             $request->categoryId = array($this->queryCategory);
-        }else{
+        } else {
             $request->categoryId = array('6030');
         }
         $itemFilter = new Types\ItemFilter();
@@ -91,13 +98,13 @@ class EbayForm extends Model
         $itemFilter->value[] = 'AuctionWithBIN';
         $itemFilter->value[] = 'FixedPrice';
         $request->itemFilter[] = $itemFilter;
-        if(isset($this->queryMinPrice)) {
+        if (isset($this->queryMinPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MinPrice',
                 'value' => array($this->queryMinPrice)
             ));
         }
-        if(isset($this->queryMaxPrice)) {
+        if (isset($this->queryMaxPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MaxPrice',
                 'value' => array($this->queryMaxPrice)
@@ -110,28 +117,30 @@ class EbayForm extends Model
         $request->paginationInput = new Types\PaginationInput();
         $request->paginationInput->entriesPerPage = 100;
 
-            $request->paginationInput->pageNumber = $this->queryPage;
+        $request->paginationInput->pageNumber = $this->queryPage;
 
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
-            $this->pageCount = (int) $response->paginationOutput->totalPages;
+            $this->pageCount = (int)$response->paginationOutput->totalPages;
             $arrayresp = $response->toArray();
-            if(!$this->isFill($arrayresp)){
+            if (!$this->isFill($arrayresp)) {
                 $this->emptyResponse = true;
                 return false;
             }
             $this->addToBD($arrayresp);
             return $this->getItemsFromDB();
-        }else{
+        } else {
             return false;
         }
     }
 
-    private function isFill($arrayresp) {
+    private function isFill($arrayresp)
+    {
         return !empty($arrayresp['searchResult']['item']);
     }
 
-    private function addToBD($ebayResponse) {
+    private function addToBD($ebayResponse)
+    {
         date_default_timezone_set('Europe/Moscow');
 
         $today = date("YmdHis");
@@ -142,31 +151,29 @@ class EbayForm extends Model
         $hash->page = $this->queryPage;
         $hash->save();
         $hashID = $hash->id;
-        foreach($ebayResponse['searchResult']['item'] as $itemEbay) {
+        foreach ($ebayResponse['searchResult']['item'] as $itemEbay) {
             $ebay_item = Item::findOne([
                 'ebay_item_id' => $itemEbay['itemId'],
             ]);
-            if(!empty($ebay_item->ebay_item_id)){
+            if (!empty($ebay_item->ebay_item_id)) {
                 continue;
             }
             $item = new Item();
-            $item->ebay_item_id         = $itemEbay['itemId'];
-            $item->title                = $itemEbay['title'];
-            $item->categoryId           = $itemEbay['primaryCategory']['categoryId'];
-            $item->categoryName         = $itemEbay['primaryCategory']['categoryName'];
-            $item->galleryURL           = $itemEbay['galleryURL'];
-            $item->viewItemURL          = $itemEbay['viewItemURL'];
-            if(EbayConst::$usePricePolitic) {
-                $price = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'] * EbayConst::$currentUSDExchangeRate * EbayConst::$priceCoefficient;
-                $item->current_price_value = ceil($price / 10) * 10;
-            }else{
-                $item->current_price_value  = ceil($itemEbay['sellingStatus']['convertedCurrentPrice']['value'] / 10) * 10;
-            }
-            $item->sellingState         = $itemEbay['sellingStatus']['sellingState'];
-            $item->timeLeft             = $itemEbay['sellingStatus']['timeLeft'];
+            $item->ebay_item_id = $itemEbay['itemId'];
+            $item->title = $itemEbay['title'];
+            $item->categoryId = $itemEbay['primaryCategory']['categoryId'];
+            $item->categoryName = $itemEbay['primaryCategory']['categoryName'];
+            $item->galleryURL = $itemEbay['galleryURL'];
+            $item->viewItemURL = $itemEbay['viewItemURL'];
+            $item->sellingState = $itemEbay['sellingStatus']['sellingState'];
+            $item->timeLeft = $itemEbay['sellingStatus']['timeLeft'];
+            $item->current_price_value = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'];
+            $item->condition_id = $itemEbay['condition']['conditionId'];
+            $item->condition_display_name = $itemEbay['condition']['conditionDisplayName'];
+            $item->shipping_service_cost = $this->calculateShipping($itemEbay);
+            $item->price_shipping_sum = $this->calculateValidPrice($itemEbay, $item->shipping_service_cost);
             $item->save();
             $itemID = $item->id;
-
             $links = new Links();
             $links->itemId = $itemID;
             $links->hashId = $hashID;
@@ -174,18 +181,20 @@ class EbayForm extends Model
         }
     }
 
-    public function getSingleItem() {
-        if(isset($this->singleItemId)){
+    public function getSingleItem()
+    {
+        if (isset($this->singleItemId)) {
             return Item::find()->where(['ebay_item_id' => $this->singleItemId])->asArray()->all();
         }
     }
 
-    public function getCategories() {
+    public function getCategories()
+    {
 //         удаление кеша
         //Yii::$app->getCache()->delete('Lolcategory');
 
         $categories = Yii::$app->getCache()->get('Lolcategory');
-        if($categories !== false) {
+        if ($categories !== false) {
             return $categories;
         }
         $service = new TradSer\TradingService(array(
@@ -216,7 +225,8 @@ class EbayForm extends Model
         return $catconfig;
     }
 
-    private function getCategoryConfig() {
+    private function getCategoryConfig()
+    {
         $categorys = [
             "auto" => [
                 "autocat" => "6030",
@@ -238,7 +248,8 @@ class EbayForm extends Model
         return $categorys;
     }
 
-    private function addCatsToDB($cats) {
+    private function addCatsToDB($cats)
+    {
         foreach ($cats['CategoryArray']['Category'] as $row) {
             $ebay_cat = EbayCategory::findOne([
                 'category_id' => $row['CategoryID'],
@@ -252,6 +263,26 @@ class EbayForm extends Model
             $ebaycategory->category_level = $row['CategoryLevel'];
             $ebaycategory->category_name = $row['CategoryName'];
             $ebaycategory->save();
+        }
+    }
+
+    private function calculateValidPrice($itemEbay, $shipping)
+    {
+        if (EbayConst::$usePricePolitic) {
+            $price = ($itemEbay['sellingStatus']['convertedCurrentPrice']['value'] + $shipping) * EbayConst::$currentUSDExchangeRate * EbayConst::$priceCoefficient;
+            return ceil($price / 10) * 10;
+        } else {
+            $price = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'] + $shipping;
+            return ceil($price / 10) * 10;
+        }
+    }
+
+    private function calculateShipping($itemEbay)
+    {
+        if (array_key_exists('shippingServiceCost', $itemEbay['shippingInfo'])) {
+            return $itemEbay['shippingInfo']['shippingServiceCost']['value'] * EbayConst::$currentUSDExchangeRate;
+        } else {
+            return 0;
         }
     }
 }

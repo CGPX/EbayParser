@@ -32,7 +32,7 @@ $this->params['myMod'][] = $model;
                               <tr class=\"\">
                                   <td class=\"\">
 
-                      <span class=\"glyphicon glyphicon-rub btn-sm\"></span><span class=\"item_price\">". $value1[current_price_value] ."</span>
+                      <span class=\"glyphicon glyphicon-rub btn-sm\"></span><span class=\"item_price\">". $value1[price_shipping_sum] ."</span>
                       <button class=\"btn btn-default btn-sm pull-right addToCart\" data-id=\"". $value1[ebay_item_id] ."\">Купить сейчас <span class=\"glyphicon glyphicon-shopping-cart\" aria-hidden=\"true\"></span>
                     </td>
                               </tr>
