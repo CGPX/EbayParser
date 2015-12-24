@@ -15,6 +15,7 @@ use \DTS\eBaySDK\Trading\Enums as TradEnums;
 class EbayForm extends Model
 {
     private $cacheTime = 2678400;
+    public $emptyResponse = false;
     public $queryText;
     public $queryCategory;
     public $queryMinPrice;
@@ -115,11 +116,19 @@ class EbayForm extends Model
         if ($response->ack !== 'Failure') {
             $this->pageCount = (int) $response->paginationOutput->totalPages;
             $arrayresp = $response->toArray();
+            if(!$this->isFill($arrayresp)){
+                $this->emptyResponse = true;
+                return false;
+            }
             $this->addToBD($arrayresp);
             return $this->getItemsFromDB();
         }else{
             return false;
         }
+    }
+
+    private function isFill($arrayresp) {
+        return !empty($arrayresp['searchResult']['item']);
     }
 
     private function addToBD($ebayResponse) {
@@ -171,7 +180,7 @@ class EbayForm extends Model
     }
 
     public function getCategories() {
-        // удаление кеша
+//         удаление кеша
         //Yii::$app->getCache()->delete('Lolcategory');
 
         $categories = Yii::$app->getCache()->get('Lolcategory');
@@ -197,7 +206,9 @@ class EbayForm extends Model
                     'CategoryArray.Category.CategoryLevel',
                     'CategoryArray.Category.CategoryName'
                 );
-                $catconfig[$name][$key] = $service->getCategories($request)->toArray();
+                $cats = $service->getCategories($request)->toArray();
+                $this->addCatsToDB($cats);
+                $catconfig[$name][$key] = $cats;
             }
         }
         Yii::$app->getCache()->set('Lolcategory', $catconfig, $this->cacheTime);
@@ -224,5 +235,22 @@ class EbayForm extends Model
             ],
         ];
         return $categorys;
+    }
+
+    private function addCatsToDB($cats) {
+        foreach ($cats['CategoryArray']['Category'] as $row) {
+            $ebay_cat = EbayCategory::findOne([
+                'category_id' => $row['CategoryID'],
+            ]);
+            if (!empty($ebay_cat->category_id)) {
+                continue;
+            }
+            $ebaycategory = new EbayCategory();
+            $ebaycategory->category_id = $row['CategoryID'];
+            $ebaycategory->category_parent_id = $row['CategoryParentID'][0];
+            $ebaycategory->category_level = $row['CategoryLevel'];
+            $ebaycategory->category_name = $row['CategoryName'];
+            $ebaycategory->save();
+        }
     }
 }
