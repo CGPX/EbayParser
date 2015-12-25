@@ -12,6 +12,17 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'items/category/<queryText>/<category:\d+>/<brand:\d+>/<model:\d+>/<queryPage:\d+>/<querySort:\d+>' => 'site/get-items-by',
+                'items/<queryText>' => 'site/get-item-by-query',
+                'item/<ebayitemid:\d+>' => 'site/single',
+                'items' => 'site/itemslist',
+                '' => 'site/order',
+            ],
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

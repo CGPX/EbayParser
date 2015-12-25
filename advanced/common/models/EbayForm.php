@@ -21,6 +21,7 @@ class EbayForm extends Model
     public $queryMinPrice;
     public $queryMaxPrice;
     public $querySort;
+    public $querySortShipping;
     public $queryBrand;
     public $queryState;
     public $queryPage = 1;
@@ -32,8 +33,12 @@ class EbayForm extends Model
     /**
      * EbayForm constructor.
      */
-    public function __construct()
+    public function __construct($queryText = "", $queryCategory = null, $queryPage, $querySort = null)
     {
+        $this->queryText = $queryText;
+        $this->queryCategory = $queryCategory;
+        $this->queryPage = $queryPage;
+        $this->querySort -> $querySort;
         $this->initConfig();
     }
 
@@ -61,6 +66,18 @@ class EbayForm extends Model
             return false;
         }
         $this->pageCount = $h->page_count;
+        switch($this->querySort) {
+            case 0: //Включена сортировка по возрастанию
+                return $h->itemsWithOrderBy;
+            case 1: //Включена сортировка по убыванию
+                return $h->getItemsWithOrderBy('price_shipping_sum', SORT_ASC)->all();
+        }
+//        switch($this->querySortShipping) {
+//            case 0:
+//                return $h->getItemsWithOrderBy('shipping_service_cost')->all();
+//            case 1:
+//                return $h->getItemsWithOrderBy('shipping_service_cost', SORT_ASC)->all();
+//        }
         $resp = $h->items;
         return $resp;
     }
@@ -181,11 +198,9 @@ class EbayForm extends Model
         }
     }
 
-    public function getSingleItem()
+    public function getSingleItem($ebay_item_id)
     {
-        if (isset($this->singleItemId)) {
-            return Item::find()->where(['ebay_item_id' => $this->singleItemId])->asArray()->all();
-        }
+        return Item::find()->where(['ebay_item_id' => $ebay_item_id])->asArray()->all();
     }
 
     public function getCategories()

@@ -25,11 +25,6 @@ $this->title = 'Оформление заявки';
                                 <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="ФИО" name="OrderForm[name]"></td></tr>
                                 <tr><td><input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="OrderForm[email]"></td></tr>
                                 <tr><td><input type="phone" class="form-control" id="exampleInputEmail1" placeholder="Телефон" name="OrderForm[phone]"></td></tr>
-                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Регион" name="OrderForm[region]"></td></tr>
-                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Город" name="OrderForm[city]"></td></tr>
-                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Индекс" name="OrderForm[index]"></td></tr>
-                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="Адрес" name="OrderForm[addres]"></td></tr>
-                                <tr><td><textarea class="form-control" rows="3" placeholder="Дополнительная информация" name="OrderForm[body]"></textarea></td></tr>
                                 <tr><td><textarea class="form-control OrderForm-itemslist" rows="3" placeholder="Перечень товаров" name="OrderForm[itemslist]" style="display:none;"></textarea></p></td></tr>
                                 <tr><td>
                                         <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [

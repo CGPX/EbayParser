@@ -64,23 +64,14 @@ function catalogArray($auto,$autocat,$level,$categories){
 }
 
 ?>
-
-
-
 					<div id="6028" class="menu">
-
 						<div class="panel list-group">
 								 <?= catalogArray('auto','autocat',3,$categories); ?>
 								 <?= catalogArray('moto','motocat',3,$categories); ?>
 								 <?= catalogArray('snow','snowcat',3,$categories); ?>
 								 <?= catalogArray('atv','atvcat',3,$categories); ?>
 						</div>
-
-					</div>
-
-
-
-
+                    </div>
 <?php
 /*
 <div id="menu" class="">

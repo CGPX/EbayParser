@@ -84,20 +84,12 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionItemslist() {
+    public function actionItemslist2() {
         $model = new EbayForm();
 
         if ($model->load(Yii::$app->request->post())) {
 
             Yii::$app->getCache()->set('postModel', $model);
-
-            if(isset($model->singleItemId) & !empty($model->singleItemId)){
-                $result = $model->getSingleItem();
-                return $this->render('single',[
-                    'result' => $result,
-                    'model' => $model,
-                ]);
-            }
 
             if (empty($model->queryPage) or $model->queryPage==null){$model->queryPage=1;} else {$model->queryPage=(int)$model->queryPage;}
 
@@ -113,14 +105,45 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionItemslist() {
+        return $this->render('itemslist', [
+            'result' => false,
+        ]);
+    }
+
+    public function actionGetItemsBy($queryText = '',$category = null, $brand= null, $model= null, $queryPage = 1, $querySort = null) {
+        $queryCategory = '';
+
+        $model = new EbayForm($queryText);
+        $model->load([$queryCategory,$queryPage,$querySort]);
+        $result = $model->getItems();
+        return $this->render('itemslist', [
+            'result' => $result,
+            'model' => $model,
+        ]);
+    }
+
+    public function actionGetItemByQuery($queryText) {
+        $model = new EbayForm($queryText);
+        $result = $model->getItems();
+        return $this->render('itemslist', [
+            'result' => $result,
+            'model' => $model,
+        ]);
+    }
     /**
      * Выводим просмотр подробностей о товаре
      *
      * @return mixed
      */
-    public function actionSingle()
+    public function actionSingle($ebayitemid)
     {
-
+        $model = new EbayForm();
+        $result = $model->getSingleItem($ebayitemid);
+        return $this->render('single',[
+            'result' => $result,
+            'model' => $model,
+        ]);
     }
 
     /**

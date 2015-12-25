@@ -17,11 +17,6 @@ class OrderForm extends Model {
     public $name;
     public $email;
     public $phone;
-    public $addres;
-    public $body;
-    public $region;
-    public $index;
-    public $city;
     public $itemslist;
     public $verifyCode;
     private $subject = 'Заказ';
@@ -59,11 +54,6 @@ class OrderForm extends Model {
                 'name' => $this->name,
                 'email' => $this->email,
                 'phone' => $this->phone,
-                'addres' => $this->addres,
-                'body' => $this->body,
-                'region' => $this->region,
-                'index' => $this->index,
-                'city' => $this->city,
                 'text' => $text,
             ])
                 ->setTo([Yii::$app->params['adminEmail'], $this->email])
