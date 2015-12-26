@@ -120,8 +120,8 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionGetItemByQuery($queryText) {
-        $model = new EbayForm($queryText);
+    public function actionGetItemByQuery($queryText, $page, $sort) {
+        $model = new EbayForm($queryText, null, $page, $sort);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,
