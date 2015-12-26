@@ -18,11 +18,13 @@ return [
             'rules' => [
                 [
                     'route' => 'site/get-items-by',
-                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>',
+                    'pattern' => 'items/category/<category:\d+>/<brand:\d+>/<page:\d+>/<sort:\d+>/<queryText:.+>',
                     'defaults' => [
                         'category' => '6030',
+                        'brand' => '',
                         'page' => 1,
                         'sort' => 0,
+                        'queryText' =>'',
                     ],
                 ],
                 [

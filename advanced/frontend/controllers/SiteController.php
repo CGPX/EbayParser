@@ -111,9 +111,10 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionGetItemsBy($category = null, $page, $sort) {
-        $model = new EbayForm('',$category, $page, $sort);
+    public function actionGetItemsBy($category = null, $brand, $page, $sort, $queryText) {
+        $model = new EbayForm($category, $brand, $page, $sort, $queryText);
         $result = $model->getItems();
+        $model->getCategories();
         return $this->render('itemslist', [
             'result' => $result,
             'model' => $model,
@@ -121,7 +122,7 @@ class SiteController extends Controller
     }
 
     public function actionGetItemByQuery($queryText, $page, $sort) {
-        $model = new EbayForm($queryText, null, $page, $sort);
+        $model = new EbayForm(null, null, $page, $sort, $queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,

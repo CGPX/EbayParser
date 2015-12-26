@@ -37,11 +37,14 @@ class EbayForm extends Model
      * @param int $queryPage
      * @param null $querySort
      */
-    public function __construct($queryText = '', $queryCategory = null, $queryPage = 1, $querySort = null)
+    public function __construct($queryCategory = null, $brand = null, $queryPage = 1, $querySort = null, $queryText = '')
     {   $cat = [];
         $this->queryText = $queryText;
         if(!empty($queryCategory)){
             $cat[] = $queryCategory;
+        }
+        if(!empty($brand)){
+            $cat[] = $brand;
         }
         $this->queryCategory = $cat;
         $this->queryPage = (int) $queryPage;
@@ -209,10 +212,10 @@ class EbayForm extends Model
 //         удаление кеша
         //Yii::$app->getCache()->delete('Lolcategory');
 
-        $categories = Yii::$app->getCache()->get('Lolcategory');
-        if ($categories !== false) {
-            return $categories;
+        if (EbayCategory::find()->count() > 0){
+            return EbayCategory::find()->asArray()->all();
         }
+
         $service = new TradSer\TradingService(array(
             'apiVersion' => $this->config['tradingApiVersion'],
             'siteId' => Constants\SiteIds::US
@@ -234,10 +237,10 @@ class EbayForm extends Model
                 );
                 $cats = $service->getCategories($request)->toArray();
                 $this->addCatsToDB($cats);
-                $catconfig[$name][$key] = $cats;
+                //$catconfig[$name][$key] = $cats;
             }
         }
-        Yii::$app->getCache()->set('Lolcategory', $catconfig, $this->cacheTime);
+        //Yii::$app->getCache()->set('Lolcategory', $catconfig, $this->cacheTime);
         return $catconfig;
     }
 

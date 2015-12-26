@@ -13,13 +13,6 @@ use yii\bootstrap\ActiveForm;
 
 AppAsset::register($this);
 $SearchForm="hidden"; // форма поиска на всех страницах. по сути она либо скрыта, либо показана.
-/**
- * <?= $BlockCatalog ?> - вызываем отображение каталога
- * <?= $BlockCart ?> - вызываем отображение корзины
- * В необходимых для отображения шаблонах нужно вызывать рендер в эти переменные
- *
- * <?= $BlockCataog = \Yii::$app->view->renderFile('@app/views/site/catalog.php'); ?>
- */
 
 ?>
 <?php $this->beginPage() ?>
@@ -96,11 +89,13 @@ $SearchForm="hidden"; // форма поиска на всех страница�
                                     <!--Содержимое-->
 
                                     <?php
-                                        if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single"){
-                                            $SearchForm = "";
-                                            $this->beginContent('@frontend/views/site/catalog.php');
-                                                echo $content;
-                                            $this->endContent();
+                                    if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single" or Yii::$app->controller->action->id=="get-items-by" or Yii::$app->controller->action->id=="get-item-by-query"){
+                                        //if (Yii::$app->controller->action->id=="index" or Yii::$app->controller->action->id=="order"){}else{
+                                            $SearchForm ="";
+
+                                            //$this->beginContent('@frontend/views/site/catalog.php');
+                                            //echo $content;
+                                            //$this->endContent();
                                         }
                                     ?>
 
@@ -112,14 +107,16 @@ $SearchForm="hidden"; // форма поиска на всех страница�
                             <article class="col-sm-12 col-md-8 col-lg-8">
                                 <!--Содержимое-->
 
-
+                                <!-- хлебные крошки -->
                                 <div class="row">
-                                    <!-- хлебные крошки -->
-                                    <?= Breadcrumbs::widget([
-                                        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                                    ]) ?>
-                                    <!-- виджет alert сообщений -->
-                                    <?= Alert::widget() ?>
+                                    <div class="col-lg-12">
+                                        <!-- хлебные крошки -->
+                                        <?= Breadcrumbs::widget([
+                                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                                        ]) ?>
+                                        <!-- виджет alert сообщений -->
+                                        <?= Alert::widget() ?>
+                                    </div>
                                 </div>
 
                                 <!-- поисковая форма -->
@@ -140,6 +137,7 @@ $SearchForm="hidden"; // форма поиска на всех страница�
                                             <input type="text" class="form-control" placeholder="Model">
                                             <input type="text" class="form-control" placeholder="Year">
                                         </div>
+
                                         <?php ActiveForm::end(); ?>
                                     </div>
                                 </div>
@@ -156,7 +154,8 @@ $SearchForm="hidden"; // форма поиска на всех страница�
                                     <!-- содержимое -->
 
                                     <?php
-                                        if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single"){
+                                    if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single" or Yii::$app->controller->action->id=="get-items-by" or Yii::$app->controller->action->id=="get-item-by-query"){
+                                        //if (Yii::$app->controller->action->id=="index" or Yii::$app->controller->action->id=="order"){}else{
                                             $this->beginContent('@frontend/views/site/cart.php');
                                                 echo $content;
                                             $this->endContent();

@@ -20,6 +20,10 @@ $this->params['myMod'][] = $model;
     <?php
     if ($result!==false) {
         foreach ($result as $value1) {
+            if (!isset($value1['galleryURL'])){
+                $value1['galleryURL']="imgs/image-not-found.jpg";
+            }
+
             echo "
                   <div class=\"col-md-4\" style=\"height:400px;\">
                       <div class=\"panel panel-default item_box\">
@@ -28,7 +32,7 @@ $this->params['myMod'][] = $model;
                                   <td class=\"item_title\" style=\"height:80px;\"><h5 class=\"\"><a href=\"".Url::to(['site/single', 'ebayitemid' => $value1[ebay_item_id]])."\" >". $value1[title] ."</a></h5></td>
                               </tr>
                               <tr>
-                                  <td align=\"center\"><img src=\"". $value1[galleryURL] ."\" class=\"img-responsive\" style=\"height:220px; width:100%;\" alt=\"Image\"></td>
+                                  <td align=\"center\"><img src=\"". $value1['galleryURL'] ."\" class=\"img-responsive\" style=\"height:220px; width:100%;\" alt=\"". $value1[title] ."\"></td>
                               </tr>
                               <tr class=\"\">
                                   <td class=\"\">
