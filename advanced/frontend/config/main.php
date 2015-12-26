@@ -12,6 +12,25 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' =>'items/category/<category:\d+>/<page:\d+>/<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'page' => 1,
+                        'sort' => 0,
+                    ],
+                ],
+                'items/<queryText:\w+>' => 'site/get-item-by-query',
+                'item/<ebayitemid:\d+>' => 'site/single',
+                'items' => 'site/itemslist',
+                '' => 'site/order',
+            ],
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

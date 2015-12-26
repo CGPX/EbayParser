@@ -10,6 +10,7 @@
 
 use common\models\EbayCategory;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = 'BayEbay - Каталог';
 $this->params['myMod'][] = $model;
@@ -24,7 +25,7 @@ $this->params['myMod'][] = $model;
                       <div class=\"panel panel-default item_box\">
                           <table class=\"table table-striped\">
                               <tr>
-                                  <td class=\"item_title\" style=\"height:80px;\"><h5 class=\"\"><a class=\"singleChange\" href=\"#\" data-target=\"". $value1[ebay_item_id] ."\">". $value1[title] ."</a></h5></td>
+                                  <td class=\"item_title\" style=\"height:80px;\"><h5 class=\"\"><a href=\"".Url::to(['site/single', 'ebayitemid' => $value1[ebay_item_id]])."\" >". $value1[title] ."</a></h5></td>
                               </tr>
                               <tr>
                                   <td align=\"center\"><img src=\"". $value1[galleryURL] ."\" class=\"img-responsive\" style=\"height:220px; width:100%;\" alt=\"Image\"></td>
@@ -32,7 +33,7 @@ $this->params['myMod'][] = $model;
                               <tr class=\"\">
                                   <td class=\"\">
 
-                      <span class=\"glyphicon glyphicon-rub btn-sm\"></span><span class=\"item_price\">". $value1[current_price_value] ."</span>
+                      <span class=\"glyphicon glyphicon-rub btn-sm\"></span><span class=\"item_price\">". $value1[price_shipping_sum] ."</span>
                       <button class=\"btn btn-default btn-sm pull-right addToCart\" data-id=\"". $value1[ebay_item_id] ."\">Купить сейчас <span class=\"glyphicon glyphicon-shopping-cart\" aria-hidden=\"true\"></span>
                     </td>
                               </tr>

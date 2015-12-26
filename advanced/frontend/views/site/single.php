@@ -80,7 +80,7 @@ $this->params['myMod'][] = $model;
                 <div class="col-md-6">
                     <div class="item_title hidden"><?= $result[0]['title']; ?></div>
                     <div class="input-group">
-                        <div class="input-group-addon item_price"><?= $result[0]['current_price_value']; ?> <span class="glyphicon glyphicon-rub"></span></div>
+                        <div class="input-group-addon item_price"><?= $result[0]['price_shipping_sum']; ?> <span class="glyphicon glyphicon-rub"></span></div>
                         <div class="input-group-addon hidden"><span class="glyphicon glyphicon-chevron-left"></span></div>
                         <input name="quantity" type="text" value="1" min="1" max="9999" maxlength="5" class="form-control item_number hidden" autocomplete="off" />
                         <div class="input-group-addon hidden"><span class="glyphicon glyphicon-chevron-right"></span></div>

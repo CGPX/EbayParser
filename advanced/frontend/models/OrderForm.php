@@ -17,11 +17,6 @@ class OrderForm extends Model {
     public $name;
     public $email;
     public $phone;
-    public $addres;
-    public $body;
-    public $region;
-    public $index;
-    public $city;
     public $itemslist;
     public $verifyCode;
     private $subject = 'Заказ';
@@ -30,8 +25,8 @@ class OrderForm extends Model {
     public function rules()
     {
         return [
-            [['name', 'email', 'phone', 'itemslist'], 'required'],
-            [['body', 'region', 'index', 'city', 'addres'], 'default'],
+            [['name', 'phone', 'itemslist'], 'required'],
+            [['email'], 'default'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly
@@ -59,11 +54,6 @@ class OrderForm extends Model {
                 'name' => $this->name,
                 'email' => $this->email,
                 'phone' => $this->phone,
-                'addres' => $this->addres,
-                'body' => $this->body,
-                'region' => $this->region,
-                'index' => $this->index,
-                'city' => $this->city,
                 'text' => $text,
             ])
                 ->setTo([Yii::$app->params['adminEmail'], $this->email])

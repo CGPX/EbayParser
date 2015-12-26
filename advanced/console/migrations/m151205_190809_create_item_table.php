@@ -22,6 +22,10 @@ class m151205_190809_create_item_table extends Migration
             'galleryURL' => $this->string(),
             'viewItemURL' => $this->string()->notNull(),
             'current_price_value' => $this->money(null,0),
+            'condition_id' => $this->integer(),
+            'condition_display_name' => $this->string(),
+            'shipping_service_cost' => $this->money(null,0),
+            'price_shipping_sum' => $this->money(null,0),
             'sellingState' => $this->string()->notNull(),
             'timeLeft' => $this->string()->notNull(),
         ], $tableOptions);
