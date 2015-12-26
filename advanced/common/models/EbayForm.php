@@ -32,13 +32,20 @@ class EbayForm extends Model
 
     /**
      * EbayForm constructor.
+     * @param string $queryText
+     * @param null $queryCategory
+     * @param int $queryPage
+     * @param null $querySort
      */
-    public function __construct($queryText = "", $queryCategory = null, $queryPage, $querySort = null)
-    {
+    public function __construct($queryText = '', $queryCategory = null, $queryPage = 1, $querySort = null)
+    {   $cat = [];
         $this->queryText = $queryText;
-        $this->queryCategory = $queryCategory;
-        $this->queryPage = $queryPage;
-        $this->querySort -> $querySort;
+        if(!empty($queryCategory)){
+            $cat[] = $queryCategory;
+        }
+        $this->queryCategory = $cat;
+        $this->queryPage = (int) $queryPage;
+        $this->querySort = (int) $querySort;
         $this->initConfig();
     }
 
@@ -56,7 +63,7 @@ class EbayForm extends Model
 
     private function genMd5Hash()
     {
-        $this->queryHash = md5(strtolower($this->queryText) . $this->queryCategory . strtolower($this->queryBrand) . $this->queryState . strtolower($this->querySort) . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage);
+        $this->queryHash = md5(strtolower($this->queryText) . implode(",", $this->queryCategory) . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage);
     }
 
     private function getItemsFromDB()
@@ -72,12 +79,6 @@ class EbayForm extends Model
             case 1: //Включена сортировка по убыванию
                 return $h->getItemsWithOrderBy('price_shipping_sum', SORT_ASC)->all();
         }
-//        switch($this->querySortShipping) {
-//            case 0:
-//                return $h->getItemsWithOrderBy('shipping_service_cost')->all();
-//            case 1:
-//                return $h->getItemsWithOrderBy('shipping_service_cost', SORT_ASC)->all();
-//        }
         $resp = $h->items;
         return $resp;
     }
@@ -106,7 +107,7 @@ class EbayForm extends Model
         $request = new Types\FindItemsAdvancedRequest();
         $request->keywords = strtolower($this->queryText);
         if (!empty($this->queryCategory)) {
-            $request->categoryId = array($this->queryCategory);
+            $request->categoryId = $this->queryCategory; // array($this->queryCategory);
         } else {
             $request->categoryId = array('6030');
         }

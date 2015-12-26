@@ -25,8 +25,8 @@ class OrderForm extends Model {
     public function rules()
     {
         return [
-            [['name', 'email', 'phone', 'itemslist'], 'required'],
-            [['body', 'region', 'index', 'city', 'addres'], 'default'],
+            [['name', 'phone', 'itemslist'], 'required'],
+            [['email'], 'default'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly

@@ -16,8 +16,16 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'items/category/<queryText>/<category:\d+>/<brand:\d+>/<model:\d+>/<queryPage:\d+>/<querySort:\d+>' => 'site/get-items-by',
-                'items/<queryText>' => 'site/get-item-by-query',
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' =>'items/category/<category:\d+>/<page:\d+>/<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'page' => 1,
+                        'sort' => 0,
+                    ],
+                ],
+                'items/<queryText:\w+>' => 'site/get-item-by-query',
                 'item/<ebayitemid:\d+>' => 'site/single',
                 'items' => 'site/itemslist',
                 '' => 'site/order',
