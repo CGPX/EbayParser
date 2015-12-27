@@ -23,6 +23,7 @@ class EbayForm extends Model
     public $querySort;
     public $querySortShipping;
     public $queryBrand;
+    public $queryModel;
     public $queryState;
     public $queryPage = 1;
     public $pageCount;
@@ -32,20 +33,21 @@ class EbayForm extends Model
 
     /**
      * EbayForm constructor.
-     * @param string $queryText
      * @param null $queryCategory
+     * @param null $brand
+     * @param null $e_model
      * @param int $queryPage
      * @param null $querySort
+     * @param string $queryText
      */
-    public function __construct($queryCategory = null, $brand = null, $queryPage = 1, $querySort = null, $queryText = '')
+    public function __construct($queryCategory = null, $brand = null, $e_model = null, $queryPage = 1, $querySort = null, $queryText = '')
     {   $cat = [];
         $this->queryText = $queryText;
         if(!empty($queryCategory)){
             $cat[] = $queryCategory;
         }
-        if(!empty($brand)){
-            $cat[] = $brand;
-        }
+        $this->queryBrand = $brand;
+        $this->queryModel = $e_model;
         $this->queryCategory = $cat;
         $this->queryPage = (int) $queryPage;
         $this->querySort = (int) $querySort;
@@ -66,7 +68,7 @@ class EbayForm extends Model
 
     private function genMd5Hash()
     {
-        $this->queryHash = md5(strtolower($this->queryText) . implode(",", $this->queryCategory) . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage);
+        $this->queryHash = md5(strtolower($this->queryText) . implode(",", $this->queryCategory) . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort . $this->queryModel . $this->queryBrand);
     }
 
     private function getItemsFromDB()
@@ -119,6 +121,20 @@ class EbayForm extends Model
         $itemFilter->value[] = 'AuctionWithBIN';
         $itemFilter->value[] = 'FixedPrice';
         $request->itemFilter[] = $itemFilter;
+
+        if(!empty($this->queryBrand)) {
+            $aspectFilter = new Types\AspectFilter();
+            $aspectFilter->aspectName = 'Make';
+            $aspectFilter->aspectValueName[] = $this->queryBrand;
+            $request->aspectFilter[] = $aspectFilter;
+        }
+        if(!empty($this->queryModel)){
+            $aspectFilter = new Types\AspectFilter();
+            $aspectFilter->aspectName = 'Model';
+            $aspectFilter->aspectValueName[] = $this->queryModel;
+            $request->aspectFilter[] = $aspectFilter;
+        }
+
         if (isset($this->queryMinPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
                 'name' => 'MinPrice',
@@ -131,10 +147,14 @@ class EbayForm extends Model
                 'value' => array($this->queryMaxPrice)
             ));
         }
-        $request->sortOrder = 'CurrentPriceHighest';
-//        if(empty($this->querySort)) {
-//            $request->sortOrder = $this->querySort;
-//        }
+        switch($this->querySort) {
+            case 0:
+                $request->sortOrder = 'PricePlusShippingHighest';
+                break;
+            case 1:
+                $request->sortOrder = 'PricePlusShippingLowest';
+                break;
+        }
         $request->paginationInput = new Types\PaginationInput();
         $request->paginationInput->entriesPerPage = 100;
 
@@ -213,9 +233,8 @@ class EbayForm extends Model
         //Yii::$app->getCache()->delete('Lolcategory');
 
         if (EbayCategory::find()->count() > 0){
-            return EbayCategory::find()->asArray()->all();
+            return true;
         }
-
         $service = new TradSer\TradingService(array(
             'apiVersion' => $this->config['tradingApiVersion'],
             'siteId' => Constants\SiteIds::US
@@ -237,11 +256,8 @@ class EbayForm extends Model
                 );
                 $cats = $service->getCategories($request)->toArray();
                 $this->addCatsToDB($cats);
-                //$catconfig[$name][$key] = $cats;
             }
         }
-        //Yii::$app->getCache()->set('Lolcategory', $catconfig, $this->cacheTime);
-        return $catconfig;
     }
 
     private function getCategoryConfig()
