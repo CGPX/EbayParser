@@ -111,8 +111,18 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionGetItemsBy($category = null, $brand, $page, $sort, $queryText) {
-        $model = new EbayForm($category, $brand, $page, $sort, $queryText);
+    public function actionGetItemsBy($category = null, $brand, $ser, $page, $sort, $queryText) {
+        $text ='';
+        if(!empty($brand)){
+            $text.=$brand.' ';
+        }
+        if(!empty($ser)){
+            $text.=$ser.' ';
+        }
+        $text.=$queryText;
+        $text = trim($text);
+        $model = new EbayForm($category, null, null, (int)$page, $sort, $text);
+//        var_dump($category . ' brand - ' . $brand . ' model - '.$ser . ' page - ' .$page.' sort - '.$sort.' query - '.$queryText);
         $result = $model->getItems();
         $model->getCategories();
         return $this->render('itemslist', [
@@ -122,7 +132,7 @@ class SiteController extends Controller
     }
 
     public function actionGetItemByQuery($queryText, $page, $sort) {
-        $model = new EbayForm(null, null, $page, $sort, $queryText);
+        $model = new EbayForm(null, null, null, $page, $sort, $queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,
