@@ -6,7 +6,6 @@ $(function() {
      * Объявление переменных
      */
 
-
     /**
      * Функции работы с LocalStorage
      */
@@ -26,8 +25,10 @@ $(function() {
     function catChange(){
         // забираем данные атрибута ИД
         catId=$(this).attr('data-target');
+        catId=catId.substring(1);
         // закидываем в инпут новые данные ИД перехода
-        $('#ebayform-querycategory').attr('value', catId.substr(1));
+        //$('#ebayform-querycategory').attr('value', catId.substr(1));
+        getChange('',catId,'','','','','');
         // жмём сабмит ;(
         $(".catChange").removeClass("active"),
         $(this).addClass("active");
@@ -71,7 +72,7 @@ $(function() {
         var totalPrice=0;
         // если корзина не пустая, то формируем данные для вывода
         $(".cat_items_list").text("");
-        if (cartData !== null){ //alert("cart is NOT empty!!!")
+        if (cartData !== null){
             for (var items in cartData) {
 
                 // повторяем операцию в каждой итерации
@@ -83,6 +84,8 @@ $(function() {
                     $(".cart_item_box_edit .item_name").html(cartData[items][1]);
                     $(".cart_item_box_edit .item_price").html(cartData[items][2]);
                     $(".cart_item_box_edit .item_quantity").html(cartData[items][3]);
+                    $(".cart_item_box_edit .item_img").attr('src', cartData[items][4]);
+                    $(".cart_item_box_edit .item_img").attr('alt', cartData[items][1]);
                 $(".cart_item_box_edit").addClass("cart_item_box").removeClass("cart_item_box_edit");
 
                 totalPrice = +totalPrice + +cartData[items][2] * +cartData[items][3];
@@ -107,10 +110,10 @@ $(function() {
         // забираем данные номера страницы
         pageNum=$(this).attr('data-target');
         // пушим номер страницы в инпут
-        $('#ebayform-querypage').attr('value', pageNum);
+        //$('#ebayform-querypage').attr('value', pageNum);
         // инициализируем переход через submit
-        $("#ebay-form").submit();
-
+        //$("#ebay-form").submit();
+        getChange('','','','',pageNum,'','');
         return false;
     }
     $('.pageChange').click(pageChange);
@@ -169,7 +172,8 @@ $(function() {
             // ID товара
             itemId = $that.data('id'),
             itemTitle = $('.item_title', parentBox).text(), // название товара
-            itemPrice = $('.item_price', parentBox).text(); // стоимость товара
+            itemPrice = $('.item_price', parentBox).text(), // стоимость товара
+            itemImg = $('.item_img', parentBox).children('img').attr('src'); // изображение товара
             // тут через запятые нужно всё что содержится внутри локал стоража. так что кол-во чтобы записать тоже надо включить в это множество
             var itemNumber = $('.item_number', parentBox).text(); // количество добавляемого товара
         if (itemNumber < 2){itemNumber=1;}
@@ -184,7 +188,7 @@ $(function() {
         } else { // если товара в корзине еще нет, то добавляем в объект
             // вот тут непосредственно определяем что пишем в стораж. надо учесть
             // что 0 - это ID товара, а последнее значение числовое сменить на переменную обозначающую кол-во
-            cartData[itemId] = [itemId, itemTitle, itemPrice, +itemNumber];
+            cartData[itemId] = [itemId, itemTitle, itemPrice, +itemNumber, itemImg];
         }
         // Обновляем данные в LocalStorage
         if (!setCartData(cartData)) {
@@ -202,21 +206,21 @@ $(function() {
      */
     function removeItem(itemRemove){
         cartData = getCartData();
-        if (typeof itemRemove !== "undefined") {
-            itemId = itemRemove;
-        } else {
+        if (itemRemove == '[object Object]') {
             itemId = $(this).closest('.cart_item_box').data('id');
+        } else {
+            itemId = itemRemove;
         }
-
         if (cartData !== null){
             if (cartData.hasOwnProperty(itemId)) {
-                delete cartData[itemId];
-                if(!setCartData(cartData)){
-
+                askConfirm = confirm('Вы действительно хотите удалить этот товар из корзины?');
+                if (askConfirm==true){
+                    delete cartData[itemId];
+                    if(!setCartData(cartData)){}
                 }
             }
         } else {
-            alert("Данные в корзине отсутствуют!!!");
+            alert("Данный товар в корзине не обнаружен!");
         }
         return false;
     }
@@ -269,4 +273,113 @@ $(function() {
         return false;
     }
     $('.catChange').click(accordActivation);
+
+    /**
+     * Применяем фильтр ёба
+     * class
+     * filter_box - содержимое всех выпадающих меню
+     * filter_change - активатор (клавиша) функции применения фильтра
+     *
+     * filter_ts - select типов транспортных средств
+     * filter_brands - select производителей
+     * filter_models - select моделей
+     */
+    function filterChange(){
+        if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
+        if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
+        if($(".filter_box .filter_models :selected").val()=='null'){addModel=''}else{addModel=$(".filter_box .filter_models :selected").text();}
+        if($(".filter_box .filter_sort :selected").val()=='null'){addSort=''}else{addSort=$(".filter_box .filter_sort :selected").val();}
+        getChange('','',addBrand,addModel,'',addSort,'');
+        return false;
+    }
+    $('.filter_change').click(filterChange);
+
+    function filterQuery(){
+        if($("#ebayform-querytext").val()==''){addQuery=''}else{addQuery=$("#ebayform-querytext").val();}
+        getChange('','','','','','',addQuery);
+        return false;
+    }
+    $('.filter_query').click(filterQuery);
+
+    /**
+     * Триггер на изменении выбора ТС
+     */
+    $( ".filter_ts" ).change(function() {
+        var tsId = $( ".filter_ts option" ).filter(':selected').attr('value');
+        if (tsId=='null'){
+            //alert('Вы не выбрали тип ТС');
+        }else{
+            $('.filter_box .filter_brands option').each(function(){
+                $(this).removeClass('hidden');
+                $(this).addClass('hidden');
+                brandIdThis=$(this).data('id');
+                if (brandIdThis == tsId) {$(this).removeClass('hidden')}
+                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+            });
+            $('.filter_box .filter_models option').each(function(){
+                $(this).removeClass('hidden');
+                $(this).addClass('hidden');
+                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+            });
+        }
+    });
+    /**
+     * Триггер на изменение выбора Бренда
+     */
+    $( ".filter_brands" ).change(function() {
+        var brandId = $(".filter_brands option").filter(':selected').attr('value');
+        if(brandId=='null'){
+            //alert('Вы не выбрали марку ТС');
+        }else{
+            $('.filter_box .filter_models option').each(function(){
+                $(this).removeClass('hidden');
+                $(this).addClass('hidden');
+                modelIdThis=$(this).data('id');
+                if (modelIdThis == brandId) {$(this).removeClass('hidden')}
+                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+            });
+        }
+    });
+
+    /**
+     * Функция заполнения и перехода на необходимую страницу
+     *
+     */
+    function getChange(cAction, cCat, cBrand, cModel, cPage, cSort, cQuery){
+        var resultLocationString="";
+        addressData=window.location.href;
+        addressDataArray=addressData.split('/');
+        //if (addressDataArray[3]=='items'){}else{resultLocationString+='/items';}
+            if(cAction!==''){
+                resultLocationString+='/'+cAction;
+            }else{
+                resultLocationString+='/items';
+                if(cCat!==''){
+                    resultLocationString+='/category/'+cCat;
+                }else{
+                    if(addressDataArray[4]!=='category'){
+                        resultLocationString+='/category/6030';
+                    }else{
+                        resultLocationString+='/category/'+addressDataArray[5];
+                    }
+                    if(cBrand!==''){resultLocationString+='/'+cBrand;}
+                    if(cModel!==''){resultLocationString+='/'+cModel;}
+                    if(cPage!==''){resultLocationString+='/'+cPage;}else{resultLocationString+='/1';}
+                    if(cSort!==''){resultLocationString+='/'+cSort;}else{resultLocationString+='/0';}
+                    if(cQuery!==''){
+                        resultLocationString+='/'+cQuery;
+                    }else{
+                        postQueryData=$('#ebayform-querytext').attr('value');
+                        if(postQueryData!==""){
+                            resultLocationString+='/'+postQueryData;
+                        }
+                    }
+                }
+            }
+
+        window.location.href=resultLocationString;
+        return false;
+    }
+    $('.getChange').click(getChange);
+
 });

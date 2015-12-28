@@ -41,10 +41,8 @@ $this->params['myMod'][] = $model;
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
 
-                <div class="item active">
-                    <center>
-                        <img class="zoom image img-thumbnail" style="height: 450px;" src="<?= $result[0]['galleryURL']; ?>" alt="">
-                    </center>
+                <div class="item active" align="center">
+                        <img class="zoom image img-thumbnail item_img" style="height: 450px;" src="<?= $result[0]['galleryURL']; ?>" alt="">
                 </div>
 
 
@@ -63,7 +61,6 @@ $this->params['myMod'][] = $model;
     </div>
 
     <div class="col-lg-6">
-
         <div class="item_box">
             <div class="row">
                 <div class="col-md-12 item_title2">
@@ -73,12 +70,15 @@ $this->params['myMod'][] = $model;
             <div class="row">
                 <div class="col-md-12">
                     <h3><small>Лот номер: <?= $result[0]['ebay_item_id']; ?></small></h3>
+                    <h3><small>Состояние: <?= $result[0]['condition_display_name']; ?></small></h3>
+                    <h3><small><a target="_blank" href="<?= $result[0]['viewItemURL']; ?>">Описание на Ebay</a></small></h3>
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-md-6">
                     <div class="item_title hidden"><?= $result[0]['title']; ?></div>
+                    <div class="item_img hidden"><img src="<?= $result[0]['galleryURL']; ?>"></div>
                     <div class="input-group">
                         <div class="input-group-addon item_price"><?= $result[0]['price_shipping_sum']; ?> <span class="glyphicon glyphicon-rub"></span></div>
                         <div class="input-group-addon hidden"><span class="glyphicon glyphicon-chevron-left"></span></div>

@@ -22,7 +22,6 @@ class AppAsset extends AssetBundle
         'css/custom-styles.css',
     ];
     public $js = [
-        'js/cart.js',
         'js/custom-functions.js',
     ];
     public $depends = [
