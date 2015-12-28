@@ -32,7 +32,7 @@ $this->params['myMod'][] = $model;
                                   <td class=\"item_title\" style=\"height:80px;\"><h5 class=\"\"><a href=\"".Url::to(['site/single', 'ebayitemid' => $value1[ebay_item_id]])."\" >". $value1[title] ."</a></h5></td>
                               </tr>
                               <tr>
-                                  <td align=\"center\"><img src=\"". $value1['galleryURL'] ."\" class=\"img-responsive\" style=\"height:220px; width:100%;\" alt=\"". $value1[title] ."\"></td>
+                                  <td class=\"item_img\" align=\"center\"><img src=\"". $value1['galleryURL'] ."\" class=\"img-responsive\" style=\"height:220px; width:100%;\" alt=\"". $value1[title] ."\"></td>
                               </tr>
                               <tr class=\"\">
                                   <td class=\"\">
@@ -70,7 +70,8 @@ $iScheti=$pageLast-$pageStart;
 for ($i=0; $i<=$iScheti; $i++){
     $pageOlolo = $pageStart + $i;
     if ((int)$model->queryPage == $pageOlolo) {$pageActive="active";} else {$pageActive="";}
-    $pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
+    //$pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
+    $pagesOut .='<li class=""><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
 }
 
 if (isset($model->pageCount)){

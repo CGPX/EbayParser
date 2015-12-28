@@ -17,6 +17,7 @@ class EbayForm extends Model
     private $cacheTime = 2678400;
     public $emptyResponse = false;
     public $queryText;
+    public $queryTextShow;
     public $queryCategory;
     public $queryMinPrice;
     public $queryMaxPrice;
