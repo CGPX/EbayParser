@@ -34,7 +34,7 @@ class SiteController extends Controller
                     [
                         'actions' => ['signup'],
                         'allow' => true,
-                        'roles' => ['?'],
+                       // 'roles' => ['?'],
                     ],
                     [
                         'actions' => ['logout'],
@@ -84,28 +84,9 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionItemslist2() {
-        $model = new EbayForm();
-
-        if ($model->load(Yii::$app->request->post())) {
-
-            Yii::$app->getCache()->set('postModel', $model);
-
-            if (empty($model->queryPage) or $model->queryPage==null){$model->queryPage=1;} else {$model->queryPage=(int)$model->queryPage;}
-
-            $result = $model->getItems();
-            return $this->render('itemslist', [
-                'result' => $result,
-                'model' => $model,
-            ]);
-        }
-        return $this->render('itemslist', [
-            'result' => false,
-            'model' => $model,
-        ]);
-    }
-
     public function actionItemslist() {
+        $model = new EbayForm();
+        $model->getCategories();
         return $this->render('itemslist', [
             'result' => false,
         ]);
@@ -125,7 +106,6 @@ class SiteController extends Controller
         $model->queryTextShow = $queryText;
 //        var_dump($category . ' brand - ' . $brand . ' model - '.$ser . ' page - ' .$page.' sort - '.$sort.' query - '.$queryText);
         $result = $model->getItems();
-        $model->getCategories();
         return $this->render('itemslist', [
             'result' => $result,
             'model' => $model,
@@ -148,10 +128,13 @@ class SiteController extends Controller
     public function actionSingle($ebayitemid)
     {
         $model = new EbayForm();
+        $model->checkDataAboutSingleItem($ebayitemid);
         $result = $model->getSingleItem($ebayitemid);
+        $images = $model->getItemImages($ebayitemid);
         return $this->render('single',[
             'result' => $result,
             'model' => $model,
+            'images' => $images,
         ]);
     }
 
@@ -220,16 +203,11 @@ class SiteController extends Controller
         $model = new OrderForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
-
                 //Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
                 return $this->render('success');
-
             } else {
-
                 Yii::$app->session->setFlash('error', 'There was an error sending email.');
-
             }
-
             return $this->refresh();
         } else {
             return $this->render('order', [

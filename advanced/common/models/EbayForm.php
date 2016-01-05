@@ -11,9 +11,13 @@ use \DTS\eBaySDK\Finding\Enums;
 use \DTS\eBaySDK\Trading\Services as TradSer;
 use \DTS\eBaySDK\Trading\Types as TradType;
 use \DTS\eBaySDK\Trading\Enums as TradEnums;
+use \DTS\eBaySDK\Shopping\Services as ShopSer;
+use \DTS\eBaySDK\Shopping\Types as ShopType;
+use \DTS\eBaySDK\Shopping\Enums as ShopEnums;
 
 class EbayForm extends Model
 {
+    const USD = 840;
     private $cacheTime = 2678400;
     public $emptyResponse = false;
     public $queryText;
@@ -65,6 +69,11 @@ class EbayForm extends Model
     private function initConfig()
     {
         $this->config = require __DIR__ . '/../../configuration.php';
+        if(!$this->isPriceConfigInit()) {
+            $this->initPriceConfig();
+        } else {
+            $this->updatePriceConfig();
+        }
     }
 
     private function genMd5Hash()
@@ -97,6 +106,10 @@ class EbayForm extends Model
         }
     }
 
+    private function replaseSimbols($query) {
+        return htmlspecialchars($query, ENT_QUOTES);
+    }
+
     public function getItems()
     {
         $this->genMd5Hash();
@@ -111,7 +124,7 @@ class EbayForm extends Model
             'globalId' => Constants\GlobalIds::US,
         ));
         $request = new Types\FindItemsAdvancedRequest();
-        $request->keywords = strtolower($this->queryText);
+        $request->keywords = $this->replaseSimbols(strtolower($this->queryText));
         if (!empty($this->queryCategory)) {
             $request->categoryId = $this->queryCategory; // array($this->queryCategory);
         } else {
@@ -158,9 +171,7 @@ class EbayForm extends Model
         }
         $request->paginationInput = new Types\PaginationInput();
         $request->paginationInput->entriesPerPage = 100;
-
         $request->paginationInput->pageNumber = $this->queryPage;
-
         $response = $service->findItemsAdvanced($request);
         if ($response->ack !== 'Failure') {
             $this->pageCount = (int)$response->paginationOutput->totalPages;
@@ -228,11 +239,12 @@ class EbayForm extends Model
         return Item::find()->where(['ebay_item_id' => $ebay_item_id])->asArray()->all();
     }
 
+    public function getItemImages($ebay_item_id) {
+        return ImageGallery::find()->where(['ebay_item_id' => $ebay_item_id])->asArray()->all();
+    }
+
     public function getCategories()
     {
-//         удаление кеша
-        //Yii::$app->getCache()->delete('Lolcategory');
-
         if (EbayCategory::find()->count() > 0){
             return true;
         }
@@ -304,8 +316,9 @@ class EbayForm extends Model
 
     private function calculateValidPrice($itemEbay, $shipping)
     {
-        if (EbayConst::$usePricePolitic) {
-            $price = ($itemEbay['sellingStatus']['convertedCurrentPrice']['value'] + $shipping) * EbayConst::$currentUSDExchangeRate * EbayConst::$priceCoefficient;
+        $priceConfig = PriceConfig::findOne(1);
+        if ($priceConfig->use_price_politic) {
+            $price = ($itemEbay['sellingStatus']['convertedCurrentPrice']['value'] + $shipping) * $priceConfig->price_percent * $priceConfig->current_usd_exchange_rate  * $priceConfig->price_coefficient ;
             return ceil($price / 10) * 10;
         } else {
             $price = $itemEbay['sellingStatus']['convertedCurrentPrice']['value'] + $shipping;
@@ -316,9 +329,94 @@ class EbayForm extends Model
     private function calculateShipping($itemEbay)
     {
         if (array_key_exists('shippingServiceCost', $itemEbay['shippingInfo'])) {
-            return $itemEbay['shippingInfo']['shippingServiceCost']['value'] * EbayConst::$currentUSDExchangeRate;
+            return $itemEbay['shippingInfo']['shippingServiceCost']['value'];
         } else {
             return 0;
+        }
+    }
+
+    public function checkDataAboutSingleItem($ebayitemid)
+   {
+       $this->getSingleItemFromEbay($ebayitemid);
+    }
+
+    private function getSingleItemFromEbay($ebayitemid)
+    {
+        $this->queryText = $ebayitemid;
+        $this->getItems();
+        if(!ImageGallery::find()->where(['ebay_item_id'=>$ebayitemid])->exists()) {
+            $service = new ShopSer\ShoppingService(array(
+                'apiVersion' => $this->config['shoppingApiVersion'],
+                'appId' => $this->config['production']['appId']
+            ));
+            $request = new ShopType\GetSingleItemRequestType();
+            $request->ItemID = $ebayitemid;
+            $request->IncludeSelector = 'Details';
+            $response = $service->getSingleItem($request);
+            if ($response->Ack !== 'Failure') {
+                $res = $response->toArray();
+                $this->addImagesToDB($res, $ebayitemid);
+            }
+        }
+    }
+
+    public function addImagesToDB($item, $ebayitemid)
+    {
+        if (array_key_exists('PictureURL', $item['Item'])) {
+            foreach ($item['Item']['PictureURL'] as $field) {
+                $image = new ImageGallery();
+                $image->ebay_item_id = $ebayitemid;
+                $image->image_url = $field;
+                $image->save();
+            }
+        }
+    }
+
+    private function getCurrentRate($int)
+    {
+        $content = $this->get_content();
+        $value = '';
+        $pattern = "#<Valute ID=\"([^\"]+)[^>]+>[^>]+>([^<]+)[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>([^<]+)[^>]+>[^>]+>([^<]+)#i";
+        preg_match_all($pattern, $content, $out, PREG_SET_ORDER);
+        foreach($out as $cur)
+        {
+            if($cur[2] == $int) return (double)str_replace(",",".",$cur[4]);
+        }
+    }
+
+    private function get_content() {
+        $date = date("d/m/Y");
+        $link = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=$date";
+        $fd = fopen($link, "r");
+        $text="";
+        if (!$fd) echo "Запрашиваемая страница не найдена";
+        else {
+            while (!feof ($fd)) $text .= fgets($fd, 4096);
+        }
+        fclose ($fd);
+        return $text;
+    }
+
+    private function isPriceConfigInit() {
+        return PriceConfig::find()->where(['id' => 1])->exists();
+    }
+
+    private function initPriceConfig() {
+        $priceConfig = new PriceConfig();
+        $priceConfig->use_price_politic = true;
+        $priceConfig->price_coefficient = EbayConst::$priceCoefficient;
+        $priceConfig->price_percent = EbayConst::$pricePercent;
+        $priceConfig->current_usd_exchange_rate = $this->getCurrentRate($this::USD);
+        $priceConfig->last_update_time = date("Ymd");
+        $priceConfig->save();
+    }
+
+    private function updatePriceConfig() {
+        $oldRecords = PriceConfig::find()->where('last_update_time < (NOW() - interval 1 DAY )')->all();
+        foreach ($oldRecords as $oldRecord) {
+            $oldRecord->current_usd_exchange_rate = $this->getCurrentRate($this::USD);
+            $oldRecord->last_update_time = date("Ymd");
+            $oldRecord->update();
         }
     }
 }
