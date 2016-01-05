@@ -8,8 +8,20 @@
 $this->title .= 'BayEbay - Просмотр товара';
 $this->params['myMod'][] = $model;
 
-//echo $model->singleItemId;
+$tabs   = '';
+$img    = '';
+$active = 'active';
+$i = 0;
+foreach ($images as $image) {
+    if($i>0) {
+        $active = '';
+    }
+    $img .= '<div class="item '.$active.'" align="center"><img class="zoom image img-thumbnail item_img" style="height: 450px;" src="'. $image['image_url'] .'" alt=""></div>';
+    $tabs.='<li data-target="" data-slide-to="'.$i.'" class="active"></li>';
+    $i++;
+}
 ?>
+
 <div class="row">
     <div class="col-lg-6">
 
@@ -33,19 +45,12 @@ $this->params['myMod'][] = $model;
         <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
             <!-- Indicators индикаторы на каком слайде находимся-->
             <ol class="carousel-indicators">
-
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-
+                <?= $tabs ?>
             </ol>
 
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
-
-                <div class="item active" align="center">
-                        <img class="zoom image img-thumbnail item_img" style="height: 450px;" src="<?= $result[0]['galleryURL']; ?>" alt="">
-                </div>
-
-
+                     <?= $img ?>
             </div>
 
             <!-- Controls клавиши управления -->

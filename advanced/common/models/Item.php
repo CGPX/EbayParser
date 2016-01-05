@@ -11,4 +11,15 @@ class Item extends ActiveRecord {
         return '{{%item}}';
     }
 
+    public function beforeDelete() {
+        if (parent::beforeDelete()) {
+            $items =ImageGallery::find()->where(['ebay_item_id' => $this->ebay_item_id])->all();
+            foreach($items as $item) {
+                $item->delete();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

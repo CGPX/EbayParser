@@ -27,6 +27,7 @@ class m151205_190809_create_item_table extends Migration
             'shipping_service_cost' => $this->money(null,0),
             'price_shipping_sum' => $this->money(null,0),
             'sellingState' => $this->string()->notNull(),
+            'updated' => $this->boolean(),
             'timeLeft' => $this->string()->notNull(),
         ], $tableOptions);
     }
