@@ -300,6 +300,7 @@ $(function() {
         return false;
     }
     $('.filter_query').click(filterQuery);
+    $('.filter_query_input').keydown(function( event ){if ( event.which == 13 ){filterQuery()}});
 
     /**
      * Триггер на изменении выбора ТС
@@ -356,16 +357,23 @@ $(function() {
                 resultLocationString+='/items';
                 if(cCat!==''){
                     resultLocationString+='/category/'+cCat;
+                    if(+addressDataArray.length>9){
+                        resultLocationString+='/1';
+                        resultLocationString+='/'+addressDataArray[7];
+                        // условия смены родительской категории
+                        resultLocationString+='/'+addressDataArray[8];
+                        resultLocationString+='/'+addressDataArray[9];
+                    }
                 }else{
                     if(addressDataArray[4]!=='category'){
                         resultLocationString+='/category/6030';
                     }else{
                         resultLocationString+='/category/'+addressDataArray[5];
                     }
-                    if(cBrand!==''){resultLocationString+='/'+cBrand;}
-                    if(cModel!==''){resultLocationString+='/'+cModel;}
                     if(cPage!==''){resultLocationString+='/'+cPage;}else{resultLocationString+='/1';}
                     if(cSort!==''){resultLocationString+='/'+cSort;}else{resultLocationString+='/0';}
+                    if(cBrand!==''){resultLocationString+='/'+cBrand;}else{if(+addressDataArray.length>9){resultLocationString+='/'+addressDataArray[8];}}
+                    if(cModel!==''){resultLocationString+='/'+cModel;}else{if(+addressDataArray.length>9){resultLocationString+='/'+addressDataArray[9];}}
                     if(cQuery!==''){
                         resultLocationString+='/'+cQuery;
                     }else{

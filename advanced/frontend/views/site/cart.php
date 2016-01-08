@@ -51,6 +51,6 @@
 
         <?= \Yii::$app->view->renderFile('@app/views/site/cart-inside.php'); ?>
 
-        <div class="panel-footer text-center"><button class="btn btn-danger btn-sm cartClear" type="submit">Очистить</button> <button class="btn btn-primary btn-sm" type="submit" onclick="location.href = '?r=site/order'">Оформить</button></div>
+        <div class="panel-footer text-center"><button class="btn btn-danger btn-sm cartClear" type="submit">Очистить</button> <button class="btn btn-primary btn-sm" type="submit" onclick="location.href = '/order'">Оформить</button></div>
     </div>
 </div>
