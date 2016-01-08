@@ -19,7 +19,7 @@ return [
                 'items' => 'site/itemslist',
                 [
                     'route' => 'site/get-items-by',
-                    'pattern' => 'items/category/<category:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<ser:[-_a-zA-Z0-9\s]+>/<page:\d+>/<sort:\d+>/<queryText:[&-_a-zA-Z0-9\s.]+>',
+                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<ser:[-_a-zA-Z0-9\s]+>/<queryText:[&-_a-zA-Z0-9\s.]+>',
                     'defaults' => [
                         'category' => '6030',
                         'brand' => null,

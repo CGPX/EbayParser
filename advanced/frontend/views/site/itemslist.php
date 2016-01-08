@@ -74,7 +74,7 @@ for ($i=0; $i<=$iScheti; $i++){
     $pagesOut .='<li class=""><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
 }
 
-if (isset($model->pageCount)){
+if ($model->pageCount>0){
     echo "
         <div class=\"row\">
             <div class=\"col-sm-12\">
