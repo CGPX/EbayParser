@@ -78,7 +78,7 @@ class EbayForm extends Model
 
     private function genMd5Hash()
     {
-        $this->queryHash = md5(strtolower($this->queryText) . implode(",", $this->queryCategory) . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort . $this->queryModel . $this->queryBrand);
+        $this->queryHash = md5(strtolower($this->queryText) . implode(",", $this->queryCategory) . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort);
     }
 
     private function getItemsFromDB()
@@ -135,19 +135,6 @@ class EbayForm extends Model
         $itemFilter->value[] = 'AuctionWithBIN';
         $itemFilter->value[] = 'FixedPrice';
         $request->itemFilter[] = $itemFilter;
-
-        if(!empty($this->queryBrand)) {
-            $aspectFilter = new Types\AspectFilter();
-            $aspectFilter->aspectName = 'Make';
-            $aspectFilter->aspectValueName[] = $this->queryBrand;
-            $request->aspectFilter[] = $aspectFilter;
-        }
-        if(!empty($this->queryModel)){
-            $aspectFilter = new Types\AspectFilter();
-            $aspectFilter->aspectName = 'Model';
-            $aspectFilter->aspectValueName[] = $this->queryModel;
-            $request->aspectFilter[] = $aspectFilter;
-        }
 
         if (isset($this->queryMinPrice)) {
             $request->itemFilter[] = new Types\ItemFilter(array(
@@ -253,10 +240,15 @@ class EbayForm extends Model
             'siteId' => Constants\SiteIds::US
         ));
         $catconfig = $this->getCategoryConfig();
+        $i = 1;
         foreach ($catconfig as $name => $cat) {
             foreach ($cat as $key => $value) {
                 $request = new TradType\GetCategoriesRequestType();
-                $request->CategorySiteID = '215';
+                if($i%2==0) {
+                    $request->CategorySiteID = '0';
+                }else{
+                    $request->CategorySiteID = '215';
+                }
                 $request->CategoryParent = array($value);
                 $request->RequesterCredentials = new TradType\CustomSecurityHeaderType();
                 $request->RequesterCredentials->eBayAuthToken = $this->config['production']['userToken'];
@@ -268,7 +260,8 @@ class EbayForm extends Model
                     'CategoryArray.Category.CategoryName'
                 );
                 $cats = $service->getCategories($request)->toArray();
-                $this->addCatsToDB($cats);
+                $this->addCatsToDB($cats, $value);
+                $i++;
             }
         }
     }
@@ -296,7 +289,7 @@ class EbayForm extends Model
         return $categorys;
     }
 
-    private function addCatsToDB($cats)
+    private function addCatsToDB($cats, $rootParent)
     {
         foreach ($cats['CategoryArray']['Category'] as $row) {
             $ebay_cat = EbayCategory::findOne([
@@ -310,6 +303,7 @@ class EbayForm extends Model
             $ebaycategory->category_parent_id = $row['CategoryParentID'][0];
             $ebaycategory->category_level = $row['CategoryLevel'];
             $ebaycategory->category_name = $row['CategoryName'];
+            $ebaycategory->category_root_parent = $rootParent;
             $ebaycategory->save();
         }
     }

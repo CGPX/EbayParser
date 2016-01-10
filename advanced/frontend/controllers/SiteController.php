@@ -102,9 +102,8 @@ class SiteController extends Controller
         }
         $text.=$queryText;
         $text = trim($text);
-        $model = new EbayForm($category, null, null, (int)$page, $sort, $text);
+        $model = new EbayForm($category, $brand, $ser, (int)$page, $sort, $text);
         $model->queryTextShow = $queryText;
-//        var_dump($category . ' brand - ' . $brand . ' model - '.$ser . ' page - ' .$page.' sort - '.$sort.' query - '.$queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,

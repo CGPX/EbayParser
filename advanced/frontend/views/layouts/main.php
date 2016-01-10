@@ -156,53 +156,88 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                 <br />
                                 <div class="row <?= $FilterForm ?>">
                                     <div class="col-lg-12">
-
                                         <form class="form-inline filter_box" role="form">
                                             <div class="form-group">
                                                 <select class="form-control input-sm filter_ts">
-                                                    <option selected="selected" value="null">Выберите тип ТС</option>
-                                                    <option value="6001">Автомобили</option>
-                                                    <option value="6024">Мотоциклы</option>
-                                                    <option value="42595">Снегоходы</option>
-                                                    <option value="6723">Квадроциклы</option>
+                                                    <option value="null">Выберите тип ТС</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 6030) { echo 'selected = "selected"';}?> value="6001">Автомобили</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 10063) { echo 'selected = "selected"';}?> value="6024">Мотоциклы</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 100448) { echo 'selected = "selected"';}?> value="42595">Снегоходы</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 43962) { echo 'selected = "selected"';}?> value="6723">Квадроциклы</option>
                                                 </select>
 
                                                 <select class="form-control input-sm filter_brands">
-                                                    <option selected="selected" value="null">Выберите марку</option>
+                                                    <option value="null">Выберите марку</option>
                                                     <?php
                                                     // автомобили
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>6001])->asArray()->all();
                                                     $modelCarArray = array();
-                                                    foreach($modelArray as $value){
-                                                        echo "<option class=\"hidden\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
+                                                    foreach($modelArray as $value) {
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                            $cssClass = '';
+                                                            $cssSelected = 'selected = "selected"';
+                                                        } else {
+                                                            $cssClass = 'hidden';
+                                                            $cssSelected = '';
+                                                        }
+                                                        echo "<option ".$cssSelected." class=\"".$cssClass."\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
                                                         $modelCarArray=array_merge($modelCarArray,\common\models\EbayCategory::find()->where(['category_parent_id'=>$value['category_id']])->asArray()->all());
                                                     }
                                                     // мотоциклы
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>6024])->asArray()->all();
                                                     foreach($modelArray as $value){
-                                                        echo "<option class=\"hidden\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                            $cssClass = '';
+                                                            $cssSelected = 'selected = "selected"';
+                                                        } else {
+                                                            $cssClass = 'hidden';
+                                                            $cssSelected = '';
+                                                        }
+                                                        echo "<option ".$cssSelected." class=\"".$cssClass."\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
                                                         $modelCarArray=array_merge($modelCarArray,\common\models\EbayCategory::find()->where(['category_parent_id'=>$value['category_id']])->asArray()->all());
                                                     }
                                                     // снегоходы
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>42595])->asArray()->all();
                                                     foreach($modelArray as $value){
-                                                        echo "<option class=\"hidden\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                            $cssClass = '';
+                                                            $cssSelected = 'selected = "selected"';
+                                                        } else {
+                                                            $cssClass = 'hidden';
+                                                            $cssSelected = '';
+                                                        }
+                                                        echo "<option ".$cssSelected." class=\"".$cssClass."\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
                                                         $modelCarArray=array_merge($modelCarArray,\common\models\EbayCategory::find()->where(['category_parent_id'=>$value['category_id']])->asArray()->all());
                                                     }
                                                     // квадроциклы
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>6723])->asArray()->all();
                                                     foreach($modelArray as $value){
-                                                        echo "<option class=\"hidden\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                            $cssClass = '';
+                                                            $cssSelected = 'selected = "selected"';
+                                                        } else {
+                                                            $cssClass = 'hidden';
+                                                            $cssSelected = '';
+                                                        }
+                                                        echo "<option ".$cssSelected." class=\"".$cssClass."\" value=\"".$value['category_id']."\" data-id=\"".$value['category_parent_id']."\">".$value['category_name']."</option>";
                                                         $modelCarArray=array_merge($modelCarArray,\common\models\EbayCategory::find()->where(['category_parent_id'=>$value['category_id']])->asArray()->all());
                                                     }
                                                     ?>
                                                 </select>
 
                                                 <select class="form-control input-sm filter_models">
-                                                    <option selected="selected" value="null">Выберите модель</option>
+                                                    <option value="null">Выберите модель</option>
                                                     <?php
-                                                    foreach ($modelCarArray as $ololosh){
-                                                        echo "<option class=\"hidden\" value=\"".$ololosh['category_id']."\" data-id=\"".$ololosh['category_parent_id']."\">".$ololosh['category_name']."</option>";
+
+                                                    foreach ($modelCarArray as $ololosh) {
+                                                        if($ololosh['category_name'] == $this->params['myMod'][0]['queryModel']) {
+                                                            $cssClass = '';
+                                                            $cssSelected = 'selected = "selected"';
+                                                        } else {
+                                                            $cssClass = 'hidden';
+                                                            $cssSelected = '';
+                                                        }
+                                                        echo "<option ".$cssSelected." class=\"".$cssClass."\" value=\"".$ololosh['category_id']."\" data-id=\"".$ololosh['category_parent_id']."\">".$ololosh['category_name']."</option>";
                                                     }
                                                     ?>
                                                 </select>
