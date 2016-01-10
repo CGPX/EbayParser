@@ -19,6 +19,7 @@ class m151224_062609_create_category_table extends Migration
             'category_parent_id' => $this->bigInteger(),
             'category_level' => $this->integer(),
             'category_name' => $this->string()->notNull(),
+            'category_root_parent' => $this->bigInteger()->notNull(),
         ], $tableOptions);
     }
 

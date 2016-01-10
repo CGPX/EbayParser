@@ -19,7 +19,7 @@ return [
                 'items' => 'site/itemslist',
                 [
                     'route' => 'site/get-items-by',
-                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<ser:[-_a-zA-Z0-9\s]+>/<queryText:[&-_a-zA-Z0-9\s.]+>',
+                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<ser:[-_a-zA-Z0-9\s]+>/<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
                     'defaults' => [
                         'category' => '6030',
                         'brand' => null,
@@ -31,7 +31,7 @@ return [
                 ],
                 [
                     'route' => 'site/get-item-by-query',
-                    'pattern' => 'items/<page:\d+>/<sort:\d+>/<queryText:[&-_a-zA-Z0-9\s.]+>',
+                    'pattern' => 'items/<page:\d+>/<sort:\d+>/<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
                     'defaults' => [
                         'queryText' => '',
                         'page' => 1,

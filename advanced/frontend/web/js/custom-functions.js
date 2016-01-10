@@ -305,7 +305,8 @@ $(function() {
     /**
      * Триггер на изменении выбора ТС
      */
-    $( ".filter_ts" ).change(function() {
+    function filterTs (abort) {
+        abort = abort || 'false';
         var tsId = $( ".filter_ts option" ).filter(':selected').attr('value');
         if (tsId=='null'){
             //alert('Вы не выбрали тип ТС');
@@ -315,19 +316,27 @@ $(function() {
                 $(this).addClass('hidden');
                 brandIdThis=$(this).data('id');
                 if (brandIdThis == tsId) {$(this).removeClass('hidden')}
-                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                if(abort == 'false') {
+                    if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                }
             });
             $('.filter_box .filter_models option').each(function(){
                 $(this).removeClass('hidden');
                 $(this).addClass('hidden');
-                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                if(abort == 'false'){
+                    if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                }
             });
         }
-    });
+    }
+    $( ".filter_ts" ).change(filterTs);
+    $(document).ready(filterTs('true'));
+
     /**
      * Триггер на изменение выбора Бренда
      */
-    $( ".filter_brands" ).change(function() {
+    function filterBs(abort) {
+        abort = abort || 'false';
         var brandId = $(".filter_brands option").filter(':selected').attr('value');
         if(brandId=='null'){
             //alert('Вы не выбрали марку ТС');
@@ -337,10 +346,14 @@ $(function() {
                 $(this).addClass('hidden');
                 modelIdThis=$(this).data('id');
                 if (modelIdThis == brandId) {$(this).removeClass('hidden')}
-                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                if(abort == 'false') {
+                    if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                }
             });
         }
-    });
+    }
+    $( ".filter_brands" ).change(filterBs);
+    $(document).ready(filterBs('true'));
 
     /**
      * Функция заполнения и перехода на необходимую страницу

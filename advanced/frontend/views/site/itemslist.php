@@ -1,15 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: bartleby
- * Date: 06.12.2015
- * Time: 22:46
- *
  * Файл отвечающий за вывод навигации по каталогу (так сказать айтем лист)
  */
 
 use common\models\EbayCategory;
-use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->title = 'BayEbay - Каталог';
