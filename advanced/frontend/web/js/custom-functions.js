@@ -17,29 +17,6 @@ $(function() {
         return false;
     }
 
-
-    /**
-     * post передача запроса на смену категории
-     * ===============================================================
-     */
-    function catChange(){
-        // забираем данные атрибута ИД
-        catId=$(this).attr('data-target');
-        catId=catId.substring(1);
-        // закидываем в инпут новые данные ИД перехода
-        //$('#ebayform-querycategory').attr('value', catId.substr(1));
-        getChange('',catId,'','','','','');
-        // жмём сабмит ;(
-        $(".catChange").removeClass("active"),
-        $(this).addClass("active");
-
-        return false;
-    }
-    // Инициализируем клик
-    // Для инициализации дописываем class="catChange"
-    $('.catChange').click(catChange);
-
-
     /**
      * Post Передача информации из корзины в форму оформления заказа
      * ===============================================================
@@ -104,29 +81,11 @@ $(function() {
     $(document).ready(cartDraw);
 
     /**
-     * Смена страницы
-     */
-    function pageChange(){
-        // забираем данные номера страницы
-        pageNum=$(this).attr('data-target');
-        // пушим номер страницы в инпут
-        //$('#ebayform-querypage').attr('value', pageNum);
-        // инициализируем переход через submit
-        //$("#ebay-form").submit();
-        getChange('','','','',pageNum,'','');
-        return false;
-    }
-    $('.pageChange').click(pageChange);
-
-    /**
      * Переход в просмотр товара
      */
     function singleChange(){
-        // забираем данные item ID
         itemId=$(this).attr('data-target');
-        // пушим этот самый ИД
         $('#ebayform-singleitemid').attr('value', itemId);
-        // переходим через submit
         $("#ebay-form").submit();
 
         return false;
@@ -251,10 +210,8 @@ $(function() {
             if (+cartData[itemId][3]>1) {
                 cartData[itemId][3] -= 1;
             } else if (+cartData[itemId][3]===1) {
-                // тут надо запустить удаление айтема
                 removeItem(itemId);
             }
-
         }
         if (!setCartData(cartData)) {
         }
@@ -275,7 +232,7 @@ $(function() {
     $('.catChange').click(accordActivation);
 
     /**
-     * Применяем фильтр ёба
+     * Применяем фильтр
      * class
      * filter_box - содержимое всех выпадающих меню
      * filter_change - активатор (клавиша) функции применения фильтра
@@ -284,16 +241,25 @@ $(function() {
      * filter_brands - select производителей
      * filter_models - select моделей
      */
-    function filterChange(){
-        if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
+    function filterChange(catId){
+        catId=catId || "";
+        if(catId!==""){
+            addCat=catId;
+        }else{
+            if($(".filter_box .filter_ts :selected").val()=='null'){addBrand=''}else{addCat=$(".filter_box .filter_ts :selected").data('id');}
+        }
+
         if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
         if($(".filter_box .filter_models :selected").val()=='null'){addModel=''}else{addModel=$(".filter_box .filter_models :selected").text();}
         if($(".filter_box .filter_sort :selected").val()=='null'){addSort=''}else{addSort=$(".filter_box .filter_sort :selected").val();}
-        getChange('','',addBrand,addModel,'',addSort,'');
+        getChange('',addCat,addBrand,addModel,'',addSort,'');
         return false;
     }
     $('.filter_change').click(filterChange);
 
+    /**
+     * Пушим запрос
+     */
     function filterQuery(){
         if($("#ebayform-querytext").val()==''){addQuery=''}else{addQuery=$("#ebayform-querytext").val();}
         getChange('','','','','','',addQuery);
@@ -303,10 +269,45 @@ $(function() {
     $('.filter_query_input').keydown(function( event ){if ( event.which == 13 ){filterQuery()}});
 
     /**
+     * Смена страницы
+     */
+    function pageChange(){
+        pageNum=$(this).attr('data-target');
+        getChange('','','','',pageNum,'','');
+        return false;
+    }
+    $('.pageChange').click(pageChange);
+
+    /**
+     * post передача запроса на смену категории
+     * ===============================================================
+     */
+    function catChange(){
+        catId=$(this).attr('data-target'); catId=catId.substring(1);
+        rootId=$(this).attr('data-root');
+        addressData=window.location.href;
+        addressDataArray=addressData.split('/');
+        if(typeof addressDataArray[5]=='undefined'){cuId='#6030';}else{
+            if(addressDataArray[5].charAt(addressDataArray[5].length-1)=='#'){cuId='#'+addressDataArray[5].slice(0,-1);}else{cuId='#'+addressDataArray[5];}
+        }
+        cuRootId=$("[data-target=#"+cuId.substring(1)+"]").data("root");
+        $(".catChange").removeClass("active"),
+            $(this).addClass("active");
+        if(+rootId!==+cuRootId){
+            getChange('',catId,'','','','','');
+        }else{
+            filterChange(catId);
+        }
+        return false;
+    }
+    // Инициализируем клик
+    // Для инициализации дописываем class="catChange"
+    $('.catChange').click(catChange);
+
+    /**
      * Триггер на изменении выбора ТС
      */
-    function filterTs (abort) {
-        abort = abort || 'false';
+    function filterTs() {
         var tsId = $( ".filter_ts option" ).filter(':selected').attr('value');
         if (tsId=='null'){
             //alert('Вы не выбрали тип ТС');
@@ -316,27 +317,22 @@ $(function() {
                 $(this).addClass('hidden');
                 brandIdThis=$(this).data('id');
                 if (brandIdThis == tsId) {$(this).removeClass('hidden')}
-                if(abort == 'false') {
-                    if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
-                }
+                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
             });
             $('.filter_box .filter_models option').each(function(){
                 $(this).removeClass('hidden');
                 $(this).addClass('hidden');
-                if(abort == 'false'){
-                    if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
-                }
+                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
             });
         }
     }
     $( ".filter_ts" ).change(filterTs);
-    $(document).ready(filterTs('true'));
+    //$(document).ready(filterTs('true'));
 
     /**
      * Триггер на изменение выбора Бренда
      */
-    function filterBs(abort) {
-        abort = abort || 'false';
+    function filterBs() {
         var brandId = $(".filter_brands option").filter(':selected').attr('value');
         if(brandId=='null'){
             //alert('Вы не выбрали марку ТС');
@@ -346,58 +342,63 @@ $(function() {
                 $(this).addClass('hidden');
                 modelIdThis=$(this).data('id');
                 if (modelIdThis == brandId) {$(this).removeClass('hidden')}
-                if(abort == 'false') {
-                    if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
-                }
+                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
             });
         }
     }
     $( ".filter_brands" ).change(filterBs);
-    $(document).ready(filterBs('true'));
+    //$(document).ready(filterBs('true'));
 
     /**
      * Функция заполнения и перехода на необходимую страницу
      *
      */
     function getChange(cAction, cCat, cBrand, cModel, cPage, cSort, cQuery){
+        cAction=cAction || ''; cCat=cCat || ''; cBrand=cBrand || ''; cModel=cModel || ''; cPage=cPage || ''; cSort=cSort || ''; cQuery=cQuery || '';
         var resultLocationString="";
         addressData=window.location.href;
         addressDataArray=addressData.split('/');
-        //if (addressDataArray[3]=='items'){}else{resultLocationString+='/items';}
             if(cAction!==''){
                 resultLocationString+='/'+cAction;
             }else{
                 resultLocationString+='/items';
-                if(cCat!==''){
-                    resultLocationString+='/category/'+cCat;
-                    if(+addressDataArray.length>9){
-                        resultLocationString+='/1';
-                        resultLocationString+='/'+addressDataArray[7];
-                        // условия смены родительской категории
-                        resultLocationString+='/'+addressDataArray[8];
-                        resultLocationString+='/'+addressDataArray[9];
-                    }
-                }else{
-                    if(addressDataArray[4]!=='category'){
-                        resultLocationString+='/category/6030';
-                    }else{
-                        resultLocationString+='/category/'+addressDataArray[5];
-                    }
-                    if(cPage!==''){resultLocationString+='/'+cPage;}else{resultLocationString+='/1';}
-                    if(cSort!==''){resultLocationString+='/'+cSort;}else{resultLocationString+='/0';}
-                    if(cBrand!==''){resultLocationString+='/'+cBrand;}else{if(+addressDataArray.length>9){resultLocationString+='/'+addressDataArray[8];}}
-                    if(cModel!==''){resultLocationString+='/'+cModel;}else{if(+addressDataArray.length>9){resultLocationString+='/'+addressDataArray[9];}}
-                    if(cQuery!==''){
-                        resultLocationString+='/'+cQuery;
-                    }else{
-                        postQueryData=$('#ebayform-querytext').attr('value');
-                        if(postQueryData!==""){
-                            resultLocationString+='/'+postQueryData;
-                        }
-                    }
+                if(+addressDataArray.length==4){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                    if(cPage!==''){resultLocationString+='/category/6030'+'/'+cPage+'/0';}
+                    if(cQuery!==''){resultLocationString+='/category/6030'+'/'+cQuery;}
+                }else if(+addressDataArray.length==6){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
+                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
+                }else if(+addressDataArray.length==7){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[6];}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/'+addressDataArray[6];}
+                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
+                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
+                }else if(+addressDataArray.length==8){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
+                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7];}
+                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+addressDataArray[7]+'/'+cQuery;}
+                }else if(+addressDataArray.length==9){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[8];}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1'+addressDataArray[7]+'/'+addressDataArray[8];}
+                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8];}
+                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+'/'+addressDataArray[7]+'/'+cQuery;}
+                }else if(+addressDataArray.length==10){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[9];}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
+                }else if(+addressDataArray.length==11){
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[10];}
+                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
+                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
+                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
                 }
             }
-
         window.location.href=resultLocationString;
         return false;
     }

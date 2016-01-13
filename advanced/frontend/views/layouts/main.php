@@ -160,10 +160,10 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                             <div class="form-group">
                                                 <select class="form-control input-sm filter_ts">
                                                     <option value="null">Выберите тип ТС</option>
-                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 6030) { echo 'selected = "selected"';}?> value="6001">Автомобили</option>
-                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 10063) { echo 'selected = "selected"';}?> value="6024">Мотоциклы</option>
-                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 100448) { echo 'selected = "selected"';}?> value="42595">Снегоходы</option>
-                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 43962) { echo 'selected = "selected"';}?> value="6723">Квадроциклы</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 6030) { echo 'selected = "selected"';}?> value="6001" data-id="6030" data-root="6030">Автомобили</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 10063) { echo 'selected = "selected"';}?> value="6024" data-id="10063" data-root="10063">Мотоциклы</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 100448) { echo 'selected = "selected"';}?> value="42595" data-id="100448" data-root="100448">Снегоходы</option>
+                                                    <option <?php if(\common\models\EbayCategory::findOne(['category_id' => $this->params['myMod'][0]['queryCategory'][0]])->category_root_parent == 43962) { echo 'selected = "selected"';}?> value="6723" data-id="43962" data-root="43962">Квадроциклы</option>
                                                 </select>
 
                                                 <select class="form-control input-sm filter_brands">
@@ -173,7 +173,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>6001])->asArray()->all();
                                                     $modelCarArray = array();
                                                     foreach($modelArray as $value) {
-                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                        if(($value['category_name'] == $this->params['myMod'][0]['queryBrand']) and ($this->params['myMod'][0]['queryCategory'][0]==6030)) {
                                                             $cssClass = '';
                                                             $cssSelected = 'selected = "selected"';
                                                         } else {
@@ -186,7 +186,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                                     // мотоциклы
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>6024])->asArray()->all();
                                                     foreach($modelArray as $value){
-                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand'] and $this->params['myMod'][0]['queryCategory'][0]==10063) {
                                                             $cssClass = '';
                                                             $cssSelected = 'selected = "selected"';
                                                         } else {
@@ -199,7 +199,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                                     // снегоходы
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>42595])->asArray()->all();
                                                     foreach($modelArray as $value){
-                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand'] and $this->params['myMod'][0]['queryCategory'][0]==100448) {
                                                             $cssClass = '';
                                                             $cssSelected = 'selected = "selected"';
                                                         } else {
@@ -212,7 +212,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                                     // квадроциклы
                                                     $modelArray=\common\models\EbayCategory::find()->where(['category_parent_id'=>6723])->asArray()->all();
                                                     foreach($modelArray as $value){
-                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand']) {
+                                                        if($value['category_name'] == $this->params['myMod'][0]['queryBrand'] and $this->params['myMod'][0]['queryCategory'][0]==43962) {
                                                             $cssClass = '';
                                                             $cssSelected = 'selected = "selected"';
                                                         } else {
@@ -242,9 +242,8 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                                     ?>
                                                 </select>
                                                 <select class="form-control input-sm filter_sort">
-                                                    <option selected="selected" value="null">Сортировать по</option>
-                                                    <option value="0">Возрастанию</option>
-                                                    <option value="1">Убыванию</option>
+                                                    <option <?php if($this->params['myMod'][0]['querySort']==0){echo"selected=\"selected\"";}?> value="0">Сортировать по возрастанию</option>
+                                                    <option <?php if($this->params['myMod'][0]['querySort']==1){echo"selected=\"selected\"";}?> value="1">Сортировать по убыванию</option>
                                                 </select>
                                             </div>
                                             <a class="btn btn-default btn-success filter_change">Применить</a>

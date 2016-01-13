@@ -14,17 +14,17 @@ function catalogArray($rootParentId){
         for($i=0;$i<$value['category_level'];$i++){$blank.="&nbsp";}
         $lastStandCheck=\common\models\EbayCategory::find()->where(['category_parent_id'=>$value['category_id']])->asArray()->all();
         if(isset($lastStandCheck[0]['category_id'])){
-            $textToEcho.="<a href=\"#\" class=\"list-group-item small\" data-toggle=\"collapse\" data-target=\"#".$value['category_id']."\" data-parent=\"#".$value['category_parent_id']."\">". $blank . $value['category_name']." <span class=\"glyphicon pull-right glyphicon-list\"></span ></a>\n";
+            $textToEcho.="<a href=\"#\" class=\"list-group-item small\" data-toggle=\"collapse\" data-target=\"#".$value['category_id']."\" data-parent=\"#".$value['category_parent_id']."\" data-root=\"".$value['category_root_parent']."\">". $blank . $value['category_name']." <span class=\"glyphicon pull-right glyphicon-list\"></span ></a>\n";
             $textToEcho.="<div id=\"".$value['category_id']."\" class=\"sublinks collapse\" > \n";
             catalogArray($value['category_id']);
             $textToEcho.="</div>";
         }else{
-            $textToEcho.="<a href=\"#\" class=\"list-group-item small catChange\" data-toggle=\"collapse\" data-target=\"#".$value['category_id']."\" data-parent=\"#".$value['category_parent_id']."\">". $blank . $value['category_name']." <span class=\"glyphicon pull-right glyphicon-circle-arrow-right\"></span ></a>\n";
+            $textToEcho.="<a href=\"#\" class=\"list-group-item small catChange\" data-toggle=\"collapse\" data-target=\"#".$value['category_id']."\" data-parent=\"#".$value['category_parent_id']."\" data-root=\"".$value['category_root_parent']."\">". $blank . $value['category_name']." <span class=\"glyphicon pull-right glyphicon-circle-arrow-right\"></span ></a>\n";
         }
-
     }
     return $textToEcho;
 }
+yii::$app->getCache()->delete('cats');
 $cacheCats = yii::$app->getCache()->get('cats');
 if($cacheCats == false) {
     $textToShow = catalogArray('6028');
