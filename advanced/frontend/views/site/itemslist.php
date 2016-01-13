@@ -65,7 +65,7 @@ for ($i=0; $i<=$iScheti; $i++){
     $pageOlolo = $pageStart + $i;
     if ((int)$model->queryPage == $pageOlolo) {$pageActive="active";} else {$pageActive="";}
     //$pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
-    $pagesOut .='<li class=""><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
+    $pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
 }
 
 if ($model->pageCount>0){

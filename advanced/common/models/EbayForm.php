@@ -83,7 +83,7 @@ class EbayForm extends Model
 
     private function getItemsFromDB()
     {
-        $h = Hash::findOne(['hash' => $this->queryHash, 'page' => $this->queryPage]);
+        $h = Hash::findOne(['hash' => $this->queryHash]);
         if ($h == false) {
             return false;
         }
