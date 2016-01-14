@@ -30,6 +30,17 @@ return [
                     ],
                 ],
                 [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'page' => 1,
+                        'sort' => 0,
+                        'brand' => '',
+                        'queryText' => '',
+                    ],
+                ],
+                [
                     'route' => 'site/get-item-by-query',
                     'pattern' => 'items/<page:\d+>/<sort:\d+>/<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
                     'defaults' => [

@@ -3,7 +3,7 @@
  */
 $(function() {
     /**
-     * Объявление переменных
+     * Объявление глобальных переменных
      */
 
     /**
@@ -79,18 +79,6 @@ $(function() {
     }
     // рисуем корзину при загрузке страницы
     $(document).ready(cartDraw);
-
-    /**
-     * Переход в просмотр товара
-     */
-    function singleChange(){
-        itemId=$(this).attr('data-target');
-        $('#ebayform-singleitemid').attr('value', itemId);
-        $("#ebay-form").submit();
-
-        return false;
-    }
-    $('.singleChange').click(singleChange);
 
     /**
      * Всплывающие сообщения в корзине
@@ -220,6 +208,18 @@ $(function() {
     $(document).on("click", ".itemDec", itemDec).on("click", ".itemDec", cartDraw);
 
     /**
+     * Переход в просмотр товара
+     */
+    function singleChange(){
+        itemId=$(this).attr('data-target');
+        $('#ebayform-singleitemid').attr('value', itemId);
+        $("#ebay-form").submit();
+
+        return false;
+    }
+    $('.singleChange').click(singleChange);
+
+    /**
      * Работа аккордеона каталога
      * одновременно с работой аккордеона должна отработать и окраска
      * <button class='catC2hange' onclick="$('#6030').collapse('toggle');">Test</button>
@@ -241,21 +241,20 @@ $(function() {
      * filter_brands - select производителей
      * filter_models - select моделей
      */
-        function filterChange(catId){
-        var catId1;
-        if(typeof catId == 'object') {
-            catId1 = 0;
-        }
-        if(catId1 !== 0){
-            addCat = catId;
+        function filterChange(){
+        addressData=window.location.href;
+        addressDataArray=addressData.split('/');
+        cuRootId=$("[data-target=#"+addressDataArray[5]+"]").data("root");
+        setRootId=$(".filter_box .filter_ts :selected").data("root");
+        if(addressDataArray[4]=='category' && +cuRootId!==+setRootId){
+            getChange('changeRoot', '', setRootId, '', '', '', '', '');
         }else{
-                if($(".filter_box .filter_ts :selected").val()=='null'){addBrand=''}else{addCat=$(".filter_box .filter_ts :selected").data('id');}
-            }
-
-        if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
-        if($(".filter_box .filter_models :selected").val()=='null'){addModel=''}else{addModel=$(".filter_box .filter_models :selected").text();}
-        if($(".filter_box .filter_sort :selected").val()=='null'){addSort=''}else{addSort=$(".filter_box .filter_sort :selected").val();}
-        getChange('',addCat,addBrand,addModel,'',addSort,'');
+            if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
+            if($(".filter_box .filter_models :selected").val()=='null'){addModel=''}else{addModel=$(".filter_box .filter_models :selected").text();}
+            if($(".filter_box .filter_sort :selected").val()=='null'){addSort=''}else{addSort=$(".filter_box .filter_sort :selected").val();}
+            if($(".filter_box .filter_ts :selected").val()=='null'){addBrand=''}else{addCat=$(".filter_box .filter_ts :selected").data('id');}
+            getChange('','',addCat,addBrand,addModel,'',addSort,'');
+        }
         return false;
     }
     $('.filter_change').click(filterChange);
@@ -265,7 +264,7 @@ $(function() {
      */
     function filterQuery(){
         if($("#ebayform-querytext").val()==''){addQuery=''}else{addQuery=$("#ebayform-querytext").val();}
-        getChange('','','','','','',addQuery);
+        getChange('','','','','','','',addQuery);
         return false;
     }
     $('.filter_query').click(filterQuery);
@@ -276,7 +275,7 @@ $(function() {
      */
     function pageChange(){
         pageNum=$(this).attr('data-target');
-        getChange('','','','',pageNum,'','');
+        getChange('','','','','',pageNum,'','');
         return false;
     }
     $('.pageChange').click(pageChange);
@@ -297,9 +296,9 @@ $(function() {
         $(".catChange").removeClass("active"),
             $(this).addClass("active");
         if(+rootId!==+cuRootId){
-            getChange('',catId,'','','','','');
+            getChange('changeRoot','',catId,'','','','','');
         }else{
-            filterChange(catId);
+            getChange('','',catId,'','','','','');
         }
         return false;
     }
@@ -310,8 +309,9 @@ $(function() {
     /**
      * Триггер на изменении выбора ТС
      */
-    function filterTs() {
+    function filterTs(onload) {
         var tsId = $( ".filter_ts option" ).filter(':selected').attr('value');
+        //if (onload=="onload"){alert("OLOLoSH")};
         if (tsId=='null'){
             //alert('Вы не выбрали тип ТС');
         }else{
@@ -320,22 +320,22 @@ $(function() {
                 $(this).addClass('hidden');
                 brandIdThis=$(this).data('id');
                 if (brandIdThis == tsId) {$(this).removeClass('hidden')}
-                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                if (onload!=="onload"){if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}};
             });
             $('.filter_box .filter_models option').each(function(){
                 $(this).removeClass('hidden');
                 $(this).addClass('hidden');
-                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                if (onload!=="onload"){if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}};
             });
         }
     }
     $( ".filter_ts" ).change(filterTs);
-    //$(document).ready(filterTs('true'));
+    $(document).ready(function(){filterTs('onload')});
 
     /**
      * Триггер на изменение выбора Бренда
      */
-    function filterBs() {
+    function filterBs(onload) {
         var brandId = $(".filter_brands option").filter(':selected').attr('value');
         if(brandId=='null'){
             //alert('Вы не выбрали марку ТС');
@@ -345,19 +345,19 @@ $(function() {
                 $(this).addClass('hidden');
                 modelIdThis=$(this).data('id');
                 if (modelIdThis == brandId) {$(this).removeClass('hidden')}
-                if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}
+                if (onload!=="onload"){if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}};
             });
         }
     }
     $( ".filter_brands" ).change(filterBs);
-    //$(document).ready(filterBs('true'));
+    $(document).ready(function(){filterBs('onload')});
 
     /**
      * Функция заполнения и перехода на необходимую страницу
-     *
+     * cAct=changeRoot - смена корневой директории, по сему не сохраняем фильтр
      */
-    function getChange(cAction, cCat, cBrand, cModel, cPage, cSort, cQuery){
-        cAction=cAction || ''; cCat=cCat || ''; cBrand=cBrand || ''; cModel=cModel || ''; cPage=cPage || ''; cSort=cSort || ''; cQuery=cQuery || '';
+    function getChange(cAct, cAction, cCat, cBrand, cModel, cPage, cSort, cQuery){
+        cAct=cAct || ''; cAction=cAction || ''; cCat=cCat || ''; cBrand=cBrand || ''; cModel=cModel || ''; cPage=cPage || ''; cSort=cSort || ''; cQuery=cQuery || '';
         var resultLocationString="";
         addressData=window.location.href;
         addressDataArray=addressData.split('/');
@@ -365,44 +365,45 @@ $(function() {
                 resultLocationString+='/'+cAction;
             }else{
                 resultLocationString+='/items';
-                if(+addressDataArray.length==4){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;} // не прописывать ни бренда ни модели, если значения пустые
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                    if(cPage!==''){resultLocationString+='/category/6030'+'/'+cPage+'/0';} // по сути этот кусок кода не сработает, потому что перейти от пустого к странице нельзя.так как не задана категория
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/6030'+'/'+cQuery;}
-                }else if(+addressDataArray.length==6){
-                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
-                }else if(+addressDataArray.length==7){
-                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[6];}
-                    // сохранять ли запрос при смене категории?
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/'+addressDataArray[6];}
-                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0/'+addressDataArray[6];}
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
-                }else if(+addressDataArray.length==8){
-                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
-                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7];}
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
-                }else if(+addressDataArray.length==9){
-                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[8];}
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8];}
-                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8];}
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
-                }else if(+addressDataArray.length==10){
-                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                    // меняется категория, но бренд и модель остаются. стоит ли? или нужно сделать выборку на соотвествтвие корня?
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
-                }else if(+addressDataArray.length==11){
-                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[10];}
-                    // опять та же проблема со сменой категории не подходящую по root
-                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
-                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
-                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
+                if(cAct=='changeRoot'){
+                    resultLocationString+='/category/'+cCat;
+                }else{
+                    if(+addressDataArray.length==4){
+                        if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;} // не прописывать ни бренда ни модели, если значения пустые
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                        if(cPage!==''){resultLocationString+='/category/6030'+'/'+cPage+'/0';} // по сути этот кусок кода не сработает, потому что перейти от пустого к странице нельзя.так как не задана категория
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/6030'+'/'+cQuery;}
+                    }else if(+addressDataArray.length==6){
+                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
+                    }else if(+addressDataArray.length==7){
+                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[6];}
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0/'+addressDataArray[6];}
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
+                    }else if(+addressDataArray.length==8){
+                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
+                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7];}
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
+                    }else if(+addressDataArray.length==9){
+                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[8];}
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
+                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8];}
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
+                    }else if(+addressDataArray.length==10){
+                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
+                    }else if(+addressDataArray.length==11){
+                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[10];}
+                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
+                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
+                    }
                 }
             }
         window.location.href=resultLocationString;
