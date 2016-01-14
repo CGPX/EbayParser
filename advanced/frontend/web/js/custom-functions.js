@@ -241,13 +241,16 @@ $(function() {
      * filter_brands - select производителей
      * filter_models - select моделей
      */
-    function filterChange(catId){
-        catId=catId || "";
-        if(catId!==""){
-            addCat=catId;
-        }else{
-            if($(".filter_box .filter_ts :selected").val()=='null'){addBrand=''}else{addCat=$(".filter_box .filter_ts :selected").data('id');}
+        function filterChange(catId){
+        var catId1;
+        if(typeof catId == 'object') {
+            catId1 = 0;
         }
+        if(catId1 !== 0){
+            addCat = catId;
+        }else{
+                if($(".filter_box .filter_ts :selected").val()=='null'){addBrand=''}else{addCat=$(".filter_box .filter_ts :selected").data('id');}
+            }
 
         if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
         if($(".filter_box .filter_models :selected").val()=='null'){addModel=''}else{addModel=$(".filter_box .filter_models :selected").text();}
@@ -363,40 +366,43 @@ $(function() {
             }else{
                 resultLocationString+='/items';
                 if(+addressDataArray.length==4){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                    if(cPage!==''){resultLocationString+='/category/6030'+'/'+cPage+'/0';}
-                    if(cQuery!==''){resultLocationString+='/category/6030'+'/'+cQuery;}
+                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;} // не прописывать ни бренда ни модели, если значения пустые
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                    if(cPage!==''){resultLocationString+='/category/6030'+'/'+cPage+'/0';} // по сути этот кусок кода не сработает, потому что перейти от пустого к странице нельзя.так как не задана категория
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/6030'+'/'+cQuery;}
                 }else if(+addressDataArray.length==6){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
-                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
+                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
+                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
                 }else if(+addressDataArray.length==7){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[6];}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/'+addressDataArray[6];}
-                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
-                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
+                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[6];}
+                    // сохранять ли запрос при смене категории?
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/'+addressDataArray[6];}
+                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0/'+addressDataArray[6];}
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
                 }else if(+addressDataArray.length==8){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
-                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7];}
-                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+addressDataArray[7]+'/'+cQuery;}
+                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
+                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7];}
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
                 }else if(+addressDataArray.length==9){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[8];}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1'+addressDataArray[7]+'/'+addressDataArray[8];}
-                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8];}
-                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+'/'+addressDataArray[7]+'/'+cQuery;}
+                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[8];}
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8];}
+                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8];}
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
                 }else if(+addressDataArray.length==10){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[9];}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
+                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
+                    // меняется категория, но бренд и модель остаются. стоит ли? или нужно сделать выборку на соотвествтвие корня?
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
                 }else if(+addressDataArray.length==11){
-                    if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[10];}
-                    if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
-                    if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
-                    if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1'+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
+                    /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[10];}
+                    // опять та же проблема со сменой категории не подходящую по root
+                    /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
+                    /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
+                    /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
                 }
             }
         window.location.href=resultLocationString;
