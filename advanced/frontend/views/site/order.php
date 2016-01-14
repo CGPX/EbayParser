@@ -19,9 +19,9 @@ $this->title = 'Оформление заявки';
                     <div class="panel panel-default">
                         <div id="collapse1" class="panel-collapse collapse in">
                             <?php $form = ActiveForm::begin(['id' => 'order-form']); ?>
-                            <?= $form->field($model, 'name') ?>
-                            <?= $form->field($model, 'email') ?>
-                            <?= $form->field($model, 'phone') ?>
+                            <?= $form->field($model, 'name')->label('ФИО') ?>
+                            <?= $form->field($model, 'email')->label('Электронная почта') ?>
+                            <?= $form->field($model, 'phone')->label('Телефон') ?>
                             <textarea class="form-control OrderForm-itemslist" rows="3" placeholder="Перечень товаров" name="OrderForm[itemslist]" style="display:none;"></textarea>
 
                             <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
