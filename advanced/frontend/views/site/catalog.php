@@ -24,7 +24,6 @@ function catalogArray($rootParentId){
     }
     return $textToEcho;
 }
-yii::$app->getCache()->delete('cats');
 $cacheCats = yii::$app->getCache()->get('cats');
 if($cacheCats == false) {
     $textToShow = catalogArray('6028');
