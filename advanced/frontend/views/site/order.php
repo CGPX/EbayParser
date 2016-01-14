@@ -18,31 +18,19 @@ $this->title = 'Оформление заявки';
                 <div class="panel-group">
                     <div class="panel panel-default">
                         <div id="collapse1" class="panel-collapse collapse in">
+                            <?php $form = ActiveForm::begin(['id' => 'order-form']); ?>
+                            <?= $form->field($model, 'name') ?>
+                            <?= $form->field($model, 'email') ?>
+                            <?= $form->field($model, 'phone') ?>
+                            <textarea class="form-control OrderForm-itemslist" rows="3" placeholder="Перечень товаров" name="OrderForm[itemslist]" style="display:none;"></textarea>
 
-                            <!-- Форма корзины START -->
-                            <table class="table table-hover">
-                                <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
-                                <tr><td><input type="text" class="form-control" id="exampleInputEmail1" placeholder="ФИО" name="OrderForm[name]"></td></tr>
-                                <tr><td><input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="OrderForm[email]"></td></tr>
-                                <tr><td><input type="phone" class="form-control" id="exampleInputEmail1" placeholder="Телефон" name="OrderForm[phone]"></td></tr>
-                                <tr><td><textarea class="form-control OrderForm-itemslist" rows="3" placeholder="Перечень товаров" name="OrderForm[itemslist]" style="display:none;"></textarea></p></td></tr>
-                                <tr><td>
-                                        <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
-                                            'template' => '<div class="row"><div class="col-lg-6">{image}</div><div class="col-lg-6">{input}</div></div>',
-                                        ]) ?>
-                                    </td></tr>
-                                <tr><td>
-                                        <div class="form-group text-center">
-                                            <?= Html::submitButton('Оформить заявку', ['class' => 'btn btn-success', 'name' => 'contact-button']) ?>
-                                        </div>
-                                    </td></tr>
-                                <?php ActiveForm::end(); ?>
-                            </table>
-
-                            <!-- Форма корзины END -->
-
-
-
+                            <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
+                                'template' => '<div class="row"><div class="col-lg-6">{image}</div><div class="col-lg-6">{input}</div></div>',
+                            ]) ?>
+                            <div class="form-group text-center">
+                                <?= Html::submitButton('Оформить заявку', ['class' => 'btn btn-success', 'name' => 'contact-button']) ?>
+                            </div>
+                            <?php ActiveForm::end(); ?>
                         </div>
                     </div>
                 </div>

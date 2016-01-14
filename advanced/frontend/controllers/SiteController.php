@@ -92,7 +92,7 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionGetItemsBy($category = null, $brand, $ser, $page, $sort, $queryText) {
+    public function actionGetItemsBy($category = null, $brand, $ser, $page, $sort, $queryText = " ") {
         $text ='';
         if(!empty($brand)){
             $text.=$brand.' ';

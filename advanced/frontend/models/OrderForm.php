@@ -27,8 +27,8 @@ class OrderForm extends Model {
         return [
             [['name', 'phone', 'itemslist'], 'required'],
             [['email'], 'default'],
-            // email has to be a valid email address
             ['email', 'email'],
+            // email has to be a valid email address
             // verifyCode needs to be entered correctly
             ['verifyCode', 'captcha'],
         ];
@@ -44,6 +44,11 @@ class OrderForm extends Model {
     public function sendEmail($email) {
         $text = '';
         $cart = json_decode($this->itemslist);
+        $mailArr = [];
+        $mailArr[] = Yii::$app->params['adminEmail'];
+        if(!empty($this->email)) {
+            $mailArr[] = $this->email;
+        }
         if(count($cart) > 0) {
             foreach ($cart as $item) {
                 $ebayItem = Item::findOne(['ebay_item_id' => $item[0]]);
@@ -56,7 +61,7 @@ class OrderForm extends Model {
                 'phone' => $this->phone,
                 'text' => $text,
             ])
-                ->setTo([Yii::$app->params['adminEmail'], $this->email])
+                ->setTo($mailArr)
                 ->setFrom(Yii::$app->params['supportEmail'])
                 ->setSubject($this->subject)
                 ->send();
