@@ -10,6 +10,7 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'defaultRoute' => 'site/itemslist',
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'urlManager' => [

@@ -285,7 +285,8 @@ $(function() {
      * ===============================================================
      */
     function catChange(){
-        catId=$(this).attr('data-target'); catId=catId.substring(1);
+        catId=$(this).attr('data-target');
+        catId=catId.substring(1);
         rootId=$(this).attr('data-root');
         addressData=window.location.href;
         addressDataArray=addressData.split('/');

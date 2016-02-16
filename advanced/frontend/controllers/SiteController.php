@@ -89,6 +89,7 @@ class SiteController extends Controller
         $model->getCategories();
         return $this->render('itemslist', [
             'result' => false,
+            'model' => false,
         ]);
     }
 
