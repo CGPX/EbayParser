@@ -20,24 +20,52 @@ return [
                 'items' => 'site/itemslist',
                 [
                     'route' => 'site/get-items-by',
-                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<ser:[-_a-zA-Z0-9\s]+>/<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
+                    'pattern' => 'items/category=<category:\d+>&page=<page:\d+>&sort=<sort:\d+>&text=<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
                     'defaults' => [
                         'category' => '6030',
-                        'brand' => null,
-                        'ser' => null,
                         'page' => 1,
                         'sort' => 0,
-                        'queryText' => '',
                     ],
                 ],
                 [
                     'route' => 'site/get-items-by',
-                    'pattern' => 'items/category/<category:\d+>/<page:\d+>/<sort:\d+>/<brand:[-_a-zA-Z0-9\s]+>/<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
+                    'pattern' => 'items/category=<category:\d+>&page=<page:\d+>&sort=<sort:\d+>',
                     'defaults' => [
                         'category' => '6030',
                         'page' => 1,
                         'sort' => 0,
-                        'brand' => '',
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'items/category=<category:\d+>&page=<page:\d+>&sort=<sort:\d+>&brand=<brand:[-_a-zA-Z0-9\s]+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'page' => 1,
+                        'sort' => 0,
+                        'brand' => null,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'items/category=<category:\d+>&page=<page:\d+>&sort=<sort:\d+>&brand=<brand:[-_a-zA-Z0-9\s]+>&model=<ser:[-_a-zA-Z0-9\s]+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'page' => 1,
+                        'sort' => 0,
+                        'brand' => null,
+                        'ser' => null,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'items/category=<category:\d+>&page=<page:\d+>&sort=<sort:\d+>&brand=<brand:[-_a-zA-Z0-9\s]+>&model=<ser:[-_a-zA-Z0-9\s]+>&text=<queryText:[&-_a-zA-Zа-яА-Я0-9\s.]+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'page' => 1,
+                        'sort' => 0,
+                        'brand' => null,
+                        'ser' => null,
                         'queryText' => '',
                     ],
                 ],

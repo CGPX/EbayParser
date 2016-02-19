@@ -23,6 +23,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/custom-functions.js',
+        'js/filter_control.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

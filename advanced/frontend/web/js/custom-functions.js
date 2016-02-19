@@ -241,71 +241,27 @@ $(function() {
      * filter_brands - select производителей
      * filter_models - select моделей
      */
-        function filterChange(){
-        addressData=window.location.href;
-        addressDataArray=addressData.split('/');
-        cuRootId=$("[data-target=#"+addressDataArray[5]+"]").data("root");
-        setRootId=$(".filter_box .filter_ts :selected").data("root");
-        if(addressDataArray[4]=='category' && +cuRootId!==+setRootId){
-            getChange('changeRoot', '', setRootId, '', '', '', '', '');
-        }else{
-            if($(".filter_box .filter_brands :selected").val()=='null'){addBrand=''}else{addBrand=$(".filter_box .filter_brands :selected").text();}
-            if($(".filter_box .filter_models :selected").val()=='null'){addModel=''}else{addModel=$(".filter_box .filter_models :selected").text();}
-            if($(".filter_box .filter_sort :selected").val()=='null'){addSort=''}else{addSort=$(".filter_box .filter_sort :selected").val();}
-            if($(".filter_box .filter_ts :selected").val()=='null'){addBrand=''}else{addCat=$(".filter_box .filter_ts :selected").data('id');}
-            getChange('','',addCat,addBrand,addModel,'',addSort,'');
-        }
-        return false;
-    }
-    $('.filter_change').click(filterChange);
+
+    $('.filter_change').click(FilterControl.filterAction);
 
     /**
      * Пушим запрос
      */
-    function filterQuery(){
-        if($("#ebayform-querytext").val()==''){addQuery=''}else{addQuery=$("#ebayform-querytext").val();}
-        getChange('','','','','','','',addQuery);
-        return false;
-    }
-    $('.filter_query').click(filterQuery);
-    $('.filter_query_input').keydown(function( event ){if ( event.which == 13 ){filterQuery()}});
+
+    $('.filter_query').click(FilterControl.queryTextAction);
+    $('.filter_query_input').keydown(function( event ){if ( event.which == 13 ){FilterControl.queryTextAction()}});
 
     /**
      * Смена страницы
      */
-    function pageChange(){
-        pageNum=$(this).attr('data-target');
-        getChange('','','','','',pageNum,'','');
-        return false;
-    }
-    $('.pageChange').click(pageChange);
+
+    $('.pageChange').click(FilterControl.pageAction);
 
     /**
      * post передача запроса на смену категории
      * ===============================================================
      */
-    function catChange(){
-        catId=$(this).attr('data-target');
-        catId=catId.substring(1);
-        rootId=$(this).attr('data-root');
-        addressData=window.location.href;
-        addressDataArray=addressData.split('/');
-        if(typeof addressDataArray[5]=='undefined'){cuId='#6030';}else{
-            if(addressDataArray[5].charAt(addressDataArray[5].length-1)=='#'){cuId='#'+addressDataArray[5].slice(0,-1);}else{cuId='#'+addressDataArray[5];}
-        }
-        cuRootId=$("[data-target=#"+cuId.substring(1)+"]").data("root");
-        $(".catChange").removeClass("active"),
-            $(this).addClass("active");
-        if(+rootId!==+cuRootId){
-            getChange('changeRoot','',catId,'','','','','');
-        }else{
-            getChange('','',catId,'','','','','');
-        }
-        return false;
-    }
-    // Инициализируем клик
-    // Для инициализации дописываем class="catChange"
-    $('.catChange').click(catChange);
+    $('.catChange').click(FilterControl.categoryAction);
 
     /**
      * Триггер на изменении выбора ТС
@@ -317,16 +273,32 @@ $(function() {
             //alert('Вы не выбрали тип ТС');
         }else{
             $('.filter_box .filter_brands option').each(function(){
-                $(this).removeClass('hidden');
-                $(this).addClass('hidden');
+                //$(this).removeClass('hidden');
+                //$(this).addClass('hidden');
                 brandIdThis=$(this).data('id');
-                if (brandIdThis == tsId) {$(this).removeClass('hidden')}
-                if (onload!=="onload"){if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}};
+                if (brandIdThis == tsId) {
+                    $(this).removeClass('hidden');
+                }
+                if (onload!=="onload") {
+                    if ($(this).attr('value')=='null')
+                    {
+                        $(this).removeClass('hidden').attr("selected", "selected");
+                    } else {
+                        this.selected=false;
+                    }
+                };
             });
-            $('.filter_box .filter_models option').each(function(){
+            $('.filter_box .filter_models option').each(function() {
                 $(this).removeClass('hidden');
                 $(this).addClass('hidden');
-                if (onload!=="onload"){if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}};
+                if (onload!=="onload") {
+                    if ($(this).attr('value')=='null')
+                    {
+                        $(this).removeClass('hidden').attr("selected", "selected");
+                    }else{
+                        this.selected=false;
+                    }
+                };
             });
         }
     }
@@ -341,75 +313,24 @@ $(function() {
         if(brandId=='null'){
             //alert('Вы не выбрали марку ТС');
         }else{
-            $('.filter_box .filter_models option').each(function(){
+            $('.filter_box .filter_models option').each(function()
+            {
                 $(this).removeClass('hidden');
                 $(this).addClass('hidden');
                 modelIdThis=$(this).data('id');
-                if (modelIdThis == brandId) {$(this).removeClass('hidden')}
-                if (onload!=="onload"){if ($(this).attr('value')=='null'){$(this).removeClass('hidden').attr("selected", "selected")}else{this.selected=false;}};
+                if (modelIdThis == brandId) {
+                    $(this).removeClass('hidden')
+                }
+                if (onload!=="onload") {
+                    if ($(this).attr('value')=='null') {
+                        $(this).removeClass('hidden').attr("selected", "selected")
+                    }else {
+                        this.selected=false;
+                    }
+                };
             });
         }
     }
     $( ".filter_brands" ).change(filterBs);
     $(document).ready(function(){filterBs('onload')});
-
-    /**
-     * Функция заполнения и перехода на необходимую страницу
-     * cAct=changeRoot - смена корневой директории, по сему не сохраняем фильтр
-     */
-    function getChange(cAct, cAction, cCat, cBrand, cModel, cPage, cSort, cQuery){
-        cAct=cAct || ''; cAction=cAction || ''; cCat=cCat || ''; cBrand=cBrand || ''; cModel=cModel || ''; cPage=cPage || ''; cSort=cSort || ''; cQuery=cQuery || '';
-        var resultLocationString="";
-        addressData=window.location.href;
-        addressDataArray=addressData.split('/');
-            if(cAction!==''){
-                resultLocationString+='/'+cAction;
-            }else{
-                resultLocationString+='/items';
-                if(cAct=='changeRoot'){
-                    resultLocationString+='/category/'+cCat;
-                }else{
-                    if(+addressDataArray.length==4){
-                        if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;} // не прописывать ни бренда ни модели, если значения пустые
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                        if(cPage!==''){resultLocationString+='/category/6030'+'/'+cPage+'/0';} // по сути этот кусок кода не сработает, потому что перейти от пустого к странице нельзя.так как не задана категория
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/6030'+'/'+cQuery;}
-                    }else if(+addressDataArray.length==6){
-                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0';}
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
-                    }else if(+addressDataArray.length==7){
-                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[6];}
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat;}
-                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/0/'+addressDataArray[6];}
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cQuery;}
-                    }else if(+addressDataArray.length==8){
-                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
-                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7];}
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
-                    }else if(+addressDataArray.length==9){
-                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[8];}
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7];}
-                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8];}
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+cQuery;}
-                    }else if(+addressDataArray.length==10){
-                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel;}
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
-                    }else if(+addressDataArray.length==11){
-                        /*CHECK*/if(cCat!=='' && cBrand!==''){resultLocationString+='/category/'+cCat+'/1/'+cSort+'/'+cBrand+'/'+cModel+'/'+addressDataArray[10];}
-                        /*CHECK*/if(cCat!=='' && cBrand==''){resultLocationString+='/category/'+cCat+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9];}
-                        /*CHECK*/if(cPage!==''){resultLocationString+='/category/'+addressDataArray[5]+'/'+cPage+'/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+addressDataArray[10];}
-                        /*CHECK*/if(cQuery!==''){resultLocationString+='/category/'+addressDataArray[5]+'/1/'+addressDataArray[7]+'/'+addressDataArray[8]+'/'+addressDataArray[9]+'/'+cQuery;}
-                    }
-                }
-            }
-        window.location.href=resultLocationString;
-        return false;
-    }
-    $('.getChange').click(getChange);
-
 });
