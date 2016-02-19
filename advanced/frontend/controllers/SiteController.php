@@ -89,10 +89,11 @@ class SiteController extends Controller
         $model->getCategories();
         return $this->render('itemslist', [
             'result' => false,
+            'model' => false,
         ]);
     }
 
-    public function actionGetItemsBy($category = null, $brand, $ser, $page, $sort, $queryText = " ") {
+    public function actionGetItemsBy($category = null, $brand = null, $ser = null, $page, $sort, $queryText = " ") {
         $text ='';
         if(!empty($brand)){
             $text.=$brand.' ';

@@ -203,7 +203,9 @@ class EbayForm extends Model
             $item->title = $itemEbay['title'];
             $item->categoryId = $itemEbay['primaryCategory']['categoryId'];
             $item->categoryName = $itemEbay['primaryCategory']['categoryName'];
-            $item->galleryURL = $itemEbay['galleryURL'];
+            if (isset($itemEbay['galleryURL'])) {
+                $item->galleryURL = $itemEbay['galleryURL'];
+            }
             $item->viewItemURL = $itemEbay['viewItemURL'];
             $item->sellingState = $itemEbay['sellingStatus']['sellingState'];
             $item->timeLeft = $itemEbay['sellingStatus']['timeLeft'];
