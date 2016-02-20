@@ -179,7 +179,8 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                                     $modelCarArray = array();
                                                     foreach($modelArray as $value) {
 //                                                        if( isset($this->params['myMod'])) {
-                                                            if (($value['category_name'] == $this->params['myMod'][0]['queryBrand']) and ($this->params['myMod'][0]['queryCategory'][0] == 6030)) {
+                                                            //if (($value['category_name'] == $this->params['myMod'][0]['queryBrand']) and ($this->params['myMod'][0]['queryCategory'][0] == 6030)) {
+                                                            if (($value['category_name'] == $this->params['myMod'][0]['queryBrand'])) {
                                                                 $cssClass = '';
                                                                 $cssSelected = 'selected = "selected"';
                                                             } else {
