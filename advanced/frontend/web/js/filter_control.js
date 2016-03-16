@@ -12,12 +12,12 @@ var FilterControl = {
 
     getParamsFromHref: function() {
         addressData     = window.location.href;
-        this.category   = this.getValueFromArray(addressData.match(/category=([0-9]*)/i));
-        this.page       = this.getValueFromArray(addressData.match(/page=([0-9]*)/i));
-        this.sort       = this.getValueFromArray(addressData.match(/sort=([0-9])/i));
-        this.brand      = this.getValueFromArray(addressData.match(/brand=([-_a-zA-Z0-9\s]+)/i));
-        this.model      = this.getValueFromArray(addressData.match(/model=([-_a-zA-Z0-9\s]+)/i));
-        this.text       = this.getValueFromArray(addressData.match(/text=([%&-_a-zA-Zа-яА-Я0-9\s.]+)/i));
+        this.category   = this.getValueFromLS(localStorage.getItem('category'));
+        this.page       = this.getValueFromLS(localStorage.getItem('page'));
+        this.sort       = this.getValueFromLS(localStorage.getItem('sort'));
+        this.brand      = this.getValueFromLS(localStorage.getItem('brand'));
+        this.model      = this.getValueFromLS(localStorage.getItem('model'));
+        this.text       = this.getValueFromLS(localStorage.getItem('text'));
         if(this.category === '') {
             this.category = 6030;
         }
@@ -25,19 +25,20 @@ var FilterControl = {
             this.page = 1;
         }
         if(this.sort === '') {
-            this.sort = 0;
+            this.sort = 2;
         }
     },
 
-    getValueFromArray: function(param) {
+    getValueFromLS: function(param) {
         if(param == null) {
             return '';
         } else {
-          return param[1];
+          return param;
         }
     },
 
     setCurrentCategory: function(cat) {
+        localStorage.setItem('category', JSON.stringify(+cat));
         this.currentCategory = +cat;
     },
 
@@ -74,10 +75,12 @@ var FilterControl = {
     },
 
     setPage: function(page) {
+        localStorage.setItem('page', JSON.stringify(+page));
         this.page = +page;
     },
 
     setQueryText: function(text) {
+        localStorage.setItem('text', JSON.stringify(text));
         this.text = text;
     },
 

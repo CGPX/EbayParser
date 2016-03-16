@@ -2,39 +2,52 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Collapse;
-?>
 
-<?php
-$textToEcho="";
-function catalogArray($rootParentId){
-    global $textToEcho;
-    $catArrayFirst=\common\models\EbayCategory::find()->where(['category_parent_id'=>$rootParentId])->asArray()->all();
+function catalogArray($rootParentId,$level){
+    #$cache = yii::$app->getCache()->get('cat_'.$rootParentId);
+    #if(!empty($cache)) { 
+    #    return $cache;
+    #}
+    $textToEcho = "";
+    $catArrayFirst = \common\models\EbayCategory::find()->where(['category_parent_id'=>$rootParentId])->asArray()->all();
     foreach($catArrayFirst as $value){
-        $blank="";
-        for($i=0;$i<$value['category_level'];$i++){$blank.="&nbsp";}
-        $lastStandCheck=\common\models\EbayCategory::find()->where(['category_parent_id'=>$value['category_id']])->asArray()->all();
-        if(isset($lastStandCheck[0]['category_id'])){
-            $textToEcho.="<a href=\"#\" class=\"list-group-item small\" data-toggle=\"collapse\" data-target=\"#".$value['category_id']."\" data-parent=\"#".$value['category_parent_id']."\" data-root=\"".$value['category_root_parent']."\">". $blank . $value['category_name']." <span class=\"glyphicon pull-right glyphicon-list\"></span ></a>\n";
-            $textToEcho.="<div id=\"".$value['category_id']."\" class=\"sublinks collapse\" > \n";
-            catalogArray($value['category_id']);
-            $textToEcho.="</div>";
-        }else{
-            $textToEcho.="<a href=\"#\" class=\"list-group-item small catChange\" data-toggle=\"collapse\" data-target=\"#".$value['category_id']."\" data-parent=\"#".$value['category_parent_id']."\" data-root=\"".$value['category_root_parent']."\">". $blank . $value['category_name']." <span class=\"glyphicon pull-right glyphicon-circle-arrow-right\"></span ></a>\n";
+        $selected = do_next($value['category_id']);
+        $active = $selected ? 'active' : '';
+        $textToEcho.='<li class="lev'.$level.'">';
+        $textToEcho.='<a href="/category/'.$value['category_id'].'" class="alev'.$level.' '.$active.'"><span>'. $value['category_name'].'</span></a>';
+        if($selected){
+            $data = catalogArray($value['category_id'],++$level);
+            $textToEcho .= '<ul>'.$data.'</ul>';
         }
+        $textToEcho.="</li>";
     }
+    #yii::$app->getCache()->set('cat_'.$rootParentId, $textToEcho);
     return $textToEcho;
 }
-$cacheCats = yii::$app->getCache()->get('cats');
-if($cacheCats == false) {
-    $textToShow = catalogArray('6028');
-    yii::$app->getCache()->set('cats', $textToShow);
-} else {
-    $textToShow = $cacheCats;
-}
-?>
 
-	<div id="6028" class="menu">
-		<div class="panel list-group">
-			<?= $textToShow; ?>
-		</div>
-	</div>
+
+
+function do_next($cat_id){
+    $root = !empty($_GET["category"]) ? $_GET["category"] : 6028;
+    $BreadArray = createBread($root);
+    if(sizeof($BreadArray) == 0){
+        return FALSE;
+    }
+    foreach($BreadArray as $b){
+        if ($b["category_id"] == $cat_id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+#$cacheCats = yii::$app->getCache()->get('cats');
+#$cacheCats = false;
+#if($cacheCats == false) { 
+    #$textToShow = catalogArray('6028',1);
+#    yii::$app->getCache()->set('cats', $textToShow);
+#} else {
+#    $textToShow = $cacheCats;
+#}
+
+echo catalogArray('6028',1);

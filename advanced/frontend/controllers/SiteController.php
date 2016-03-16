@@ -94,6 +94,7 @@ class SiteController extends Controller
     }
 
     public function actionGetItemsBy($category = null, $brand = null, $ser = null, $page, $sort, $queryText = " ") {
+
         $text ='';
         if(!empty($brand)){
             $text.=$brand.' ';

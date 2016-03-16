@@ -16,29 +16,27 @@ $this->params['myMod'][] = $model;
         foreach ($result as $value1) {
             if (!isset($value1['galleryURL'])){
                 $value1['galleryURL']="imgs/image-not-found.jpg";
+            }else{
+
             }
-
-            echo "
-                  <div class=\"col-md-4\" style=\"height:400px;\">
-                      <div class=\"panel panel-default item_box\">
-                          <table class=\"table table-striped\">
+    ?>
+    
+    <?php
+    $value1['galleryURL'] = preg_replace("/http:\/\//", "https://", $value1['galleryURL']);
+    echo '<div class="item">
+                      
+                          <table class="table table-striped">
                               <tr>
-                                  <td class=\"item_title\" style=\"height:80px;\"><h5 class=\"\"><a href=\"".Url::to(['site/single', 'ebayitemid' => $value1['ebay_item_id']])."\" >". $value1['title'] ."</a></h5></td>
-                              </tr>
-                              <tr>
-                                  <td class=\"item_img\" align=\"center\"><img src=\"". $value1['galleryURL'] ."\" class=\"img-responsive\" style=\"height:220px; width:100%;\" alt=\"". $value1['title'] ."\"></td>
-                              </tr>
-                              <tr class=\"\">
-                                  <td class=\"\">
-
-                      <span class=\"glyphicon glyphicon-rub btn-sm\"></span><span class=\"item_price\">". $value1['price_shipping_sum'] ."</span>
-                      <button class=\"btn btn-default btn-sm pull-right addToCart\" data-id=\"". $value1['ebay_item_id'] ."\">Купить сейчас <span class=\"glyphicon glyphicon-shopping-cart\" aria-hidden=\"true\"></span>
-                    </td>
-                              </tr>
+                                  <td rowspan="2" class="item_img" align="center" style="width:140px;"><a href='.Url::to(['site/single', 'ebayitemid' => $value1['ebay_item_id']]).'" >'
+            . '<img style="max-width:140px;max-height:140px;" src="'. $value1['galleryURL'] .'" class="img-responsive" style=""></a></td>
+<td class="item_title" >
+    <h2 class=""><a href="'.Url::to(['site/single', 'ebayitemid' => $value1['ebay_item_id']]).'" >'. $value1['title'] .'</a></h2>
+       <span class="item_price">Цена: '. $value1['price_shipping_sum'] .' Руб.</span>
+           <button class="addToCart" data-id="'. $value1['ebay_item_id'] .'">Заказать</button>
+            </td>
+                            </tr>
                           </table>
-                      </div>
-                  </div>
-        ";
+                  </div>';
         }
     }elseif(isset($model->emptyResponse)) {
         if ($model->emptyResponse) {
@@ -86,4 +84,3 @@ if ($model->pageCount>0) {
         </div>
 ";}
 }
-?>

@@ -155,6 +155,9 @@ class EbayForm extends Model
             case 1:
                 $request->sortOrder = 'PricePlusShippingLowest';
                 break;
+            case 2:
+                $request->sortOrder = 'BestMatch';
+                break;
         }
         $request->paginationInput = new Types\PaginationInput();
         $request->paginationInput->entriesPerPage = 100;
