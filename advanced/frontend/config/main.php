@@ -109,6 +109,16 @@ return [
                 ],
                 [
                     'route' => 'site/get-item-by-query',
+                    'pattern' => 'category/<category:\d+>&page=<page:\d+>&sort=<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-item-by-query',
                     'pattern' => 'category/<category:\d+>',
                     'defaults' => [
                         'category' => '6030',
@@ -119,6 +129,7 @@ return [
                 ],
                 'item/<ebayitemid:\d+>' => 'site/single',
                 'order' => 'site/order',
+                'root' => 'site/root',
             ],
         ],
         'user' => [

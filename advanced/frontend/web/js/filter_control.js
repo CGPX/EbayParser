@@ -50,23 +50,27 @@ var FilterControl = {
 
     makeURL: function () {
         myLink = '';
-        myLink+='/items/category=' + this.category + '&page=' + this.page + '&sort=' + this.sort;
+        linkParams = '';
+        myLink+='/category/'+ this.category + linkParams + '&page=' + this.page + '&sort=' + this.sort;
         if(this.brand !== '') {
-            myLink += '&brand=' + this.brand;
+            linkParams += '/' + this.brand;
         }
         if(this.model !== '') {
-            myLink += '&model=' + this.model;
+            linkParams += '/' + this.model;
         }
         if(this.text !== '') {
-            myLink += '&text=' + this.text;
+            linkParams += '&text=' + this.text;
         }
         window.location.href = myLink;
     },
 
     addFilterParams: function() {
         this.brand = $(".filter_box .filter_brands :selected").text();
+        localStorage.setItem('brand', JSON.stringify(this.brand));
         this.model = $(".filter_box .filter_models :selected").text();
+        localStorage.setItem('model', JSON.stringify(this.model));
         this.sort  = +$(".filter_box .filter_sort :selected").val();
+        localStorage.setItem('sort', JSON.stringify(this.sort));
     },
 
     update: function() {
@@ -84,10 +88,21 @@ var FilterControl = {
         this.text = text;
     },
 
+    getRootCategory: function(catId) {
+        jQuery.ajax({
+            url: '/root', type: 'POST', dataType: 'json', cache: false,
+            data: {catId: catId},
+            beforeSend: function(jqXHR, settings) {  },
+            success: function(data, textStatus, jqXHR) {  },
+            complete: function(jqXHR, textStatus) { },
+            error: function(jqXHR, textStatus, errorThrown) {  }
+        });
+    },
+
     categoryAction: function() {
         $(".catChange").removeClass("active"),
             $(this).addClass("active");
-        categoryTargetId    = +$(this).attr('data-target').substring(1);
+        categoryTargetId    = +FilterControl.getRootCategory(6030);
         categoryRootId      = +$(this).attr('data-root');
         rootIdFromAddress = +$("[data-target=#"+FilterControl.category+"]").data("root");
 

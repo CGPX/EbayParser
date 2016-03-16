@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use frontend\actions\CustomAction;
 use Yii;
 use common\models\LoginForm;
 use common\models\EbayForm;
@@ -64,6 +65,9 @@ class SiteController extends Controller
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+            'root' => [
+                'class' => CustomAction::className(),
             ],
         ];
     }
