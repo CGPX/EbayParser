@@ -51,16 +51,17 @@ var FilterControl = {
     makeURL: function () {
         myLink = '';
         linkParams = '';
-        myLink+='/category/'+ this.category + linkParams + '&page=' + this.page + '&sort=' + this.sort;
+
         if(this.brand !== '') {
-            linkParams += '/' + this.brand;
+            linkParams += this.brand + '/';
         }
         if(this.model !== '') {
-            linkParams += '/' + this.model;
+            linkParams += this.model + '/';
         }
         if(this.text !== '') {
             linkParams += '&text=' + this.text;
         }
+        myLink+='/category/' + this.category + '/' + linkParams + '&page=' + this.page + '&sort=' + this.sort;
         window.location.href = myLink;
     },
 
@@ -87,16 +88,23 @@ var FilterControl = {
         localStorage.setItem('text', JSON.stringify(text));
         this.text = text;
     },
+    setRootCategory: function(id) {
+        this.rootCategory = id;
+    },
 
     getRootCategory: function(catId) {
         jQuery.ajax({
-            url: '/root', type: 'POST', dataType: 'json', cache: false,
+            url: '/root', type: 'POST', dataType: 'json', cache: false, async: false,
             data: {catId: catId},
             beforeSend: function(jqXHR, settings) {  },
-            success: function(data, textStatus, jqXHR) {  },
+            success: function(data, textStatus, jqXHR) {
+                if (typeof(data.success) !== 'undefined') {
+                    FilterControl.setRootCategory(+data.category)
+            } },
             complete: function(jqXHR, textStatus) { },
             error: function(jqXHR, textStatus, errorThrown) {  }
         });
+
     },
 
     categoryAction: function() {
@@ -117,7 +125,9 @@ var FilterControl = {
     },
 
     filterAction: function() {
-        rootIdFromAddress = $("[data-target=#"+FilterControl.category+"]").data("root");
+        FilterControl.getRootCategory(+FilterControl.category);
+
+        rootIdFromAddress = FilterControl.rootCategory;
         rootIdFromFilter = $(".filter_box .filter_ts :selected").data("root");
 
         if(rootIdFromAddress !== rootIdFromFilter) {

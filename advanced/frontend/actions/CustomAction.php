@@ -24,7 +24,7 @@ class CustomAction extends Action
             if (null === $catId = (int)Yii::$app->request->post('catId')) {
                 return ['content' => Yii::t('vote', 'catId has not been sent')];
             }
-            $category = EbayCategory::find()->where(['id' => $catId])->one();
+            $category = EbayCategory::find()->where(['category_id' => $catId])->one();
             return ['success' => true, 'category' => $category->category_root_parent];
         }
     }
