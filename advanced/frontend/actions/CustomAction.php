@@ -17,6 +17,8 @@ use yii\web\Response;
 class CustomAction extends Action
 {
 
+
+
     public function run()
     {
         if (Yii::$app->request->getIsAjax()) {

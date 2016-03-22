@@ -4,12 +4,12 @@
 /* @var $content string */
 
 use common\models\EbayCategory;
+use frontend\widgets\CustomFilter;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+
 use yii\bootstrap\ActiveForm;
 
 AppAsset::register($this);
@@ -336,7 +336,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
 
                                     </div>
                                 </div>
-
+                              <?= CustomFilter::widget(['model' => $this->params['myMod'][0]])?>
                                 <br />
                                 <?= $content ?>
 

@@ -130,6 +130,7 @@ return [
                 'item/<ebayitemid:\d+>' => 'site/single',
                 'order' => 'site/order',
                 'root' => 'site/root',
+                'cats/<id:\d+>' => 'site/cats',
             ],
         ],
         'user' => [

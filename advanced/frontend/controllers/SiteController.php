@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\EbayCategory;
 use frontend\actions\CustomAction;
 use Yii;
 use common\models\LoginForm;
@@ -93,8 +94,20 @@ class SiteController extends Controller
         $model->getCategories();
         return $this->render('itemslist', [
             'result' => false,
-            'model' => false,
+            'model' => $model,
         ]);
+    }
+
+    public function actionCats($id)
+    {
+        $cats = EbayCategory::find()->where(['category_parent_id' => $id])->all();
+        if (!empty($cats)) {
+                foreach ($cats as $category) {
+                    echo "<option  value=\"" . $category->category_id . "\" data-id=\"" . $category->category_parent_id . "\">" . $category->category_name . "</option>";
+            }
+        } else {
+          echo "<option></option>";
+        }
     }
 
     public function actionGetItemsBy($category = null, $brand = null, $ser = null, $page, $sort, $queryText = " ") {
