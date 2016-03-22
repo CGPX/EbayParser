@@ -61,7 +61,7 @@ var FilterControl = {
         if(this.text !== '') {
             linkParams += '&text=' + this.text;
         }
-        myLink+='/category/' + this.category + '/' + linkParams + '&page=' + this.page + '&sort=' + this.sort;
+        myLink+='/category/' + this.category + '/' + linkParams ;//+ '&page=' + this.page + '&sort=' + this.sort;
         window.location.href = myLink;
     },
 

@@ -27,6 +27,7 @@ class EbayForm extends Model
     public $queryMaxPrice;
     public $querySort;
     public $querySortShipping;
+    public $queryFilterRoot;
     public $queryBrand;
     public $queryModel;
     public $queryState;

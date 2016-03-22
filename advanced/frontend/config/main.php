@@ -131,6 +131,7 @@ return [
                 'order' => 'site/order',
                 'root' => 'site/root',
                 'cats/<id:\d+>' => 'site/cats',
+                '<category:\d+>' => 'site/filter',
             ],
         ],
         'user' => [

@@ -13,6 +13,7 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\base\InvalidParamException;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -137,6 +138,14 @@ class SiteController extends Controller
             'result' => $result,
             'model' => $model,
         ]);
+    }
+
+    public function actionFilter() {
+        $model = new EbayForm();
+        if($model->load(Yii::$app->request->post())){
+            $url = '/category/' . $model->queryCategory . '/';
+            return $this->redirect(Url::to(['category/', 'category' => $model->queryCategory]),302);
+        }
     }
     /**
      * Выводим просмотр подробностей о товаре
