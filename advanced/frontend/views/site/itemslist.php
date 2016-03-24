@@ -4,12 +4,14 @@
  */
 
 use common\models\EbayCategory;
+use frontend\widgets\CustomFilter;
 use yii\helpers\Url;
 
 $this->title = 'BayEbay - Каталог';
 $this->params['myMod'][] = $model;
 
 ?>
+<?= CustomFilter::widget(['model' => $model])?>
 <div class="row">
     <?php
     if ($result!==false) {

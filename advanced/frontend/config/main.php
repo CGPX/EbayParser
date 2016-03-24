@@ -32,6 +32,78 @@ return [
                 ],
                 [
                     'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>/text=<queryText:\w+|[\w\W]+?>&page=<page:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'ser' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>/text=<queryText:\w+|[\w\W]+?>&sort=<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'ser' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>/&sort=<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'ser' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>&sort=<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'ser' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>/&page=<page:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'ser' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>&page=<page:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'ser' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
                     'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/<ser:\w+|[\w\W]+?>/text=<queryText:\w+|[\w\W]+?>',
                     'defaults' => [
                         'category' => '6030',
@@ -57,6 +129,28 @@ return [
                 [
                     'route' => 'site/get-items-by',
                     'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/text=<queryText:\w+|[\w\W]+?>&page=<page:\d+>&sort=<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/text=<queryText:\w+|[\w\W]+?>&sort=<sort:\d+>',
+                    'defaults' => [
+                        'category' => '6030',
+                        'brand' => null,
+                        'queryText' => '',
+                        'page' => 1,
+                        'sort' => 2,
+                    ],
+                ],
+                [
+                    'route' => 'site/get-items-by',
+                    'pattern' => 'category/<category:\d+>/<brand:\w+|[\w\W]+?>/text=<queryText:\w+|[\w\W]+?>&page=<page:\d+>',
                     'defaults' => [
                         'category' => '6030',
                         'brand' => null,

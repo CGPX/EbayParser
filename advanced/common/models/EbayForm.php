@@ -64,7 +64,7 @@ class EbayForm extends Model
      */
     public function setQueryText($queryText)
     {
-        $this->queryText = $queryText;
+        $this->queryText = trim($queryText);
     }
 
     /**
@@ -80,7 +80,7 @@ class EbayForm extends Model
      */
     public function setQueryBrand($queryBrand)
     {
-        $this->queryBrand = $queryBrand;
+        $this->queryBrand = trim($queryBrand);
     }
 
     /**
@@ -88,7 +88,7 @@ class EbayForm extends Model
      */
     public function setQueryModel($queryModel)
     {
-        $this->queryModel = $queryModel;
+        $this->queryModel = trim($queryModel);
     }
 
     /**
@@ -104,7 +104,7 @@ class EbayForm extends Model
     public function rules()
     {
         return [
-            [['queryText', 'queryCategory', 'queryPage', 'singleItemId'], 'default'],
+            [['queryText', 'queryFilterRoot', 'queryBrand', 'queryModel', 'querySort', 'queryCategory', 'queryPage', 'singleItemId'], 'default'],
         ];
     }
 
@@ -168,7 +168,7 @@ class EbayForm extends Model
         $request = new Types\FindItemsAdvancedRequest();
         $request->keywords = $this->replaseSimbols(strtolower($this->queryText));
         if (!empty($this->queryCategory)) {
-            $request->categoryId = $this->queryCategory; // array($this->queryCategory);
+            $request->categoryId = array($this->queryCategory);
         } else {
             $request->categoryId = array('6030');
         }

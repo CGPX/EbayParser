@@ -104,7 +104,7 @@ class SiteController extends Controller
         $cats = EbayCategory::find()->where(['category_parent_id' => $id])->all();
         if (!empty($cats)) {
                 foreach ($cats as $category) {
-                    echo '<option  value="' . $category->category_name .' " data-id="'. $category->category_parent_id .'" data-catid= "'.$category->category_id.'"> '. $category->category_name .' </option>';
+                    echo '<option  value="'.$category->category_name.'" data-id="'.$category->category_parent_id.'" data-catid="'.$category->category_id.'">'.$category->category_name.'</option>';
             }
         } else {
           echo "<option></option>";
@@ -153,15 +153,19 @@ class SiteController extends Controller
 
     public function actionFilter() {
         $model = new EbayForm();
-        if($model->load(Yii::$app->request->post())){
+        if($model->load(Yii::$app->request->post(), 'EbayForm')){
             $url = $this->getUrl($model);
             return $this->redirect($url,302);
         }
     }
 
     private function getUrl($model) {
-
-        $url = '/category/' . $model->queryCategory. '/' . $model->queryBrand . '/' . $model->queryModel . '/';
+        $url = '/category/' . $model->queryCategory
+            . (empty($model->queryBrand) ? "" : '/'.$model->queryBrand)
+            . (empty($model->queryModel) ? "" : '/'.$model->queryModel)
+            . (empty($model->queryText) ? "" : '/text='.$model->queryText)
+            . ((int)$model->queryPage > 1 ? '&page='.$model->queryPage : "")
+            . ($model->querySort < 2 ? '&sort='.$model->querySort : "");
         return $url;
     }
     /**

@@ -208,29 +208,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                     </div>
                                 </div>
 
-                                <!-- поисковая форма -->
-                                <div class="row">
-                                    <div class="col-lg-12">
 
-                                        <div class="input-group">
-                                            <?php  if(isset($this->params['myMod'])) {$qText = $this->params['myMod'][0]['queryTextShow']; } ?>
-                                            <input type="text" class="form-control filter_query_input" placeholder="Ищем запчасти..." id="ebayform-querytext" name="EbayForm[queryText]" value="<?=$qText?>">
-                                              <span class="input-group-btn">
-                                                <button class="btn btn-success filter_query" type="button">Найти <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                                              </span>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <br />
-                                <div class="row <?= $FilterForm ?>">
-                                    <div class="col-lg-12">
-                                        <?= CustomFilter::widget(['model' => $this->params['myMod'][0]])?>
-                                    </div>
-                                </div>
-
-                                <br />
                                 <?= $content ?>
 
                             </article>
