@@ -104,7 +104,7 @@ class SiteController extends Controller
         $cats = EbayCategory::find()->where(['category_parent_id' => $id])->all();
         if (!empty($cats)) {
                 foreach ($cats as $category) {
-                    echo "<option  value=\"" . $category->category_id . "\" data-id=\"" . $category->category_parent_id . "\">" . $category->category_name . "</option>";
+                    echo '<option  value="' . $category->category_name .' " data-id="'. $category->category_parent_id .'" data-catid= "'.$category->category_id.'"> '. $category->category_name .' </option>';
             }
         } else {
           echo "<option></option>";
@@ -112,6 +112,7 @@ class SiteController extends Controller
     }
 
     public function actionGetItemsBy($category = null, $brand = null, $ser = null, $page, $sort, $queryText = " ") {
+        $model = new EbayForm();
 
         $text ='';
         if(!empty($brand)){
@@ -122,8 +123,14 @@ class SiteController extends Controller
         }
         $text.=$queryText;
         $text = trim($text);
-        $model = new EbayForm($category, $brand, $ser, (int)$page, $sort, $text);
-        $model->queryTextShow = $queryText;
+
+        $model->setQueryCategory($category);
+        $model->setQueryBrand($brand);
+        $model->setQueryModel($ser);
+        $model->setQueryPage((int)$page);
+        $model->setQuerySort($sort);
+        $model->setQueryText($text);
+        $model->setQueryTextShow($queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,
@@ -132,7 +139,11 @@ class SiteController extends Controller
     }
 
     public function actionGetItemByQuery($queryText, $page, $sort) {
-        $model = new EbayForm(null, null, null, $page, $sort, $queryText);
+        $model = new EbayForm();
+        $model->setQueryPage((int)$page);
+        $model->setQuerySort($sort);
+        $model->setQueryText($queryText);
+        $model->setQueryTextShow($queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,
@@ -143,9 +154,15 @@ class SiteController extends Controller
     public function actionFilter() {
         $model = new EbayForm();
         if($model->load(Yii::$app->request->post())){
-            $url = '/category/' . $model->queryCategory . '/';
-            return $this->redirect(Url::to(['category/', 'category' => $model->queryCategory]),302);
+            $url = $this->getUrl($model);
+            return $this->redirect($url,302);
         }
+    }
+
+    private function getUrl($model) {
+
+        $url = '/category/' . $model->queryCategory. '/' . $model->queryBrand . '/' . $model->queryModel . '/';
+        return $url;
     }
     /**
      * Выводим просмотр подробностей о товаре

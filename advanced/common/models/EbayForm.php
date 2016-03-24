@@ -20,16 +20,16 @@ class EbayForm extends Model
     const USD = 840;
     private $cacheTime = 2678400;
     public $emptyResponse = false;
-    public $queryText;
-    public $queryTextShow;
-    public $queryCategory;
+    public $queryText = '';
+    public $queryTextShow = '';
+    public $queryCategory = null;
     public $queryMinPrice;
     public $queryMaxPrice;
     public $querySort;
     public $querySortShipping;
     public $queryFilterRoot;
-    public $queryBrand;
-    public $queryModel;
+    public $queryBrand = null;
+    public $queryModel = null;
     public $queryState;
     public $queryPage = 1;
     public $pageCount;
@@ -37,28 +37,69 @@ class EbayForm extends Model
     private $config;
     private $queryHash;
 
-    /**
-     * EbayForm constructor.
-     * @param null $queryCategory
-     * @param null $brand
-     * @param null $e_model
-     * @param int $queryPage
-     * @param null $querySort
-     * @param string $queryText
-     */
-    public function __construct($queryCategory = null, $brand = null, $e_model = null, $queryPage = 1, $querySort = null, $queryText = '')
-    {   $cat = [];
-        $this->queryText = $queryText;
-        if(!empty($queryCategory)){
-            $cat[] = $queryCategory;
-        }
-        $this->queryBrand = $brand;
-        $this->queryModel = $e_model;
-        $this->queryCategory = $cat;
-        $this->queryPage = (int) $queryPage;
-        $this->querySort = (int) $querySort;
+
+    public function __construct()
+    {
         $this->initConfig();
     }
+
+    /**
+     * @param mixed $queryCategory
+     */
+    public function setQueryCategory($queryCategory)
+    {
+        $this->queryCategory = $queryCategory;
+    }
+
+    /**
+     * @param mixed $queryTextShow
+     */
+    public function setQueryTextShow($queryTextShow)
+    {
+        $this->queryTextShow = $queryTextShow;
+    }
+
+    /**
+     * @param mixed $queryText
+     */
+    public function setQueryText($queryText)
+    {
+        $this->queryText = $queryText;
+    }
+
+    /**
+     * @param mixed $querySort
+     */
+    public function setQuerySort($querySort)
+    {
+        $this->querySort = $querySort;
+    }
+
+    /**
+     * @param mixed $queryBrand
+     */
+    public function setQueryBrand($queryBrand)
+    {
+        $this->queryBrand = $queryBrand;
+    }
+
+    /**
+     * @param mixed $queryModel
+     */
+    public function setQueryModel($queryModel)
+    {
+        $this->queryModel = $queryModel;
+    }
+
+    /**
+     * @param int $queryPage
+     */
+    public function setQueryPage($queryPage)
+    {
+        $this->queryPage = $queryPage;
+    }
+
+
 
     public function rules()
     {
@@ -79,7 +120,7 @@ class EbayForm extends Model
 
     private function genMd5Hash()
     {
-        $this->queryHash = md5(strtolower($this->queryText) . implode(",", $this->queryCategory) . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort);
+        $this->queryHash = md5(strtolower($this->queryText) . $this->queryCategory . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort);
     }
 
     private function getItemsFromDB()

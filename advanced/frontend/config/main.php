@@ -118,7 +118,7 @@ return [
                     ],
                 ],
                 [
-                    'route' => 'site/get-item-by-query',
+                    'route' => 'site/get-items-by',
                     'pattern' => 'category/<category:\d+>',
                     'defaults' => [
                         'category' => '6030',
@@ -130,7 +130,7 @@ return [
                 'item/<ebayitemid:\d+>' => 'site/single',
                 'order' => 'site/order',
                 'root' => 'site/root',
-                'cats/<id:\d+>' => 'site/cats',
+                'getCats/<id:\d+>' => 'site/cats',
                 '<category:\d+>' => 'site/filter',
             ],
         ],

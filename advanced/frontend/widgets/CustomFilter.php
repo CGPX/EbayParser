@@ -8,6 +8,7 @@ use yii\base\Widget;
 class CustomFilter extends Widget
 {
     public $model;
+    public $currentCategory;
 
     public function run()
     {
