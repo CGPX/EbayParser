@@ -4,11 +4,44 @@ namespace frontend\widgets;
 use frontend\widgets\models\CustomFilterModel;
 use Yii;
 use yii\base\Widget;
+use yii\web\JsExpression;
+use yii\web\View;
 
 class CustomFilter extends Widget
 {
     public $model;
     public $currentCategory;
+    public $jsCodeKey = 'filter';
+
+    public function init() {
+
+        $js = new JsExpression('
+                        var FilterControl = {
+                        category: 0,
+                        page: 1,
+                        sort: 0,
+                        brand: "'.$this->model->queryBrand.'",
+                        model: "",
+                        text: "",
+
+                        getParamsFromHref: function() {
+                          this.brandSelect = $("select#ebayform-queryfilterroot");
+                            FilterControl.getDataMotherFucka(this.brandSelect);
+                        },
+
+                    getDataMotherFucka: function(sel) {
+                        hui = $("select#ebayform-querybrand");
+                        $.post("/getCats/"+sel.val(), function(data) {
+                            hui.html(data);
+                            hui.prepend(\'<option value="">Выберите марку</option>\');
+                            $("select#ebayform-querybrand option").filter(\'[value="'.$this->model->queryBrand.'"]\').attr("selected", "selected")
+                        });
+                    },
+                    };
+                    window.onload = FilterControl.getParamsFromHref;
+        ');
+        $this->view->registerJs($js, View::POS_END, $this->jsCodeKey);
+    }
 
     public function run()
     {

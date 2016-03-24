@@ -3,30 +3,23 @@ var FilterControl = {
     category: 0,
     page: 1,
     sort: 0,
-    brand: '',
+    brand: "",
     model: '',
     text: '',
-    isNeedToChangeCategory: false,
-    rootCategory: 0,
-    currentCategory: 0,
+
 
     getParamsFromHref: function() {
-        addressData     = window.location.href;
-        this.category   = this.getValueFromLS(localStorage.getItem('category'));
-        this.page       = this.getValueFromLS(localStorage.getItem('page'));
-        this.sort       = this.getValueFromLS(localStorage.getItem('sort'));
-        this.brand      = this.getValueFromLS(localStorage.getItem('brand'));
-        this.model      = this.getValueFromLS(localStorage.getItem('model'));
-        this.text       = this.getValueFromLS(localStorage.getItem('text'));
-        if(this.category === '') {
-            this.category = 6030;
-        }
-        if(this.page === '') {
-            this.page = 1;
-        }
-        if(this.sort === '') {
-            this.sort = 2;
-        }
+      this.brandSelect = $("select#ebayform-queryfilterroot");
+        FilterControl.getDataMotherFucka(this.brandSelect);
+    },
+
+    getDataMotherFucka: function(sel) {
+        hui = $("select#ebayform-querybrand");
+        $.post("/getCats/"+sel.val(), function(data) {
+            hui.html(data);
+            hui.prepend('<option value="">Выберите марку</option>');
+            $("select#ebayform-querybrand option").filter('[value="Audi"]').attr("selected", "selected")
+    });
     },
 
     getValueFromLS: function(param) {
@@ -152,4 +145,5 @@ var FilterControl = {
     }
 
 };
-FilterControl.getParamsFromHref();
+window.onload = FilterControl.getParamsFromHref;
+

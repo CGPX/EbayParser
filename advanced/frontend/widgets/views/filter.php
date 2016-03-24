@@ -41,6 +41,7 @@ echo $form->field($model, 'queryFilterRoot')->dropDownList(ArrayHelper::map(
                 $currentRootCategory => ['Selected'=>'selected']
             ],
             'prompt' => 'Выберите тип ТС',
+            'class' => 'form-control filter_query_input',
             'onchange' => '
                 $.post("'.$urlToCats.'/'.'"+$(this).val(), function(data) {
                     $("select#ebayform-querybrand").html(data);
@@ -56,7 +57,7 @@ echo $form->field($model, 'queryBrand')->dropDownList(ArrayHelper::map(
                 $model->queryBrand => ['Selected'=>'selected']
             ],
                 'prompt' => 'Выберите марку',
-                ' onclick' => '
+                'onload' => '
                     if($("select#ebayform-querybrand option:selected").data("catid") === undefined) {
                         $.post("'.$urlToCats.'/'.'"+$("select#ebayform-queryfilterroot").val(), function(data) {
                         $("select#ebayform-querybrand").html(data);
