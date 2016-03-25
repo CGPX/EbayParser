@@ -1,6 +1,7 @@
 <?php
 namespace frontend\widgets;
 
+use common\models\EbayCategory;
 use frontend\widgets\models\CustomFilterModel;
 use Yii;
 use yii\base\Widget;
@@ -14,7 +15,7 @@ class CustomFilter extends Widget
     public $jsCodeKey = 'filter';
 
     public function init() {
-
+        $modelCatId = EbayCategory::find()->where(['category_name'=>$this->model->queryBrand])->one()->category_id;
         $js = new JsExpression('
                         var FilterControl = {
                         category: 0,
@@ -24,17 +25,28 @@ class CustomFilter extends Widget
                         model: "",
                         text: "",
 
+
                         getParamsFromHref: function() {
-                          this.brandSelect = $("select#ebayform-queryfilterroot");
-                            FilterControl.getDataMotherFucka(this.brandSelect);
+                          var check = true;
+                          tsTypeSelect = $("select#ebayform-queryfilterroot");
+                          FilterControl.getDataMotherFucka(tsTypeSelect);
+                          FilterControl.getDataMotherFucka2();
                         },
 
                     getDataMotherFucka: function(sel) {
-                        hui = $("select#ebayform-querybrand");
+                        ebayformquerybrand = $("select#ebayform-querybrand");
                         $.post("/getCats/"+sel.val(), function(data) {
-                            hui.html(data);
-                            hui.prepend(\'<option value="">Выберите марку</option>\');
+                            ebayformquerybrand.html(data);
+                            ebayformquerybrand.prepend(\'<option value="">Выберите марку</option>\');
                             $("select#ebayform-querybrand option").filter(\'[value="'.$this->model->queryBrand.'"]\').attr("selected", "selected")
+                        });
+                    },
+                     getDataMotherFucka2: function() {
+                        querymodel = $("select#ebayform-querymodel");
+                        $.post("/getCats/'.$modelCatId.'", function(data) {
+                            querymodel.html(data);
+                            querymodel.prepend(\'<option value="">Выберите марку</option>\');
+                            $("select#ebayform-querymodel option").filter(\'[value="'.$this->model->queryModel.'"]\').attr("selected", "selected")
                         });
                     },
                     };

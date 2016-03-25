@@ -166,7 +166,7 @@ class EbayForm extends Model
             'globalId' => Constants\GlobalIds::US,
         ));
         $request = new Types\FindItemsAdvancedRequest();
-        $request->keywords = $this->replaseSimbols(strtolower($this->queryText));
+        $request->keywords = $this->replaseSimbols(strtolower($this->queryBrand ." ". $this->queryModel ." ". $this->queryText));
         if (!empty($this->queryCategory)) {
             $request->categoryId = array($this->queryCategory);
         } else {

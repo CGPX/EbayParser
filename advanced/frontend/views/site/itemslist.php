@@ -68,7 +68,7 @@ for ($i=0; $i<=$iScheti; $i++){
     $pageOlolo = $pageStart + $i;
     if ((int)$model->queryPage == $pageOlolo) {$pageActive="active";} else {$pageActive="";}
     //$pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
-    $pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
+    $pagesOut .='<li class="'.$pageActive.'"><a href="'.$urlFromModel.'&page='.$pageOlolo.'" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
 }
 
 if ($model->pageCount>0) {
@@ -77,9 +77,9 @@ if ($model->pageCount>0) {
             <div class=\"col-sm-12\">
                 <ul class=\"pagination\">
 
-                    <li><a href=\"#\" title=\"Первая страница\" class=\"pageChange\" data-target=\"1\">&laquo;</a></li>
+                    <li><a href=\"".$urlFromModel."\" title=\"Первая страница\" class=\"pageChange\" data-target=\"1\">&laquo;</a></li>
                     ". $pagesOut ."
-                    <li><a href=\"#\" title=\"Последняя страница\" class=\"pageChange\" data-target=\"". $modelPageCount  ."\">&raquo;</a></li>
+                    <li><a href=\"".$urlFromModel."&page=".$modelPageCount."\" title=\"Последняя страница\" class=\"pageChange\" data-target=\"". $modelPageCount  ."\">&raquo;</a></li>
 
                 </ul>
             </div>

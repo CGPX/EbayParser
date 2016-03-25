@@ -113,28 +113,22 @@ class SiteController extends Controller
 
     public function actionGetItemsBy($category = null, $brand = null, $ser = null, $page, $sort, $queryText = " ") {
         $model = new EbayForm();
-
-        $text ='';
         if(!empty($brand)){
-            $text.=$brand.' ';
+            $model->setQueryBrand($brand);
         }
         if(!empty($ser)){
-            $text.=$ser.' ';
+            $model->setQueryModel($ser);
         }
-        $text.=$queryText;
-        $text = trim($text);
-
         $model->setQueryCategory($category);
-        $model->setQueryBrand($brand);
-        $model->setQueryModel($ser);
         $model->setQueryPage((int)$page);
         $model->setQuerySort($sort);
-        $model->setQueryText($text);
+        $model->setQueryText($queryText);
         $model->setQueryTextShow($queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,
             'model' => $model,
+            'urlFromModel' => $this->getUrl($model),
         ]);
     }
 
@@ -148,6 +142,7 @@ class SiteController extends Controller
         return $this->render('itemslist', [
             'result' => $result,
             'model' => $model,
+            'urlFromModel' => $this->getUrl($model),
         ]);
     }
 
@@ -164,7 +159,7 @@ class SiteController extends Controller
             . (empty($model->queryBrand) ? "" : '/'.$model->queryBrand)
             . (empty($model->queryModel) ? "" : '/'.$model->queryModel)
             . (empty($model->queryText) ? "" : '/text='.$model->queryText)
-            . ((int)$model->queryPage > 1 ? '&page='.$model->queryPage : "")
+            //. ((int)$model->queryPage > 1 ? '&page='.$model->queryPage : "")
             . ($model->querySort < 2 ? '&sort='.$model->querySort : "");
         return $url;
     }
