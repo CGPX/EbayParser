@@ -14,7 +14,7 @@ function catalogArray($rootParentId,$level){
         $selected = do_next($value['category_id']);
         $active = $selected ? 'active' : '';
         $textToEcho.='<li class="lev'.$level.'">';
-        $textToEcho.='<a href="/category/'.$value['category_id'].'" class="alev'.$level.' '.$active.'"><span>'. $value['category_name'].'</span></a>';
+        $textToEcho.='<a href="#" class="alev'.$level.' '.$active.' categoryChange" data-target="'.$value['category_id'].'"><span>'. $value['category_name'].'</span></a>';
         if($selected){
             $data = catalogArray($value['category_id'],++$level);
             $textToEcho .= '<ul>'.$data.'</ul>';

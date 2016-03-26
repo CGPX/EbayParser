@@ -57,15 +57,6 @@ echo $form->field($model, 'queryBrand')->dropDownList(ArrayHelper::map(
                 $model->queryBrand => ['Selected'=>'selected']
             ],
                 'prompt' => 'Выберите марку',
-                'onload' => '
-                    if($("select#ebayform-querybrand option:selected").data("catid") === undefined) {
-                        $.post("'.$urlToCats.'/'.'"+$("select#ebayform-queryfilterroot").val(), function(data) {
-                        $("select#ebayform-querybrand").html(data);
-                        $("select#ebayform-querybrand").prepend(\'<option value="">Выберите марку</option>\');
-                        $("select#ebayform-querymodel").html("");
-                });
-                    }
-                ',
                 'onchange' => '
                     $.post("'.$urlToCats.'/'.'"+$("select#ebayform-querybrand option:selected").data("catid"), function(data) {
                         $("select#ebayform-querymodel").html(data);

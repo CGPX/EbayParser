@@ -104,7 +104,7 @@ class SiteController extends Controller
         $cats = EbayCategory::find()->where(['category_parent_id' => $id])->all();
         if (!empty($cats)) {
                 foreach ($cats as $category) {
-                    echo '<option  value="'.$category->category_name.'" data-id="'.$category->category_parent_id.'" data-catid="'.$category->category_id.'">'.$category->category_name.'</option>';
+                    echo '<option  value="'.$category->category_name.'" data-id="'.$category->category_parent_id.'" data-catid="'.$category->category_id.'" data-forfilter'.$category->category_name.'="'.$category->category_id.'">'.$category->category_name.'</option>';
             }
         } else {
           echo "<option></option>";
