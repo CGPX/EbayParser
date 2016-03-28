@@ -2,20 +2,25 @@
 namespace frontend\widgets;
 
 use common\models\EbayCategory;
-use frontend\widgets\models\CustomFilterModel;
+
 use Yii;
 use yii\base\Widget;
 use yii\web\JsExpression;
 use yii\web\View;
+
 
 class CustomFilter extends Widget
 {
     public $model;
     public $currentCategory;
     public $jsCodeKey = 'filter';
-
+    public $modelCatId = 0;
     public function init() {
-        $modelCatId = EbayCategory::find()->where(['category_name'=>$this->model->queryBrand])->one()->category_id;
+
+        if(isset($this->model->queryBrand)) {
+            $this->modelCatId = EbayCategory::find()->where(['category_name' => $this->model->queryBrand])->one()->category_id;
+        }
+
         $js = new JsExpression('
                         var FilterControl = {
                         category: 0,
@@ -43,7 +48,7 @@ class CustomFilter extends Widget
                     },
                      getDataMotherFucka2: function() {
                         querymodel = $("select#ebayform-querymodel");
-                        $.post("/getCats/'.$modelCatId.'", function(data) {
+                        $.post("/getCats/'. $this->modelCatId .'", function(data) {
                             querymodel.html(data);
                             querymodel.prepend(\'<option value="">Выберите марку</option>\');
                             $("select#ebayform-querymodel option").filter(\'[value="'.$this->model->queryModel.'"]\').attr("selected", "selected")
