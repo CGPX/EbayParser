@@ -2,12 +2,10 @@
 namespace frontend\widgets;
 
 use common\models\EbayCategory;
-
 use Yii;
 use yii\base\Widget;
 use yii\web\JsExpression;
 use yii\web\View;
-
 
 class CustomFilter extends Widget
 {
@@ -22,6 +20,9 @@ class CustomFilter extends Widget
         }
 
         $js = new JsExpression('
+                        $(function() {
+                            $(\'.categoryChange\').click(FilterControl.categoryAction);
+                        });
                         var FilterControl = {
                         category: 0,
                         page: 1,
@@ -53,6 +54,11 @@ class CustomFilter extends Widget
                             querymodel.prepend(\'<option value="">Выберите марку</option>\');
                             $("select#ebayform-querymodel option").filter(\'[value="'.$this->model->queryModel.'"]\').attr("selected", "selected")
                         });
+                    },
+                     categoryAction: function() {
+                            categoryId = +$(this).attr(\'data-target\');
+                            $("#ebayform-querycategory").val(categoryId);
+                            $("#ebay-form").submit();
                     },
                     };
                     window.onload = FilterControl.getParamsFromHref;
