@@ -13,10 +13,28 @@ class CustomFilter extends Widget
     public $currentCategory;
     public $jsCodeKey = 'filter';
     public $modelCatId = 0;
+    public $modelRootId = 0;
     public function init() {
 
+        if(isset($this->model->queryCategory)) {
+            switch(EbayCategory::find()->where(['category_id' => $this->model->queryCategory])->one()->category_root_parent) {
+                case 6030:
+                    $this->modelRootId = 6001;
+                    break;
+                case 10063:
+                    $this->modelRootId = 6024;
+                    break;
+                case 100448:
+                    $this->modelRootId = 42595;
+                    break;
+                case 43962:
+                    $this->modelRootId = 6723;
+                    break;
+            }
+        }
+
         if(isset($this->model->queryBrand)) {
-            $this->modelCatId = EbayCategory::find()->where(['category_name' => $this->model->queryBrand])->one()->category_id;
+            $this->modelCatId = EbayCategory::find()->where(['category_name' => $this->model->queryBrand, 'category_root_parent' => $this->modelRootId])->one()->category_id;
         }
 
         $js = new JsExpression('

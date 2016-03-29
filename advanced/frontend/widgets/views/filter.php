@@ -47,7 +47,22 @@ echo $form->field($model, 'queryFilterRoot')->dropDownList(ArrayHelper::map(
                     $("select#ebayform-querybrand").html(data);
                     $("select#ebayform-querybrand").prepend(\'<option value="">Выберите марку</option>\');
                     $("select#ebayform-querymodel").html("");
-                });'
+                });
+                    switch($(this).val()) {
+                        case "6001":
+                        $("#ebayform-querycategory").val(6030);
+                        break
+                        case "6024":
+                        $("#ebayform-querycategory").val(10063);
+                        break
+                        case "42595":
+                        $("#ebayform-querycategory").val(100448);
+                        break
+                        case "6723":
+                        $("#ebayform-querycategory").val(43962);
+                        break
+                    }
+                '
         ]
 )->label(false);
 echo $form->field($model, 'queryBrand')->dropDownList(ArrayHelper::map(
