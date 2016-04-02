@@ -8,7 +8,7 @@ $urlToCats = \yii\helpers\Url::to(['getCats/']);
 $currentCategory = (empty($model->queryCategory)) ? 6030 : $model->queryCategory;
 $currentRootCategory = EbayCategory::find()->where(['category_id' => $currentCategory])->one()->category_root_parent;
 switch($currentRootCategory) {
-    case 6030: //Включена сортировка по возрастанию
+    case 6030:
         $currentRootCategory = 6001;
         break;
     case 10063:
@@ -30,9 +30,7 @@ $form = ActiveForm::begin([
         'action' => ['site/filter'],
 ]);
 
-echo $form->field($model, 'queryText')->textInput(['value' => $model->queryText,  'placeholder' => 'Ищем запчасти...',])->label(false);
 
-echo Html::submitButton('Поиск...', ['class' => 'btn btn-primary', 'name' => 'ebay-button']);
 
 echo $form->field($model, 'queryFilterRoot')->dropDownList(ArrayHelper::map(
             $cats, 'category_id', 'category_name'),
@@ -41,7 +39,7 @@ echo $form->field($model, 'queryFilterRoot')->dropDownList(ArrayHelper::map(
                 $currentRootCategory => ['Selected'=>'selected']
             ],
             'prompt' => 'Выберите тип ТС',
-            'class' => 'form-control filter_query_input',
+            'class' => 'form-control filter_query_input hidden',
             'onchange' => '
                 $.post("'.$urlToCats.'/'.'"+$(this).val(), function(data) {
                     $("select#ebayform-querybrand").html(data);
@@ -65,31 +63,44 @@ echo $form->field($model, 'queryFilterRoot')->dropDownList(ArrayHelper::map(
                 '
         ]
 )->label(false);
+
+
 echo $form->field($model, 'queryBrand')->dropDownList(ArrayHelper::map(
-            [], 'category_id', 'category_name'),
+            EbayCategory::find()->where(['category_parent_id'=>$currentRootCategory])->all(), 'category_id', 'category_name'),
         [
             'options' => [
-                $model->queryBrand => ['Selected'=>'selected']
+                $modelCatid  => ['Selected'=>'selected']
             ],
                 'prompt' => 'Выберите марку',
                 'onchange' => '
-                    $.post("'.$urlToCats.'/'.'"+$("select#ebayform-querybrand option:selected").data("catid"), function(data) {
+                    $.post("'.$urlToCats.'/'.'"+$(this).val(), function(data) {
                         $("select#ebayform-querymodel").html(data);
                         $("select#ebayform-querymodel").prepend(\'<option value="">Выберите модель</option>\');
+                        $("select#ebayform-querymodel").prop("disabled", false)
                     });'
         ]
 )->label(false);
+if(empty($model->queryModel)) {
+        $disabled = ['disabled' => 'disabled'];
+    }
+    else {
+        $disabled = ['disabled' => 'false'];
+    }
 echo $form->field($model, 'queryModel')->dropDownList(ArrayHelper::map(
-            [], 'category_id', 'category_name'),
+    EbayCategory::find()->where(['category_parent_id' => $modelCatid])->all(), 'category_id', 'category_name'),
         [
             'options' => [
-                $model->queryModel => ['Selected'=>'selected']
+                $serCatId => ['Selected'=>'selected']
             ],
             'prompt' => 'Выберите модель',
+            $disabled['disabled'] => $disabled['disabled'],
         ]
 )->label(false);
 
-echo $form->field($model, 'querySort')->dropDownList(ArrayHelper::map($sorts, 'value','name'))->label(false);
+echo $form->field($model, 'querySort')->dropDownList(ArrayHelper::map($sorts, 'value','name'),
+    [
+
+    ])->label(false);
 
 echo $form->field($model, 'queryCategory')->hiddenInput(['value' => $currentCategory])->label(false);
 

@@ -25,7 +25,7 @@ class EbayForm extends Model
     public $queryCategory = null;
     public $queryMinPrice;
     public $queryMaxPrice;
-    public $querySort;
+    public $querySort = 2;
     public $querySortShipping;
     public $queryFilterRoot;
     public $queryBrand = null;
@@ -120,7 +120,7 @@ class EbayForm extends Model
 
     private function genMd5Hash()
     {
-        $this->queryHash = md5(strtolower($this->queryText) . $this->queryCategory . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort);
+        $this->queryHash = md5(strtolower($this->queryBrand . $this->queryModel . $this->queryText) . $this->queryCategory . $this->queryState . $this->queryMaxPrice . $this->queryMinPrice . $this->queryPage . $this->querySort);
     }
 
     private function getItemsFromDB()
@@ -166,7 +166,7 @@ class EbayForm extends Model
             'globalId' => Constants\GlobalIds::US,
         ));
         $request = new Types\FindItemsAdvancedRequest();
-        $request->keywords = $this->replaseSimbols(strtolower($this->queryBrand ." ". $this->queryModel ." ". $this->queryText));
+        $request->keywords = $this->replaseSimbols(strtolower($this->queryBrand .' '. $this->queryModel .' '. $this->queryText));
         if (!empty($this->queryCategory)) {
             $request->categoryId = array($this->queryCategory);
         } else {
@@ -213,6 +213,7 @@ class EbayForm extends Model
                 return false;
             }
             $this->addToBD($arrayresp);
+
             return $this->getItemsFromDB();
         } else {
             return false;
@@ -234,7 +235,14 @@ class EbayForm extends Model
         $hash->life_time = $today;
         $hash->page_count = $this->pageCount;
         $hash->page = $this->queryPage;
-        $hash->save();
+        if($hash->save() == false) {
+            $hash = Hash::findOne(['hash' => $this->queryHash]);
+            $hash->hash = $this->queryHash;
+            $hash->life_time = $today;
+            $hash->page_count = $this->pageCount;
+            $hash->page = $this->queryPage;
+            $hash->update();
+        }
         $hashID = $hash->id;
         foreach ($ebayResponse['searchResult']['item'] as $itemEbay) {
             $ebay_item = Item::findOne([

@@ -9,9 +9,22 @@ $this->title = 'BayEbay - Лендинг';
 
 <!-- Основной контент -->
 <div class="row">
-    <div class="col-lg-12">
-        <!-- Main -->
-        <h3>Страница Index (лендинг)</h3>
-        <p>Писать полную инструкцию по созданию блога, наверное, не имеет смысла, так как многие шаги схожи с первой версией, но я буду писать именно про те нюансы, которые отличаются, и буду делать акцент на новинках Yii2, которые я заметил в процессе создания приложения. Всё же остальное вы сможете быстро посмотреть в демо приложении, что, наверное, будет более эффективно, чем просто написанный текст.</p>
+    <div class="col-sm-6" style="text-align: center;">
+        <h2>Автозапчасти с Ebay</h2>
+        <a href="https://ebay.destinyparts.ru/category/6030"><img src="/images/index_auto.jpg" class="img-responsive" alt="Автомобильные запчасти с EBAY"/></a>
+    </div>
+    <div class="col-sm-6" style="text-align: center;">
+        <h2>Мотозапчасти с Ebay</h2>
+        <a href="https://ebay.destinyparts.ru/category/10063"><img src="/images/index_moto.jpg" class="img-responsive" alt="Мото запчасти с EBAY"/></a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6" style="text-align: center;">
+        <h2>Запчасти на снегоходы с Ebay</h2>
+        <a href="https://ebay.destinyparts.ru/category/100448"><img src="/images/index_snow.jpg" class="img-responsive" alt="Запчасти на снегоходы с EBAY"/></a>
+    </div>
+    <div class="col-sm-6" style="text-align: center;">
+        <h2>Запчасти на квадроциклы с Ebay</h2>
+        <a href="https://ebay.destinyparts.ru/category/43962"><img src="/images/index_quadro.jpg" class="img-responsive" alt="Запчасти на квадроциклы с EBAY"/></a>
     </div>
 </div>

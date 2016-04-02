@@ -20,9 +20,10 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/site.css',
         'css/custom-styles.css',
+
     ];
     public $js = [
-
+        'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

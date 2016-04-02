@@ -14,6 +14,8 @@ class CustomFilter extends Widget
     public $jsCodeKey = 'filter';
     public $modelCatId = 0;
     public $modelRootId = 0;
+    public $serCatId = 0;
+
     public function init() {
 
         if(isset($this->model->queryCategory)) {
@@ -34,45 +36,18 @@ class CustomFilter extends Widget
         }
 
         if(isset($this->model->queryBrand)) {
-            $this->modelCatId = EbayCategory::find()->where(['category_name' => $this->model->queryBrand, 'category_root_parent' => $this->modelRootId])->one()->category_id;
+            $categoryBrand = EbayCategory::find()->where(['category_name' => $this->model->queryBrand, 'category_root_parent' => $this->modelRootId])->one();
+            $this->modelCatId = $categoryBrand->category_id;
         }
-
+        if(isset($this->model->queryModel)) {
+            $this->serCatId = EbayCategory::find()->where(['category_name' => $this->model->queryModel, 'category_root_parent' => $this->modelRootId])->one()->category_id;
+        }
         $js = new JsExpression('
                         $(function() {
                             $(\'.categoryChange\').click(FilterControl.categoryAction);
                         });
                         var FilterControl = {
                         category: 0,
-                        page: 1,
-                        sort: 0,
-                        brand: "'.$this->model->queryBrand.'",
-                        model: "",
-                        text: "",
-
-
-                        getParamsFromHref: function() {
-                          var check = true;
-                          tsTypeSelect = $("select#ebayform-queryfilterroot");
-                          FilterControl.getDataMotherFucka(tsTypeSelect);
-                          FilterControl.getDataMotherFucka2();
-                        },
-
-                    getDataMotherFucka: function(sel) {
-                        ebayformquerybrand = $("select#ebayform-querybrand");
-                        $.post("/getCats/"+sel.val(), function(data) {
-                            ebayformquerybrand.html(data);
-                            ebayformquerybrand.prepend(\'<option value="">Выберите марку</option>\');
-                            $("select#ebayform-querybrand option").filter(\'[value="'.$this->model->queryBrand.'"]\').attr("selected", "selected")
-                        });
-                    },
-                     getDataMotherFucka2: function() {
-                        querymodel = $("select#ebayform-querymodel");
-                        $.post("/getCats/'. $this->modelCatId .'", function(data) {
-                            querymodel.html(data);
-                            querymodel.prepend(\'<option value="">Выберите марку</option>\');
-                            $("select#ebayform-querymodel option").filter(\'[value="'.$this->model->queryModel.'"]\').attr("selected", "selected")
-                        });
-                    },
                      categoryAction: function() {
                             categoryId = +$(this).attr(\'data-target\');
                             $("#ebayform-querycategory").val(categoryId);
@@ -82,14 +57,18 @@ class CustomFilter extends Widget
                     window.onload = FilterControl.getParamsFromHref;
         ');
         $this->view->registerJs($js, View::POS_END, $this->jsCodeKey);
+
     }
 
     public function run()
     {
+
         return $this->render('filter', [
             'model' => $this->model,
             'cats' => $this->getBasicCategoryArray(),
             'sorts' => $this->getSortOptions(),
+            'modelCatid' => $this->modelCatId,
+            'serCatId' => $this->serCatId,
         ]);
     }
 
@@ -117,17 +96,18 @@ class CustomFilter extends Widget
 
     private function getSortOptions() {
         $sorts = [
+
             [
-                'name' => 'Наилучшее совпадение',
-                'value' => 2,
-            ],
-            [
-                'name' => 'Сортировать по возрастанию',
+                'name' => 'Сортировать по убыванию',
                 'value' => 0,
             ],
             [
-                'name' => 'Сортировать по убыванию',
+                'name' => 'Сортировать по возрастанию',
                 'value' => 1,
+            ],
+            [
+                'name' => 'Наилучшее совпадение',
+                'value' => 2,
             ],
 
         ];

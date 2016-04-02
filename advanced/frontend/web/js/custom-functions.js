@@ -256,7 +256,6 @@ $(function() {
      */
 
     $('.pageChange').click(FilterControl.pageAction);
-    $('.categoryChange').click(FilterControl.categoryAction);
 
     /**
      * post передача запроса на смену категории

@@ -104,14 +104,29 @@ class SiteController extends Controller
         $cats = EbayCategory::find()->where(['category_parent_id' => $id])->all();
         if (!empty($cats)) {
                 foreach ($cats as $category) {
-                    echo '<option  value="'.$category->category_name.'" data-id="'.$category->category_parent_id.'" data-catid="'.$category->category_id.'" data-forfilter'.$category->category_name.'="'.$category->category_id.'">'.$category->category_name.'</option>';
+                    echo '<option  value="'.$category->category_id.'" data-id="'.$category->category_parent_id.'" data-catid="'.$category->category_id.'" data-forfilter'.$category->category_name.'="'.$category->category_id.'">'.$category->category_name.'</option>';
             }
         } else {
           echo "<option></option>";
         }
     }
 
-    public function actionGetItemsBy($category = null, $brand = null, $ser = null, $page, $sort, $queryText = " ") {
+    public function actionGetItemsBy($category = null, $brand = null, $ser = null) {
+
+        $request = Yii::$app->request;
+        $queryText = $request->get('text');
+        $sort = $request->get('sort');
+        if($sort == null) {
+            $sort = 2;
+        }
+        $page = $request->get('page');
+        if($page == null) {
+            $page = 1;
+        }
+        if(empty($queryText)) {
+            $queryText = '';
+        }
+
         $model = new EbayForm();
         if(!empty($brand)){
             $model->setQueryBrand($brand);
@@ -121,13 +136,14 @@ class SiteController extends Controller
         }
         $model->setQueryCategory($category);
         $model->setQueryPage((int)$page);
-        $model->setQuerySort($sort);
+        $model->setQuerySort((int)$sort);
         $model->setQueryText($queryText);
         $model->setQueryTextShow($queryText);
         $result = $model->getItems();
         return $this->render('itemslist', [
             'result' => $result,
             'model' => $model,
+            'categoryId' => $category,
             'urlFromModel' => $this->getUrl($model),
         ]);
     }
@@ -149,6 +165,8 @@ class SiteController extends Controller
     public function actionFilter() {
         $model = new EbayForm();
         if($model->load(Yii::$app->request->post(), 'EbayForm')){
+            $model->queryBrand = EbayCategory::findOne(['category_id'=>$model->queryBrand])->category_name;
+            $model->queryModel = EbayCategory::findOne(['category_id'=>$model->queryModel])->category_name;
             $url = $this->getUrl($model);
             return $this->redirect($url,302);
         }
@@ -158,17 +176,23 @@ class SiteController extends Controller
         $url = '/category/' . $model->queryCategory
             . (empty($model->queryBrand) ? "" : '/'.$model->queryBrand)
             . (empty($model->queryModel) ? "" : '/'.$model->queryModel)
-            . (empty($model->queryText) ? "" : '/text='.$model->queryText)
+            . (empty($model->queryText) ? "" : '/?text='.$model->queryText)
             //. ((int)$model->queryPage > 1 ? '&page='.$model->queryPage : "")
-            . ($model->querySort < 2 ? '&sort='.$model->querySort : "");
-        return $url;
+            . ($model->querySort < 2 ? '?&sort='.$model->querySort : "");
+        if(empty($model->queryText)) {
+
+        }
+
+        return Url::to(['/category/'. $model->queryCategory.(empty($model->queryBrand) ? "" : '/'.$model->queryBrand) . (empty($model->queryModel) ? "" : '/'.$model->queryModel), 'text' => $model->queryText, 'page' => $model->queryPage, 'sort' => $model->querySort]);
+//        return $url;
+
     }
     /**
      * Выводим просмотр подробностей о товаре
      *
      * @return mixed
      */
-    public function actionSingle($ebayitemid)
+    public function actionSingle($ebayitemid,$category = null)
     {
         $model = new EbayForm();
         $model->checkDataAboutSingleItem($ebayitemid);
@@ -178,6 +202,7 @@ class SiteController extends Controller
             'result' => $result,
             'model' => $model,
             'images' => $images,
+            'category' => $category,
         ]);
     }
 

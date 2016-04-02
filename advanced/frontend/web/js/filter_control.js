@@ -3,35 +3,41 @@ var FilterControl = {
     category: 0,
     page: 1,
     sort: 0,
-    brand: "",
+    brand: '',
     model: '',
     text: '',
-
+    isNeedToChangeCategory: false,
+    rootCategory: 0,
+    currentCategory: 0,
 
     getParamsFromHref: function() {
-      this.brandSelect = $("select#ebayform-queryfilterroot");
-        FilterControl.getDataMotherFucka(this.brandSelect);
+        addressData     = window.location.href;
+        this.category   = this.getValueFromArray(addressData.match(/category=([0-9]*)/i));
+        this.page       = this.getValueFromArray(addressData.match(/page=([0-9]*)/i));
+        this.sort       = this.getValueFromArray(addressData.match(/sort=([0-9])/i));
+        this.brand      = this.getValueFromArray(addressData.match(/brand=([-_a-zA-Z0-9\s]+)/i));
+        this.model      = this.getValueFromArray(addressData.match(/model=([-_a-zA-Z0-9\s]+)/i));
+        this.text       = this.getValueFromArray(addressData.match(/text=([%&-_a-zA-Zа-яА-Я0-9\s.]+)/i));
+        if(this.category === '') {
+            this.category = 6030;
+        }
+        if(this.page === '') {
+            this.page = 1;
+        }
+        if(this.sort === '') {
+            this.sort = 0;
+        }
     },
 
-    getDataMotherFucka: function(sel) {
-        hui = $("select#ebayform-querybrand");
-        $.post("/getCats/"+sel.val(), function(data) {
-            hui.html(data);
-            hui.prepend('<option value="">Выберите марку</option>');
-            $("select#ebayform-querybrand option").filter('[value="Audi"]').attr("selected", "selected")
-    });
-    },
-
-    getValueFromLS: function(param) {
+    getValueFromArray: function(param) {
         if(param == null) {
             return '';
         } else {
-          return param;
+          return param[1];
         }
     },
 
     setCurrentCategory: function(cat) {
-        localStorage.setItem('category', JSON.stringify(+cat));
         this.currentCategory = +cat;
     },
 
@@ -43,28 +49,23 @@ var FilterControl = {
 
     makeURL: function () {
         myLink = '';
-        linkParams = '';
-
+        myLink+='/items/category=' + this.category + '&page=' + this.page + '&sort=' + this.sort;
         if(this.brand !== '') {
-            linkParams += this.brand + '/';
+            myLink += '&brand=' + this.brand;
         }
         if(this.model !== '') {
-            linkParams += this.model + '/';
+            myLink += '&model=' + this.model;
         }
         if(this.text !== '') {
-            linkParams += '&text=' + this.text;
+            myLink += '&text=' + this.text;
         }
-        myLink+='/category/' + this.category + '/' + linkParams ;//+ '&page=' + this.page + '&sort=' + this.sort;
         window.location.href = myLink;
     },
 
     addFilterParams: function() {
         this.brand = $(".filter_box .filter_brands :selected").text();
-        localStorage.setItem('brand', JSON.stringify(this.brand));
         this.model = $(".filter_box .filter_models :selected").text();
-        localStorage.setItem('model', JSON.stringify(this.model));
         this.sort  = +$(".filter_box .filter_sort :selected").val();
-        localStorage.setItem('sort', JSON.stringify(this.sort));
     },
 
     update: function() {
@@ -73,37 +74,17 @@ var FilterControl = {
     },
 
     setPage: function(page) {
-        localStorage.setItem('page', JSON.stringify(+page));
         this.page = +page;
     },
 
     setQueryText: function(text) {
-        localStorage.setItem('text', JSON.stringify(text));
         this.text = text;
-    },
-    setRootCategory: function(id) {
-        this.rootCategory = id;
-    },
-
-    getRootCategory: function(catId) {
-        jQuery.ajax({
-            url: '/root', type: 'POST', dataType: 'json', cache: false, async: false,
-            data: {catId: catId},
-            beforeSend: function(jqXHR, settings) {  },
-            success: function(data, textStatus, jqXHR) {
-                if (typeof(data.success) !== 'undefined') {
-                    FilterControl.setRootCategory(+data.category)
-            } },
-            complete: function(jqXHR, textStatus) { },
-            error: function(jqXHR, textStatus, errorThrown) {  }
-        });
-
     },
 
     categoryAction: function() {
         $(".catChange").removeClass("active"),
             $(this).addClass("active");
-        categoryTargetId    = +FilterControl.getRootCategory(6030);
+        categoryTargetId    = +$(this).attr('data-target').substring(1);
         categoryRootId      = +$(this).attr('data-root');
         rootIdFromAddress = +$("[data-target=#"+FilterControl.category+"]").data("root");
 
@@ -118,9 +99,7 @@ var FilterControl = {
     },
 
     filterAction: function() {
-        FilterControl.getRootCategory(+FilterControl.category);
-
-        rootIdFromAddress = FilterControl.rootCategory;
+        rootIdFromAddress = $("[data-target=#"+FilterControl.category+"]").data("root");
         rootIdFromFilter = $(".filter_box .filter_ts :selected").data("root");
 
         if(rootIdFromAddress !== rootIdFromFilter) {
@@ -145,5 +124,4 @@ var FilterControl = {
     }
 
 };
-window.onload = FilterControl.getParamsFromHref;
-
+FilterControl.getParamsFromHref();

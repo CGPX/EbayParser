@@ -10,11 +10,13 @@ use yii\helpers\Url;
 $this->title = 'BayEbay - Каталог';
 $this->params['myMod'][] = $model;
 
+
 ?>
 <?= CustomFilter::widget(['model' => $model])?>
 <div class="row">
     <?php
     if ($result!==false) {
+        echo "<table class=' table-hover table'>";
         foreach ($result as $value1) {
             if (!isset($value1['galleryURL'])){
                 $value1['galleryURL']="imgs/image-not-found.jpg";
@@ -25,21 +27,20 @@ $this->params['myMod'][] = $model;
     
     <?php
     $value1['galleryURL'] = preg_replace("/http:\/\//", "https://", $value1['galleryURL']);
-    echo '<div class="item">
-                      
-                          <table class="table table-striped">
+    echo '
                               <tr>
-                                  <td rowspan="2" class="item_img" align="center" style="width:140px;"><a href='.Url::to(['site/single', 'ebayitemid' => $value1['ebay_item_id']]).'" >'
+                                  <td class="item_img" align="center"><a href="/item/'.$value1['ebay_item_id'].'?from='.$categoryId.'">'
             . '<img style="max-width:140px;max-height:140px;" src="'. $value1['galleryURL'] .'" class="img-responsive" style=""></a></td>
-<td class="item_title" >
-    <h2 class=""><a href="'.Url::to(['site/single', 'ebayitemid' => $value1['ebay_item_id']]).'" >'. $value1['title'] .'</a></h2>
-       <span class="item_price">Цена: '. $value1['price_shipping_sum'] .' Руб.</span>
-           <button class="addToCart" data-id="'. $value1['ebay_item_id'] .'">Заказать</button>
+<td class="item_title" style="width:80%" >
+        <h2 class=""><a href="/item/'.$value1['ebay_item_id'].'?from='.$categoryId.'" >'. $value1['title'] .'</a></h2>
+       <p>Цена: '. $value1['price_shipping_sum'] .' Руб.</p>
+        <button href="#" class="addToCart btn btn-success btn-sm" data-id="'. $value1['ebay_item_id'] .'">Заказать</button>
+
             </td>
                             </tr>
-                          </table>
-                  </div>';
+                          ';
         }
+        echo "</table>";
     }elseif(isset($model->emptyResponse)) {
         if ($model->emptyResponse) {
         $ebay_cat = EbayCategory::findOne([

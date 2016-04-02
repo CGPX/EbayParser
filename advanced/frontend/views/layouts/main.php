@@ -16,7 +16,7 @@ AppAsset::register($this);
 $qText ='';
 $SearchForm="hidden"; // форма поиска на всех страницах. по сути она либо скрыта, либо показана.
 $controlAction = Yii::$app->controller->action->id;
-if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="get-items-by" or Yii::$app->controller->action->id=="get-item-by-query"){
+if (Yii::$app->controller->action->id=="single" or Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="get-items-by" or Yii::$app->controller->action->id=="get-item-by-query"){
     $FilterForm="";
     $createBreadArray = array();
     function createBread($whatCatSearch){
@@ -31,7 +31,14 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
     $BreadArray=createBread($this->params['myMod'][0]['queryCategory']);
     if(isset($BreadArray)){
         foreach (array_reverse($BreadArray) as $item) {
-            $this->params['breadcrumbs'][] = ['label' => $item['label'], 'url' => '/category/'.$item['category_id'], 'category_id' => $item['category_id']];
+            $url  = '/category/'.$item['category_id'];
+            if(!empty($_SESSION["brand"])){
+                $url = $url."/".$_SESSION["brand"];
+                if(!empty($_SESSION["ser"])){
+                    $url = $url."/".$_SESSION["ser"];
+                }
+            }
+            $this->params['breadcrumbs'][] = ['label' => $item['label'], 'url' => $url, 'category_id' => $item['category_id']];
         }
     }
 }else{$FilterForm="hidden";}
@@ -45,7 +52,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
       <meta name="title" content="Доставка с EBAY | Автозапчасти из США на заказ от интернет-магазина Destinyparts.ru"/>
       <meta name="keywords" content="запчасти из сша заказать автозапчасти на заказ"/>
       <meta name="description" content="Интернет-магазин Destinyparts.ru предлагает оригинальные и неоригинальные запчасти из США. Доставка автозапчастей осуществляется в кратчайшие сроки."/>
-      <?= Html::csrfMetaTags() /* вот это что за борода? */ ?>
+      <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
       
@@ -57,6 +64,8 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
       <link rel="apple-touch-icon" href="/_sysimg/ios/apple-touch-icon-144x144.png" sizes="144x144"/>
       <link rel="apple-touch-icon" href="/_sysimg/ios/apple-touch-icon-152x152.png" sizes="152x152"/>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
       <link rel="stylesheet" type="text/css" href="/_css/main.css" />
       <link rel="stylesheet" type="text/css" href="/_css/ar2.css" />
       <link rel="stylesheet" type="text/css" href="/_css/mavselect.css" />
@@ -66,36 +75,30 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
         .item table td {
             padding: 5px;
         }
-        .item .item_price {
-            font-size: 200%;
-            color: #00A000;
+
+        .item .item_img {
+            min-width: 140px;
         }
-        .item button.addToCart{
-            padding: 7px;
-            font-size: 24px;
-            cursor: pointer;
+
+        li.active {
+            margin-top: 5px;
         }
-        
+
         ul.menu {
             margin-left: 30px;
         }
-        
-        li.active a.alev1 {
-            color: black !important;
-            font-weight: bold;
+
+
+        .basket_header {
+            padding-left: 0px;
         }
-        
-         a.active > span {
-            color: black !important;
-            font-weight: bold;
-        }
-        
+
         ul.menu  ul {
             margin-left: 15px;
         }
         .hidden {
             display: none;
-            
+
         }
       </style>
    </head>
@@ -110,41 +113,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                      <!--<img src="/images/template/logo.png"></a>-->
                      <img src="/images/logo1.png">
                   </a>
-                  <div class="header_data_blocks">
-                     <div class="auth_header">
-                        <div class="auth_title">Авторизация:</div>
-                        <div class="auth_link">
-                           <a class="show_form">Вход</a> / <a href="/registration.html">Зарегистрироваться</a>
-                        </div>
-                        <div id="CustomerBasketId" class="">
-                           <div class="auth_form">
-                              <div class="auth_form_inner">
-                                 <a class="auth_close"></a>  
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="contacts_header">
-                        <div class="pageContent">
-                           <div class="contacts_title">Наш телефон</div>
-                           <div class="phone_header"><span>+7(499)</span> 994-994-3</div>
-                        </div>
-                     </div>
-                     <div class="basket_header">
-                        <a class="basket_link" href="/shop/basket.html"><img src='/images/template/header_basket.png'></a>
-                        <div class="basket_title">Ваша корзина</div>
-                        <div class="data_basket">
-                           <span class="title_data_basket leftside">Товаров </span> 
-                           <a href="/shop/basket.html">0</a>
-                        </div>
-                        <div class="data_basket">
-                           <span class="title_data_basket leftside">Сумма: </span>
-                           <a href="/shop/basket.html">0  руб</a>
-                        </div>
-                     </div>
-                     <!---для растягивания inline-block по ширине--->
-                     <div class="ftr"></div>
-                  </div>
+
                </div>
                <div id="header_bottom" class="flc">
                   <div class="search_menu">
@@ -174,15 +143,13 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                               <a class=""  href="http://www.destinyparts.ru/kontacty.html">Контакты</a>
                            </div>
                         </li>
+                         <li >
+                             <div>
+                                 <a class=""  href="http://www.destinyparts.ru/">Оригинальные автозапчасти</a>
+                             </div>
+                         </li>
                      </ul>
-                     <div class="search_form">
-                        <form name="search_code" action="/search.html" method="GET" onsubmit="">
-                           <input class="search_btn" type="image" src="/images/template/search_btn.png" />
-                           <div id="search_input" class="">
-                              <input class="TextBox_empty" type="text" name="article" value="Например, Carbon hood" onfocus="if (this.value == 'Например, VM12-89') {this.value = ''; this.className = 'TextBox_focus';}" onblur="if (this.value == '') {this.value = 'Например, Carbon hood'; this.className = 'TextBox_empty';} else {this.className = 'TextBox';}" />
-                           </div>
-                        </form>
-                     </div>
+
                   </div>
                </div>
             </div>
@@ -192,10 +159,8 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                <div id="content">
                   <div id="content_inner">
                       <div class="pageContent">
-                          <article class="col-sm-12 col-md-8 col-lg-8">
-                                <!--Содержимое-->
+                          <article class="">
 
-                                <!-- хлебные крошки -->
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <!-- хлебные крошки -->
@@ -207,16 +172,22 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                                         <?= Alert::widget() ?>
                                     </div>
                                 </div>
-
-
+                              <?php
+                              $this->beginContent('@frontend/views/site/search_form.php');
+                              echo $content;
+                              $this->endContent();
+                              ?>
+                              
+    <hr/>
                                 <?= $content ?>
-
                             </article>
                       </div>
                       <br clear="all"/>
                      <div class="pageContent">
                         <!-- поисковая форма -->
-                        <h1>Автозапчасти из США</h1>
+                        <!--h1>Автозапчасти и доставка с EBAY</h1-->
+
+                         <!--
                         <p>ООО «Альфа Парт» занимается поставками <strong>запчастей из США</strong>. Мы предлагаем оптовым и розничным клиентам заказать комплектующие для авто марок:</p>
                         <p>В наличии и на заказ оригинальная продукция для вышеперечисленных автомобилей, а также высококачественные дубликаты. Среди них – автозапчасти Dello (всё для автотехники марки Опель), Cardone (Насосы ГУР, приводные валы), колёсные ступицы от National и прочие американские бренды. Неоригинальные товары представлены в разных ценовых категориях.</p>
                         <p><span style='font-weight:bold'>Запчасти из США – это выгодно</span></p>
@@ -230,12 +201,14 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                         </ol>
                         <p>Доставка морем длится в среднем 5 недель (с момента отплытия контейнера из порта), по воздуху 7-14 дней, если детали есть в наличии. Обработка заказа происходит моментально за счёт автоматизированного учёта продукции на складе.</p>
                         <p>Это приблизительная схема сотрудничества. Мы готовы рассмотреть ваши предпочтения в индивидуальном порядке. Звоните!</p>
+                        -->
                      </div>
                   </div>
                </div>
             </div>
             <div id="sideLeft">
-                <ul class="menu">
+
+                <ul class="menu nav nav-pills nav-stacked">
                     <?php
                         if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->action->id=="single" or Yii::$app->controller->action->id=="get-items-by" or Yii::$app->controller->action->id=="get-item-by-query"){
                                 $this->beginContent('@frontend/views/site/catalog.php');
@@ -244,7 +217,7 @@ if (Yii::$app->controller->action->id=="itemslist" or Yii::$app->controller->act
                             }
                     ?>
                 </ul>
-                
+
                <div class="clear"></div>
                <!--<div class="left_menu_title">Категории</div>-->
                <div class="left_menu">

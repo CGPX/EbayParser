@@ -13,11 +13,14 @@ function catalogArray($rootParentId,$level){
     foreach($catArrayFirst as $value){
         $selected = do_next($value['category_id']);
         $active = $selected ? 'active' : '';
-        $textToEcho.='<li class="lev'.$level.'">';
-        $textToEcho.='<a href="#" class="alev'.$level.' '.$active.' categoryChange" data-target="'.$value['category_id'].'"><span>'. $value['category_name'].'</span></a>';
+        $textToEcho.='<li class="lev'.$level.' '.$active.'">';
+        $url = '/category/'.$value['category_id'];
+        $textToEcho.='<a href="'.$url.'" class="alev'.$level.' '.$active.'" ><span>'. $value['category_name'].'</span></a>';
+
+        //$textToEcho.='<a href="#" class="alev'.$level.' '.$active.' categoryChange" data-target="'.$value['category_id'].'"><span>'. $value['category_name'].'</span></a>';
         if($selected){
             $data = catalogArray($value['category_id'],++$level);
-            $textToEcho .= '<ul>'.$data.'</ul>';
+            $textToEcho .= '<ul class="nav nav-pills nav-stacked">'.$data.'</ul>';
         }
         $textToEcho.="</li>";
     }
@@ -40,14 +43,5 @@ function do_next($cat_id){
     }
     return false;
 }
-
-#$cacheCats = yii::$app->getCache()->get('cats');
-#$cacheCats = false;
-#if($cacheCats == false) { 
-    #$textToShow = catalogArray('6028',1);
-#    yii::$app->getCache()->set('cats', $textToShow);
-#} else {
-#    $textToShow = $cacheCats;
-#}
 
 echo catalogArray('6028',1);
