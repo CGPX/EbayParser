@@ -173,19 +173,13 @@ class SiteController extends Controller
     }
 
     private function getUrl($model) {
-        $url = '/category/' . $model->queryCategory
-            . (empty($model->queryBrand) ? "" : '/'.$model->queryBrand)
-            . (empty($model->queryModel) ? "" : '/'.$model->queryModel)
-            . (empty($model->queryText) ? "" : '/?text='.$model->queryText)
-            //. ((int)$model->queryPage > 1 ? '&page='.$model->queryPage : "")
-            . ($model->querySort < 2 ? '?&sort='.$model->querySort : "");
-        if(empty($model->queryText)) {
-
+        if(empty($model->queryText) & $model->querySort == 2 &  $model->queryPage == 1) {
+            return Url::to(['/category/'. $model->queryCategory.(empty($model->queryBrand) ? "" : '/'.$model->queryBrand) . (empty($model->queryModel) ? "" : '/'.$model->queryModel)]);
         }
-
-        return Url::to(['/category/'. $model->queryCategory.(empty($model->queryBrand) ? "" : '/'.$model->queryBrand) . (empty($model->queryModel) ? "" : '/'.$model->queryModel), 'text' => $model->queryText, 'page' => $model->queryPage, 'sort' => $model->querySort]);
-//        return $url;
-
+        else
+        {
+            return Url::to(['/category/'. $model->queryCategory.(empty($model->queryBrand) ? "" : '/'.$model->queryBrand) . (empty($model->queryModel) ? "" : '/'.$model->queryModel), 'text' => $model->queryText, 'page' => $model->queryPage, 'sort' => $model->querySort]);
+        }
     }
     /**
      * Выводим просмотр подробностей о товаре

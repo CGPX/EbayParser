@@ -69,7 +69,7 @@ for ($i=0; $i<=$iScheti; $i++){
     $pageOlolo = $pageStart + $i;
     if ((int)$model->queryPage == $pageOlolo) {$pageActive="active";} else {$pageActive="";}
     //$pagesOut .='<li class="'.$pageActive.'"><a href="#" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
-    $pagesOut .='<li class="'.$pageActive.'"><a href="'.$urlFromModel.'&page='.$pageOlolo.'" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
+    $pagesOut .='<li class="'.$pageActive.'"><a href="'.Url::to(['/category/'. $model->queryCategory.(empty($model->queryBrand) ? "" : '/'.$model->queryBrand) . (empty($model->queryModel) ? "" : '/'.$model->queryModel),'page' => $pageOlolo]).'" class="pageChange" data-target="'.$pageOlolo.'">'. $pageOlolo .'</a></li>';
 }
 
 if ($model->pageCount>0) {
@@ -80,7 +80,7 @@ if ($model->pageCount>0) {
 
                     <li><a href=\"".$urlFromModel."\" title=\"Первая страница\" class=\"pageChange\" data-target=\"1\">&laquo;</a></li>
                     ". $pagesOut ."
-                    <li><a href=\"".$urlFromModel."&page=".$modelPageCount."\" title=\"Последняя страница\" class=\"pageChange\" data-target=\"". $modelPageCount  ."\">&raquo;</a></li>
+                    <li><a href=\"".Url::to(['/category/'. $model->queryCategory.(empty($model->queryBrand) ? "" : '/'.$model->queryBrand) . (empty($model->queryModel) ? "" : '/'.$model->queryModel),'page' => $modelPageCount])."\" title=\"Последняя страница\" class=\"pageChange\" data-target=\"". $modelPageCount  ."\">&raquo;</a></li>
 
                 </ul>
             </div>

@@ -37,10 +37,16 @@ class CustomFilter extends Widget
 
         if(isset($this->model->queryBrand)) {
             $categoryBrand = EbayCategory::find()->where(['category_name' => $this->model->queryBrand, 'category_root_parent' => $this->modelRootId])->one();
-            $this->modelCatId = $categoryBrand->category_id;
+            if($categoryBrand != false) {
+                $this->modelCatId = $categoryBrand->category_id;
+            }
+
         }
         if(isset($this->model->queryModel)) {
-            $this->serCatId = EbayCategory::find()->where(['category_name' => $this->model->queryModel, 'category_root_parent' => $this->modelRootId])->one()->category_id;
+            $categoryModel =  EbayCategory::find()->where(['category_name' => $this->model->queryModel, 'category_root_parent' => $this->modelRootId])->one();
+            if($categoryModel != false) {
+                $this->serCatId = $categoryModel->category_id;
+            }
         }
         $js = new JsExpression('
                         $(function() {
